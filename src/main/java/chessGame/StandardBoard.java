@@ -3,6 +3,7 @@ package chessGame;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -217,13 +218,14 @@ public class StandardBoard extends Board {
 			return false;
 	}
 
-	public void listPossibleMovesWhite() {
+	public List<Move> listPossibleMovesWhite() {
 		List<Square> squares = Arrays.stream(squaresList).flatMap(s -> Arrays.stream(s))
 				.filter(s1 -> s1.isOccupied)
 				.filter(p -> p.turnColor.equals(TurnColor.white))
 				.collect(Collectors.toList());
 
 		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> getAllowedMoves(p).stream()).collect(Collectors.toList());
+		return moves;
 	}
 
 	private List<Move> getAllowedMoves(Piece p) {
@@ -249,26 +251,38 @@ public class StandardBoard extends Board {
 	}
 
 	private List<Move> getAllowedMoves(King king) {
-		return null;
+		return genericCheckMoves(king);
+	}
+
+	private List<Move> genericCheckMoves(Piece piece) {
+		List<Move> result = new ArrayList<>();
+		for (int x = 0; x <= 8; x++) {
+			for (int y = 0; y <= 8; y++) {
+				if (piece.canMove(x, y)) {
+					result.add(new Move(piece.xLocation, piece.yLocation, x, y);
+				}
+			}
+		}
+		return result;
 	}
 
 	private List<Move> getAllowedMoves(Queen queen) {
-		return null;
+		return genericCheckMoves(queen);
 	}
 
 	private List<Move> getAllowedMoves(Pawn pawn) {
-		return null;
+		return genericCheckMoves(pawn);
 	}
 
 	private List<Move> getAllowedMoves(Rook rook) {
-		return null;
+		return genericCheckMoves(rook);
 	}
 
 	private List<Move> getAllowedMoves(Knight knight) {
-		return null;
+		return genericCheckMoves(knight);
 	}
 
 	private List<Move> getAllowedMoves(Bishop bishop) {
-		return null;
+		return genericCheckMoves(bishop);
 	}
 }

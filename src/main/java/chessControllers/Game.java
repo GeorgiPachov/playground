@@ -8,6 +8,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Color;
+import java.util.List;
+import java.util.Random;
 import java.util.Stack;
 
 import javax.swing.BoxLayout;
@@ -18,10 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
-import chessGame.King;
-import chessGame.Piece;
-import chessGame.StandardBoard;
-import chessGame.Board;
+import chessGame.*;
 import chessViews.GameDisplay;
 
 /**
@@ -237,38 +236,42 @@ public class Game {
 			public void mouseReleased(MouseEvent me) {
 			    int xDestination = me.getX();
 				int yDestination = me.getY();
-				xDestination = xDestination/squareSize;
-				yDestination = yDestination/squareSize;
-				yDestination = 7 - yDestination;
-				if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)){
-					Piece enemyPiece = null;
-					if(gameBoard.squaresList[xDestination][yDestination].isOccupied)
-						enemyPiece = gameBoard.squaresList[xDestination][yDestination].occupyingPiece;
-					MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
-					commandStack.add(newCommand);
-					newCommand.execute();
-					if(movingPiece.turnColor.equals(Board.TurnColor.white)){
-						gameTurn = gameTurn.opposite();
-						blackLabel.setForeground(Color.BLUE);
-						whiteLabel.setForeground(Color.BLACK);
-						checkKingStatus(gameBoard.blackKingTracker);
-					 }
-					 else{
-						 gameTurn = gameTurn.opposite();
-						 whiteLabel.setForeground(Color.BLUE);
-						 blackLabel.setForeground(Color.BLACK);
-						 checkKingStatus(gameBoard.whiteKingTracker);
-					 }
-					 
-				}
-				else{
-					messageBox("This is an Illegal Move!", "Illegal move message");
-				}	
+                executeMove(xDestination, yDestination);
 			}
 		});
 	}
 
-	/**
+    private void executeMove(int xDestination, int yDestination) {
+        xDestination = xDestination/squareSize;
+        yDestination = yDestination/squareSize;
+        yDestination = 7 - yDestination;
+        if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)){
+            Piece enemyPiece = null;
+            if(gameBoard.squaresList[xDestination][yDestination].isOccupied)
+                enemyPiece = gameBoard.squaresList[xDestination][yDestination].occupyingPiece;
+            MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
+            commandStack.add(newCommand);
+            newCommand.execute();
+            if(movingPiece.turnColor.equals(Board.TurnColor.white)){
+                gameTurn = gameTurn.opposite();
+                blackLabel.setForeground(Color.BLUE);
+                whiteLabel.setForeground(Color.BLACK);
+                checkKingStatus(gameBoard.blackKingTracker);
+             }
+             else{
+                 gameTurn = gameTurn.opposite();
+                 whiteLabel.setForeground(Color.BLUE);
+                 blackLabel.setForeground(Color.BLACK);
+                 checkKingStatus(gameBoard.whiteKingTracker);
+             }
+
+        }
+        else{
+            messageBox("This is an Illegal Move!", "Illegal move message");
+        }
+    }
+
+    /**
 	 * Helper method to check if the passed king is in check.
 	 * It calls the respective check and checkmate helper methods in our library 
 	 * and displays appropriate messages and updates the score.
@@ -381,10 +384,13 @@ public class Game {
 	}
 
     private static void playBlack(Game game) {
-        game.gameBoard.listPossibleMovesWhite();
+
     }
 
     private static void playWhite(Game game) {
+        List<Move> moves = game.gameBoard.listPossibleMovesWhite();
+        int rnd = new Random().nextInt(moves.size());
+        Move move = moves.get(rnd);
 
     }
 
