@@ -41,7 +41,7 @@ public class Game {
 	 */
 	static Player whitePlayer;
 	static Player blackPlayer;
-	chessGame.Board.Color gameTurn;
+	Board.TurnColor gameTurn;
 	StandardBoard gameBoard;
 	boolean gameOver;
 	static boolean gameType;
@@ -67,7 +67,7 @@ public class Game {
 	public void gameInit(boolean gameType) {
 		gameBoard = new StandardBoard(8,8);
 		gameBoard.populateBoardWithPieces(gameType);
-		gameTurn = chessGame.Board.Color.white;
+		gameTurn = Board.TurnColor.white;
 		gameOver = false;
 		squareSize = 80;
 		commandStack = new Stack();
@@ -83,8 +83,8 @@ public class Game {
 		String blackName = JOptionPane.showInputDialog("Please input Black player name");
 		if(blackName == "" || blackName == null)
 			blackName = "Frank Sinatra";
-		whitePlayer = new Player(whiteName, chessGame.Board.Color.white);
-		blackPlayer = new Player(blackName, chessGame.Board.Color.black);
+		whitePlayer = new Player(whiteName, Board.TurnColor.white);
+		blackPlayer = new Player(blackName, Board.TurnColor.black);
 	}
 	
 	/**
@@ -240,14 +240,14 @@ public class Game {
 				xDestination = xDestination/squareSize;
 				yDestination = yDestination/squareSize;
 				yDestination = 7 - yDestination;
-				if(movingPiece.color == gameTurn && movingPiece.canMove(xDestination, yDestination)){
+				if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)){
 					Piece enemyPiece = null;
 					if(gameBoard.squaresList[xDestination][yDestination].isOccupied)
 						enemyPiece = gameBoard.squaresList[xDestination][yDestination].occupyingPiece;
 					MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
 					commandStack.add(newCommand);
 					newCommand.execute();
-					if(movingPiece.color.equals(chessGame.Board.Color.white)){
+					if(movingPiece.turnColor.equals(Board.TurnColor.white)){
 						gameTurn = gameTurn.opposite();
 						blackLabel.setForeground(Color.BLUE);
 						whiteLabel.setForeground(Color.BLACK);
@@ -277,7 +277,7 @@ public class Game {
 	protected void checkKingStatus(King kingToCheck) {
 		Player currentPlayer;
 		Player otherPlayer;
-		if(kingToCheck.color == chessGame.Board.Color.white){
+		if(kingToCheck.turnColor == Board.TurnColor.white){
 			currentPlayer = whitePlayer;
 			otherPlayer = blackPlayer;
 		}
@@ -307,7 +307,7 @@ public class Game {
 		if(!commandStack.isEmpty()){
 			MoveCommand move = commandStack.pop();
 			move.undo();
-			if(gameTurn == chessGame.Board.Color.white){
+			if(gameTurn == Board.TurnColor.white){
 				blackLabel.setForeground(Color.BLUE);
 				whiteLabel.setForeground(Color.BLACK);
 			}
@@ -325,7 +325,7 @@ public class Game {
 	 */
 	private void restartGame(){
 		String player;
-		if(gameTurn.equals(chessGame.Board.Color.white))
+		if(gameTurn.equals(Board.TurnColor.white))
 			player = blackPlayer.playerName;
 		else
 			player = whitePlayer.playerName;
@@ -344,7 +344,7 @@ public class Game {
 	private void forfeitGame() {
 		Player currentPlayer;
 		Player otherPlayer;
-		if(gameTurn == chessGame.Board.Color.white){
+		if(gameTurn == Board.TurnColor.white){
 			currentPlayer = whitePlayer;
 			otherPlayer = blackPlayer;
 		}
@@ -368,20 +368,37 @@ public class Game {
 	 */
 	public static void main(String args[]){
 		getGamePlayers();
-		startNewGame();
+		Game game = startNewGame();
+		playSelf(game);
 	}
 
-	/**
+	private static void playSelf(Game game) {
+        if (game.gameTurn == Board.TurnColor.white) {
+            playWhite(game);
+        } else {
+            playBlack(game);
+        }
+	}
+
+    private static void playBlack(Game game) {
+        game.gameBoard.listPossibleMovesWhite();
+    }
+
+    private static void playWhite(Game game) {
+
+    }
+
+    /**
 	 * Helper method to start off a new game.
 	 * Called when the players want to restart or when new players join in initially.
 	 */
-	private static void startNewGame() {
+	private static Game startNewGame() {
 		Game newGame = new Game();
 		newGame.gameInit(getGameType());
 		newGame.setupDisplay();
 		newGame.gameStart();
 		newGame.mouseActions();
-		
+        return newGame;
 	}
 
 	/**

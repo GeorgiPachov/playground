@@ -1,7 +1,5 @@
 package chessGame;
 
-import chessGame.Board.Color;
-
 /**
  * Subclass of a Piece specific to a Chancellor. This handles all movements the Chancellor is capable
  * of making.
@@ -15,11 +13,11 @@ public class Chancellor extends Piece {
 	 * initialized by superclass.
 	 * @param initX
 	 * @param initY
-	 * @param color
+	 * @param turnColor
 	 * @param board
 	 */
-	public Chancellor(int initX, int initY, Color color, StandardBoard board) {
-		super(initX, initY, color, board);
+	public Chancellor(int initX, int initY, Board.TurnColor turnColor, StandardBoard board) {
+		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "chancellor";
 	}
 

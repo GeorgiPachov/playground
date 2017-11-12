@@ -1,6 +1,6 @@
 package chessGame;
 
-import chessGame.Board.Color;
+import chessGame.Board.TurnColor;
 
 /**
  * Subclass of a Piece specific to a Pawn. This handles all movements the pawn is capable
@@ -14,11 +14,11 @@ public class Pawn extends Piece {
 	 * is initialized by superclass.
 	 * @param initX
 	 * @param initY
-	 * @param color
+	 * @param turnColor
 	 * @param board
 	 */
-	public Pawn(int initX, int initY, Color color, StandardBoard board) {
-		super(initX, initY, color, board);
+	public Pawn(int initX, int initY, TurnColor turnColor, StandardBoard board) {
+		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "pawn";
 	}
 
@@ -59,7 +59,7 @@ public class Pawn extends Piece {
 	 */
 	private boolean isValidPawnMove(int xDisplacement, int yDisplacement) {
 		// Two steps allowed in first move
-		if((this.yLocation == 6 && this.color.equals(Color.black)) || (this.yLocation == 1 && this.color.equals(Color.white))){
+		if((this.yLocation == 6 && this.turnColor.equals(TurnColor.black)) || (this.yLocation == 1 && this.turnColor.equals(TurnColor.white))){
 			return handlePawnFirstMove(xDisplacement, yDisplacement);
 		}
 		// Single steps allowed in future moves.
@@ -75,7 +75,7 @@ public class Pawn extends Piece {
 	 * @return boolean true if valid regular pawn move
 	 */
 	private boolean handleRegularPawnMove(int xDisplacement, int yDisplacement) {
-		if(color.equals(Color.white)){
+		if(turnColor.equals(TurnColor.white)){
 			// White capture or move upwards.
 			if(yDisplacement == 1 && (xDisplacement == 0 || Math.abs(xDisplacement) == 1))
 				return true;
@@ -99,7 +99,7 @@ public class Pawn extends Piece {
 	 */
 	private boolean handlePawnFirstMove(int xDisplacement, int yDisplacement) {
 		// White pawns can only move upwards.
-		if(color.equals(Color.white)){
+		if(turnColor.equals(TurnColor.white)){
 			// Two step without capture.
 			if((yDisplacement == 1 || yDisplacement == 2) && (xDisplacement == 0))
 				return true;

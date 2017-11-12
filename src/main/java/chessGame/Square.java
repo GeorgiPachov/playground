@@ -1,6 +1,6 @@
 package chessGame;
 
-import chessGame.Board.Color;
+import chessGame.Board.TurnColor;
 
 /**
  * This class represents a square on the chess board.
@@ -13,19 +13,19 @@ public class Square {
 	 */
 	// Square is occupied or not
 	public boolean isOccupied;
-	// Assign 0 as white color and 1 as black color
-	public Color color;
+	// Assign 0 as white turnColor and 1 as black turnColor
+	public TurnColor turnColor;
 	// Square objects keep track of which piece occupies that square.
 	public Piece occupyingPiece;
 
 	/**
 	 * Constructor to initialize chess board Squares
 	 * @param isOccupied
-	 * @param color
+	 * @param turnColor
 	 */
-	public Square(boolean isOccupied, Color color) {
+	public Square(boolean isOccupied, TurnColor turnColor) {
 		this.isOccupied = isOccupied;
-		this.color = color;
+		this.turnColor = turnColor;
 		this.occupyingPiece = null;
 	}
 }

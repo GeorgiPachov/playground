@@ -1,9 +1,10 @@
 package chessTests;
 
+import chessGame.Board;
 import chessGame.Chancellor;
 import chessGame.Pawn;
 import chessGame.StandardBoard;
-import chessGame.Board.Color;
+import chessGame.Board.TurnColor;
 import junit.framework.TestCase;
 
 /**
@@ -18,7 +19,7 @@ public class ChancellorTest extends TestCase {
 	 */
 	public void testInvalidChancellorMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Chancellor testChan = new Chancellor(4, 3, Color.white, board);
+		Chancellor testChan = new Chancellor(4, 3, Board.TurnColor.white, board);
 		assertFalse(testChan.canMove(3, 2));
 	}
 	
@@ -27,7 +28,7 @@ public class ChancellorTest extends TestCase {
 	 */
 	public void testValidChancellorKnightMove() {
 		StandardBoard board = new StandardBoard(8,8);
-		Chancellor testKnight = new Chancellor(4, 3, Color.black, board);
+		Chancellor testKnight = new Chancellor(4, 3, Board.TurnColor.black, board);
 		assertTrue(testKnight.canMove(3, 1));	
 	}
 	
@@ -36,7 +37,7 @@ public class ChancellorTest extends TestCase {
 	 */
 	public void testValidChancellorRookMove() {
 		StandardBoard board = new StandardBoard(8,8);
-		Chancellor testRook = new Chancellor(4, 3, Color.black, board);
+		Chancellor testRook = new Chancellor(4, 3, Board.TurnColor.black, board);
 		assertTrue(testRook.canMove(5, 3));	
 	}
 	
@@ -45,8 +46,8 @@ public class ChancellorTest extends TestCase {
 	 */
 	public void testInvalidBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Chancellor testRook = new Chancellor(4, 3, Color.white, board);
-		Pawn blockingPawn = new Pawn(4, 4, Color.white, board);
+		Chancellor testRook = new Chancellor(4, 3, Board.TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(4, 4, TurnColor.white, board);
 		assertFalse(testRook.canMove(4, 5));
 	}
 	
@@ -55,8 +56,8 @@ public class ChancellorTest extends TestCase {
 	 */
 	public void testValidBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Chancellor testKnight = new Chancellor(4, 3, Color.white, board);
-		Pawn blockingPawn = new Pawn(3, 4, Color.white, board);
+		Chancellor testKnight = new Chancellor(4, 3, Board.TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(3, 4, Board.TurnColor.white, board);
 		assertTrue(testKnight.canMove(2, 4));
 	}
 }

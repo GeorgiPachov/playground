@@ -1,5 +1,10 @@
 package chessGame;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Subclass of a board. Standard version of a chess Board. Has methods for creating a standard
  * chess board and populating it with regular chess pieces.
@@ -39,15 +44,15 @@ public class StandardBoard extends Board {
 			for (int j = 0; j < this.numYSquares; j++) {
 				if (i % 2 == 0) {
 					if (j % 2 == 0)
-						squaresList[i][j] = new Square(false, Color.black);
+						squaresList[i][j] = new Square(false, TurnColor.black);
 					else
-						squaresList[i][j] = new Square(false, Color.white);
+						squaresList[i][j] = new Square(false, TurnColor.white);
 				} 
 				else {
 					if (j % 2 == 0)
-						squaresList[i][j] = new Square(false, Color.white);
+						squaresList[i][j] = new Square(false, TurnColor.white);
 					else
-						squaresList[i][j] = new Square(false, Color.black);
+						squaresList[i][j] = new Square(false, TurnColor.black);
 				}
 			}
 		}
@@ -73,10 +78,10 @@ public class StandardBoard extends Board {
 	 * Method to setup Archbishop and Chancellor as special pieces in special game.
 	 */
 	public void setupSpecialPieces() {
-		Archbishop whiteArchbishopOne = new Archbishop(2, 0, Color.white, this);
-		Archbishop whiteArchbishopTwo = new Archbishop(5, 0, Color.white, this);
-		Archbishop blackArchbishopOne = new Archbishop(2, 7, Color.black, this);
-		Archbishop blackArchbishopTwo = new Archbishop(5, 7, Color.black, this);
+		Archbishop whiteArchbishopOne = new Archbishop(2, 0, TurnColor.white, this);
+		Archbishop whiteArchbishopTwo = new Archbishop(5, 0, TurnColor.white, this);
+		Archbishop blackArchbishopOne = new Archbishop(2, 7, TurnColor.black, this);
+		Archbishop blackArchbishopTwo = new Archbishop(5, 7, TurnColor.black, this);
 		this.squaresList[2][0].isOccupied = true;
 		this.squaresList[5][0].isOccupied = true;
 		this.squaresList[2][0].occupyingPiece = whiteArchbishopOne;
@@ -86,10 +91,10 @@ public class StandardBoard extends Board {
 		this.squaresList[2][7].occupyingPiece = blackArchbishopOne;
 		this.squaresList[5][7].occupyingPiece = blackArchbishopTwo;
 		
-		Chancellor whiteKnightOne = new Chancellor(1, 0, Color.white, this);
-		Chancellor whiteKnightTwo = new Chancellor(6, 0, Color.white, this);
-		Chancellor blackKnightOne = new Chancellor(1, 7, Color.black, this);
-		Chancellor blackKnightTwo = new Chancellor(6, 7, Color.black, this);
+		Chancellor whiteKnightOne = new Chancellor(1, 0, TurnColor.white, this);
+		Chancellor whiteKnightTwo = new Chancellor(6, 0, TurnColor.white, this);
+		Chancellor blackKnightOne = new Chancellor(1, 7, TurnColor.black, this);
+		Chancellor blackKnightTwo = new Chancellor(6, 7, TurnColor.black, this);
 		this.squaresList[1][0].isOccupied = true;
 		this.squaresList[6][0].isOccupied = true;
 		this.squaresList[1][0].occupyingPiece = whiteKnightOne;
@@ -106,8 +111,8 @@ public class StandardBoard extends Board {
 	 */
 	public void setupPawns(){
 		for(int i = 0; i < 8; i++){
-			Pawn newWhitePawn = new Pawn(i, 1, Color.white, this);
-			Pawn newBlackPawn = new Pawn(i, 6, Color.black, this);
+			Pawn newWhitePawn = new Pawn(i, 1, TurnColor.white, this);
+			Pawn newBlackPawn = new Pawn(i, 6, TurnColor.black, this);
 			this.squaresList[i][1].isOccupied = true;
 			this.squaresList[i][6].isOccupied = true;
 			this.squaresList[i][1].occupyingPiece = newWhitePawn;
@@ -120,10 +125,10 @@ public class StandardBoard extends Board {
 	 * Setup 2 black rooks and 2 white rooks in their initial positions.
 	 */
 	public void setupRooks(){
-		Rook whiteRookOne = new Rook(0, 0, Color.white, this);
-		Rook whiteRookTwo = new Rook(7, 0, Color.white, this);
-		Rook blackRookOne = new Rook(0, 7, Color.black, this);
-		Rook blackRookTwo = new Rook(7, 7, Color.black, this);
+		Rook whiteRookOne = new Rook(0, 0, TurnColor.white, this);
+		Rook whiteRookTwo = new Rook(7, 0, TurnColor.white, this);
+		Rook blackRookOne = new Rook(0, 7, TurnColor.black, this);
+		Rook blackRookTwo = new Rook(7, 7, TurnColor.black, this);
 		this.squaresList[0][0].isOccupied = true;
 		this.squaresList[7][0].isOccupied = true;
 		this.squaresList[0][0].occupyingPiece = whiteRookOne;
@@ -139,10 +144,10 @@ public class StandardBoard extends Board {
 	 * Setup 2 black Bishops and 2 white Bishops in their initial positions.
 	 */
 	public void setupBishops(){
-		Bishop whiteBishopOne = new Bishop(2, 0, Color.white, this);
-		Bishop whiteBishopTwo = new Bishop(5, 0, Color.white, this);
-		Bishop blackBishopOne = new Bishop(2, 7, Color.black, this);
-		Bishop blackBishopTwo = new Bishop(5, 7, Color.black, this);
+		Bishop whiteBishopOne = new Bishop(2, 0, TurnColor.white, this);
+		Bishop whiteBishopTwo = new Bishop(5, 0, TurnColor.white, this);
+		Bishop blackBishopOne = new Bishop(2, 7, TurnColor.black, this);
+		Bishop blackBishopTwo = new Bishop(5, 7, TurnColor.black, this);
 		this.squaresList[2][0].isOccupied = true;
 		this.squaresList[5][0].isOccupied = true;
 		this.squaresList[2][0].occupyingPiece = whiteBishopOne;
@@ -157,10 +162,10 @@ public class StandardBoard extends Board {
 	 * Setup 2 black Knights and 2 white Knights in their initial positions.
 	 */
 	public void setupKnights(){
-		Knight whiteKnightOne = new Knight(1, 0, Color.white, this);
-		Knight whiteKnightTwo = new Knight(6, 0, Color.white, this);
-		Knight blackKnightOne = new Knight(1, 7, Color.black, this);
-		Knight blackKnightTwo = new Knight(6, 7, Color.black, this);
+		Knight whiteKnightOne = new Knight(1, 0, TurnColor.white, this);
+		Knight whiteKnightTwo = new Knight(6, 0, TurnColor.white, this);
+		Knight blackKnightOne = new Knight(1, 7, TurnColor.black, this);
+		Knight blackKnightTwo = new Knight(6, 7, TurnColor.black, this);
 		this.squaresList[1][0].isOccupied = true;
 		this.squaresList[6][0].isOccupied = true;
 		this.squaresList[1][0].occupyingPiece = whiteKnightOne;
@@ -175,8 +180,8 @@ public class StandardBoard extends Board {
 	 * Setup 2 queens white and black in their initial positions.
 	 */	
 	public void setupQueens(){
-		Queen whiteQueen = new Queen(3, 0, Color.white, this);
-		Queen blackQueen = new Queen(3, 7, Color.black, this);
+		Queen whiteQueen = new Queen(3, 0, TurnColor.white, this);
+		Queen blackQueen = new Queen(3, 7, TurnColor.black, this);
 		this.squaresList[3][0].isOccupied = true;
 		this.squaresList[3][7].isOccupied = true;
 		this.squaresList[3][0].occupyingPiece = whiteQueen;
@@ -187,8 +192,8 @@ public class StandardBoard extends Board {
 	 * Setup 2 queens white and black in their initial positions.
 	 */
 	public void setupKings(){
-		King whiteKing = new King(4, 0, Color.white, this);
-		King blackKing = new King(4, 7, Color.black, this);
+		King whiteKing = new King(4, 0, TurnColor.white, this);
+		King blackKing = new King(4, 7, TurnColor.black, this);
 		this.squaresList[4][0].isOccupied = true;
 		this.squaresList[4][7].isOccupied = true;
 		this.squaresList[4][0].occupyingPiece = whiteKing;
@@ -212,4 +217,58 @@ public class StandardBoard extends Board {
 			return false;
 	}
 
+	public void listPossibleMovesWhite() {
+		List<Square> squares = Arrays.stream(squaresList).flatMap(s -> Arrays.stream(s))
+				.filter(s1 -> s1.isOccupied)
+				.filter(p -> p.turnColor.equals(TurnColor.white))
+				.collect(Collectors.toList());
+
+		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> getAllowedMoves(p).stream()).collect(Collectors.toList());
+	}
+
+	private List<Move> getAllowedMoves(Piece p) {
+		if (p instanceof King) {
+			return getAllowedMoves((King) p);
+		} else if (p instanceof Queen) {
+			return getAllowedMoves((Queen) p);
+
+		} else if (p instanceof Pawn) {
+			return getAllowedMoves((Pawn) p);
+
+		} else if (p instanceof Knight) {
+			return getAllowedMoves((Knight) p);
+
+		} else if (p instanceof Bishop) {
+			return getAllowedMoves((Bishop) p);
+
+		} else if (p instanceof Rook) {
+			return getAllowedMoves((Rook) p);
+		}
+
+		return new ArrayList<>();
+	}
+
+	private List<Move> getAllowedMoves(King king) {
+		return null;
+	}
+
+	private List<Move> getAllowedMoves(Queen queen) {
+		return null;
+	}
+
+	private List<Move> getAllowedMoves(Pawn pawn) {
+		return null;
+	}
+
+	private List<Move> getAllowedMoves(Rook rook) {
+		return null;
+	}
+
+	private List<Move> getAllowedMoves(Knight knight) {
+		return null;
+	}
+
+	private List<Move> getAllowedMoves(Bishop bishop) {
+		return null;
+	}
 }

@@ -1,11 +1,7 @@
 package chessTests;
 
-import chessGame.Bishop;
-import chessGame.Board.Color;
-import chessGame.King;
-import chessGame.Pawn;
-import chessGame.Piece;
-import chessGame.StandardBoard;
+import chessGame.*;
+import chessGame.Board.TurnColor;
 import junit.framework.TestCase;
 
 /**
@@ -20,8 +16,8 @@ public class PieceTest extends TestCase {
 	 */
 	public void testEnemyCapture() {
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn whitePawn = new Pawn(1, 1, Color.white, board);
-		Pawn blackPawn = new Pawn(2, 2, Color.black, board);
+		Pawn whitePawn = new Pawn(1, 1, TurnColor.white, board);
+		Pawn blackPawn = new Pawn(2, 2, Board.TurnColor.black, board);
 		assertTrue(whitePawn.canMove(2, 2));
 		whitePawn.executeCaptureOrMove(2,2);
 		assertTrue(whitePawn.xLocation == 2 && whitePawn.yLocation == 2);
@@ -32,7 +28,7 @@ public class PieceTest extends TestCase {
 	 */
 	public void testInvalidPositiveBoundsMove() {
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn whitePawn = new Pawn(7, 7, Color.white, board);
+		Pawn whitePawn = new Pawn(7, 7, TurnColor.white, board);
 		assertFalse(whitePawn.canMove(8, 8));
 	}
 	
@@ -41,7 +37,7 @@ public class PieceTest extends TestCase {
 	 */
 	public void testInvalidNegativeBoundsMove() {
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn whitePawn = new Pawn(0, 1, Color.white, board);
+		Pawn whitePawn = new Pawn(0, 1, Board.TurnColor.white, board);
 		assertFalse(whitePawn.canMove(0, -1));
 	}
 	
@@ -50,10 +46,10 @@ public class PieceTest extends TestCase {
 	 */
 	public void testKingInDanger(){
 		StandardBoard board = new StandardBoard(8,8);
-		King newKing = new King(3, 7, Color.black, board);
+		King newKing = new King(3, 7, TurnColor.black, board);
 		board.blackKingTracker = newKing;
-		Pawn allyPawn = new Pawn(5, 5, Color.black, board);
-		Bishop enemyBishop = new Bishop(7, 3, Color.white, board);
+		Pawn allyPawn = new Pawn(5, 5, Board.TurnColor.black, board);
+		Bishop enemyBishop = new Bishop(7, 3, Board.TurnColor.white, board);
 		assertFalse(allyPawn.canMove(5, 4));
 	}
 	

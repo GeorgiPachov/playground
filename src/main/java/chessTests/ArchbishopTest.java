@@ -3,7 +3,7 @@ package chessTests;
 import chessGame.Archbishop;
 import chessGame.Pawn;
 import chessGame.StandardBoard;
-import chessGame.Board.Color;
+import chessGame.Board.TurnColor;
 import junit.framework.TestCase;
 
 /**
@@ -18,16 +18,16 @@ public class ArchbishopTest extends TestCase {
 	 */
 	public void testValidArchBishopMove() {
 		StandardBoard board = new StandardBoard(8,8);
-		Archbishop testBishop = new Archbishop(5, 3, Color.black, board);
+		Archbishop testBishop = new Archbishop(5, 3, TurnColor.black, board);
 		assertTrue(testBishop.canMove(1, 7));	
 	}
-	
+		
 	/**
 	 * Test Invalid Arch Bishop Move
 	 */
 	public void testInvalidArchBishopMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Archbishop testBishop = new Archbishop(5, 3, Color.white, board);
+		Archbishop testBishop = new Archbishop(5, 3, TurnColor.white, board);
 		assertFalse(testBishop.canMove(4, 6));
 	}
 	
@@ -36,7 +36,7 @@ public class ArchbishopTest extends TestCase {
 	 */	
 	public void testValidArchKnightMove() {
 		StandardBoard board = new StandardBoard(8,8);
-		Archbishop testKnight = new Archbishop(1, 0, Color.black, board);
+		Archbishop testKnight = new Archbishop(1, 0, TurnColor.black, board);
 		assertTrue(testKnight.canMove(2, 2));	
 	}
 	
@@ -45,7 +45,7 @@ public class ArchbishopTest extends TestCase {
 	 */
 	public void testInvalidArchKnightMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Archbishop testKnight = new Archbishop(6, 2, Color.white, board);
+		Archbishop testKnight = new Archbishop(6, 2, TurnColor.white, board);
 		assertFalse(testKnight.canMove(6, 1));
 	}
 	
@@ -54,8 +54,8 @@ public class ArchbishopTest extends TestCase {
 	 */
 	public void testValidBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Archbishop testKnight = new Archbishop(1, 0, Color.white, board);
-		Pawn blockingPawn = new Pawn(1, 1, Color.white, board);
+		Archbishop testKnight = new Archbishop(1, 0, TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(1, 1, TurnColor.white, board);
 		assertTrue(testKnight.canMove(2, 2));
 	}
 	
@@ -64,8 +64,8 @@ public class ArchbishopTest extends TestCase {
 	 */
 	public void testInvalidBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Archbishop testBishop = new Archbishop(1, 0, Color.white, board);
-		Pawn blockingPawn = new Pawn(2, 1, Color.white, board);
+		Archbishop testBishop = new Archbishop(1, 0, TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(2, 1, TurnColor.white, board);
 		assertFalse(testBishop.canMove(3, 2));
 	}
 

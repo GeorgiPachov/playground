@@ -1,6 +1,6 @@
 package chessGame;
 
-import chessGame.Board.Color;
+import chessGame.Board.TurnColor;
 
 /**
  * Subclass of a Piece specific to a Archbishop. This handles all movements the Archbishop is capable
@@ -13,11 +13,11 @@ public class Archbishop extends Piece {
 	 * initialized by superclass.
 	 * @param initX
 	 * @param initY
-	 * @param color
+	 * @param turnColor
 	 * @param board
 	 */
-	public Archbishop(int initX, int initY, Color color, StandardBoard board) {
-		super(initX, initY, color, board);
+	public Archbishop(int initX, int initY, TurnColor turnColor, StandardBoard board) {
+		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "archbishop";
 	}
 

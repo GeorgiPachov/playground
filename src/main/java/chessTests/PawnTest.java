@@ -1,7 +1,7 @@
 package chessTests;
 
-import chessGame.Board.Color;
-import chessGame.King;
+import chessGame.Board;
+import chessGame.Board.TurnColor;
 import chessGame.Pawn;
 import chessGame.StandardBoard;
 import junit.framework.TestCase;
@@ -18,7 +18,7 @@ public class PawnTest extends TestCase {
 	 */
 	public void testValidWhitePawnMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(0, 1, Color.white, board);
+		Pawn newPawn = new Pawn(0, 1, TurnColor.white, board);
 		assertTrue(newPawn.canMove(0, 2));
 	}
 	
@@ -27,7 +27,7 @@ public class PawnTest extends TestCase {
 	 */
 	public void testValidBlackPawnMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(0, 1, Color.black, board);
+		Pawn newPawn = new Pawn(0, 1, Board.TurnColor.black, board);
 		assertTrue(newPawn.canMove(0, 0));
 	}
 	
@@ -36,7 +36,7 @@ public class PawnTest extends TestCase {
 	 */
 	public void testInvalidPawnMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(1, 4, Color.black, board);
+		Pawn newPawn = new Pawn(1, 4, TurnColor.black, board);
 		assertFalse(newPawn.canMove(1, 6));
 	}
 	
@@ -45,8 +45,8 @@ public class PawnTest extends TestCase {
 	 */
 	public void testValidEnemyPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(2, 2, Color.white, board);
-		Pawn enemyPawn = new Pawn(3, 3, Color.black, board);
+		Pawn newPawn = new Pawn(2, 2, Board.TurnColor.white, board);
+		Pawn enemyPawn = new Pawn(3, 3, Board.TurnColor.black, board);
 		assertTrue(newPawn.canMove(3, 3));
 	}
 	
@@ -55,7 +55,7 @@ public class PawnTest extends TestCase {
 	 */
 	public void testValidFirstPawnMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(0, 1, Color.white, board);
+		Pawn newPawn = new Pawn(0, 1, TurnColor.white, board);
 		assertTrue(newPawn.canMove(0, 3));
 	}
 	
@@ -64,7 +64,7 @@ public class PawnTest extends TestCase {
 	 */
 	public void testValidFirstBlackPawnMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(3, 6, Color.black, board);
+		Pawn newPawn = new Pawn(3, 6, TurnColor.black, board);
 		assertTrue(newPawn.canMove(3, 4));
 	}
 	
@@ -73,8 +73,8 @@ public class PawnTest extends TestCase {
 	 */
 	public void testValidFirstPawnEnemyMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(0, 1, Color.white, board);
-		Pawn enemyPawn = new Pawn(1, 2, Color.black, board);
+		Pawn newPawn = new Pawn(0, 1, TurnColor.white, board);
+		Pawn enemyPawn = new Pawn(1, 2, Board.TurnColor.black, board);
 		assertTrue(newPawn.canMove(1, 2));
 	}
 

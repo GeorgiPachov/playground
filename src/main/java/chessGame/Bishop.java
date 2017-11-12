@@ -1,7 +1,5 @@
 package chessGame;
 
-import chessGame.Board.Color;
-
 /**
  * Subclass of a Piece specific to a Bishop. This handles all movements the bishop is capable
  * of making.
@@ -14,11 +12,11 @@ public class Bishop extends Piece {
 	 * initialized by superclass.
 	 * @param initX
 	 * @param initY
-	 * @param color
+	 * @param turnColor
 	 * @param board
 	 */
-	public Bishop(int initX, int initY, Color color, StandardBoard board) {
-		super(initX, initY, color, board);
+	public Bishop(int initX, int initY, Board.TurnColor turnColor, StandardBoard board) {
+		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "bishop";
 	}
 	

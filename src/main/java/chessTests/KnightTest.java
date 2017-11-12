@@ -1,6 +1,7 @@
 package chessTests;
 
-import chessGame.Board.Color;
+import chessGame.Board;
+import chessGame.Board.TurnColor;
 import chessGame.Knight;
 import chessGame.Pawn;
 import chessGame.StandardBoard;
@@ -18,7 +19,7 @@ public class KnightTest extends TestCase {
 	 */
 	public void testValidVerticalKnightMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Knight newKnight = new Knight(1, 0, Color.white, board);
+		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
 		assertTrue(newKnight.canMove(2, 2));
 	}
 	
@@ -27,7 +28,7 @@ public class KnightTest extends TestCase {
 	 */
 	public void testValidHorizontalKnightMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Knight newKnight = new Knight(1, 0, Color.white, board);
+		Knight newKnight = new Knight(1, 0, Board.TurnColor.white, board);
 		assertTrue(newKnight.canMove(3, 1));
 	}
 	
@@ -36,7 +37,7 @@ public class KnightTest extends TestCase {
 	 */
 	public void testInvalidKnightMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Knight newKnight = new Knight(6, 2, Color.white, board);
+		Knight newKnight = new Knight(6, 2, TurnColor.white, board);
 		assertFalse(newKnight.canMove(5, 1));
 	}
 	
@@ -45,8 +46,8 @@ public class KnightTest extends TestCase {
 	 */
 	public void testBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Knight newKnight = new Knight(1, 0, Color.white, board);
-		Pawn blockingPawn = new Pawn(1, 1, Color.white, board);
+		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(1, 1, TurnColor.white, board);
 		assertTrue(newKnight.canMove(2, 2));
 	}
 	
@@ -55,8 +56,8 @@ public class KnightTest extends TestCase {
 	 */
 	public void testInvalidAllyBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Knight newKnight = new Knight(1, 0, Color.white, board);
-		Pawn blockingPawn = new Pawn(2, 2, Color.white, board);
+		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(2, 2, Board.TurnColor.white, board);
 		assertFalse(newKnight.canMove(2, 2));
 	}
 

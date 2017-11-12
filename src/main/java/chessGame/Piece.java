@@ -7,8 +7,6 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import chessGame.Board.Color;
-
 /**
  * Superclass Piece since all chess pieces have common variables and methods to execute.
  * Defines a standard piece and it's features.
@@ -22,7 +20,7 @@ public abstract class Piece {
 	// Piece specific name will be stored here
 	String nameOfPiece;
 	// Black or White piece
-	public Color color;
+	public Board.TurnColor turnColor;
 	// Reference to the board this piece is on to indirectly access squaresList
 	StandardBoard currentBoard;
 	// xLocation of piece on board.
@@ -43,11 +41,11 @@ public abstract class Piece {
 	 * Constructor to initialize the common parameters of a piece.
 	 * @param initX
 	 * @param initY
-	 * @param color
+	 * @param turnColor
 	 * @param board
 	 */
-	public Piece(int initX, int initY, Color color, StandardBoard board) {
-		this.color = color;
+	public Piece(int initX, int initY, Board.TurnColor turnColor, StandardBoard board) {
+		this.turnColor = turnColor;
 		board.squaresList[initX][initY].isOccupied = true;
 		board.squaresList[initX][initY].occupyingPiece = this;
 		this.currentBoard = board;
@@ -87,7 +85,7 @@ public abstract class Piece {
 	private boolean isEnemyPieceAtDestination(int newX, int newY){
 		Square squareToCheck = currentBoard.squaresList[newX][newY];
 		if(squareToCheck.isOccupied){
-			return isEnemyPiece(this.color, squareToCheck.occupyingPiece);
+			return isEnemyPiece(this.turnColor, squareToCheck.occupyingPiece);
 		}
 		return true;
 	}
@@ -113,13 +111,13 @@ public abstract class Piece {
 	public boolean isKingInCheck(King kingToCheck) {
 		int kingXLocation = kingToCheck.xLocation;
 		int kingYLocation = kingToCheck.yLocation;
-		Color colorToCheck = kingToCheck.color;
+		Board.TurnColor turnColorToCheck = kingToCheck.turnColor;
 		// Iterates through the squares on the board and checks if enemy pieces can attack king.
 		for(int i = 0; i < currentBoard.numXSquares; i++){
 			for(int j = 0; j < currentBoard.numYSquares; j++){
 				Square squareToCheck = currentBoard.squaresList[i][j];
 				if(squareToCheck.isOccupied){
-					if(isEnemyPiece(colorToCheck, squareToCheck.occupyingPiece)){
+					if(isEnemyPiece(turnColorToCheck, squareToCheck.occupyingPiece)){
 						Piece enemyPiece = squareToCheck.occupyingPiece;
 						if(enemyPiece.isValidSpecialMove(kingXLocation, kingYLocation))
 							return true;
@@ -146,7 +144,7 @@ public abstract class Piece {
 			Piece pieceToCheck = squareToCheck.occupyingPiece;
 			if(isEnemyPieceAtDestination(newPieceX, newPieceY)){
 				Piece enemyPiece = pieceToCheck;
-				if(this.color.equals(Color.white)){
+				if(this.turnColor.equals(Board.TurnColor.white)){
 					if(currentBoard.whiteKingTracker == null)
 						return false;
 					kingToCheck = currentBoard.whiteKingTracker;
@@ -167,7 +165,7 @@ public abstract class Piece {
 			}
 		}
 		else{
-			if(this.color.equals(Color.white)){
+			if(this.turnColor.equals(Board.TurnColor.white)){
 				if(currentBoard.whiteKingTracker == null)
 					return false;
 				kingToCheck = currentBoard.whiteKingTracker;
@@ -209,12 +207,12 @@ public abstract class Piece {
 
 	/**
 	 * Helper method comparing colors to determine ally or enemy.
-	 * @param colorToCheck
+	 * @param turnColorToCheck
 	 * @param occupyingPiece
 	 * @return boolean true if piece is your enemy.
 	 */
-	private boolean isEnemyPiece(Color colorToCheck, Piece occupyingPiece) {
-		if(colorToCheck.equals(occupyingPiece.color))
+	private boolean isEnemyPiece(Board.TurnColor turnColorToCheck, Piece occupyingPiece) {
+		if(turnColorToCheck.equals(occupyingPiece.turnColor))
 			return false;
 		else
 			return true;
@@ -230,7 +228,7 @@ public abstract class Piece {
 	 * 
 	 */
 	public void drawPiece(Graphics graphic, int squareSize, int x, int y){
-		if(this.color.equals(Color.black)){
+		if(this.turnColor.equals(Board.TurnColor.black)){
 			String name = this.nameOfPiece.concat(".png");
 			String imagePath = "assets/black_";
 			String imageName = imagePath.concat(name);
@@ -275,12 +273,12 @@ public abstract class Piece {
 	public boolean isKingCheckmate(King kingToCheck){
 		if(!isKingInCheck(kingToCheck))
 			return false;
-		Color colorToCheck = kingToCheck.color;
+		Board.TurnColor turnColorToCheck = kingToCheck.turnColor;
 		for(int i = 0; i < currentBoard.numXSquares; i++){
 			for(int j = 0; j < currentBoard.numYSquares; j++){
 				Square squareToCheck = currentBoard.squaresList[i][j];
 				if(squareToCheck.isOccupied){
-					if(!isEnemyPiece(colorToCheck, squareToCheck.occupyingPiece)){
+					if(!isEnemyPiece(turnColorToCheck, squareToCheck.occupyingPiece)){
 						Piece allyPiece = squareToCheck.occupyingPiece;
 						 if(!checkmateHelper(allyPiece, kingToCheck))
 							 return false;

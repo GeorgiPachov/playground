@@ -24,13 +24,13 @@ public abstract class Board {
 	abstract boolean inBoardBounds(int xLocation, int yLocation);
 	
 	/**
-	 * Enum for Color values of black or white pieces and squares
+	 * Enum for TurnColor values of black or white pieces and squares
 	 * @author Pratik Naik
 	 */
-	public enum Color{
+	public enum TurnColor {
 		white, black;
 		
-		public Color opposite(){
+		public TurnColor opposite(){
 			if(this == white)
 				return black;
 			else

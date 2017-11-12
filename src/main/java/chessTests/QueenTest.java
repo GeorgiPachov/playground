@@ -1,6 +1,7 @@
 package chessTests;
 
-import chessGame.Board.Color;
+import chessGame.Board;
+import chessGame.Board.TurnColor;
 import chessGame.Queen;
 import chessGame.Rook;
 import chessGame.StandardBoard;
@@ -18,7 +19,7 @@ public class QueenTest extends TestCase {
 	 */
 	public void testValidVerticalQueenMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Queen newQueen = new Queen(3, 0, Color.black, board);
+		Queen newQueen = new Queen(3, 0, Board.TurnColor.black, board);
 		assertTrue(newQueen.canMove(7, 0));
 	}
 	
@@ -27,7 +28,7 @@ public class QueenTest extends TestCase {
 	 */
 	public void testValidHorizontalQueenMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Queen newQueen = new Queen(3, 0, Color.black, board);
+		Queen newQueen = new Queen(3, 0, TurnColor.black, board);
 		assertTrue(newQueen.canMove(5, 0));
 	}
 	
@@ -36,7 +37,7 @@ public class QueenTest extends TestCase {
 	 */
 	public void testValidDiagonalQueenMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Queen newQueen = new Queen(3, 0, Color.black, board);
+		Queen newQueen = new Queen(3, 0, TurnColor.black, board);
 		assertTrue(newQueen.canMove(6, 3));
 	}
 	
@@ -45,8 +46,8 @@ public class QueenTest extends TestCase {
 	 */
 	public void testBlockingPieceQueenMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Queen newQueen = new Queen(3, 0, Color.black, board);
-		Rook newRook = new Rook(3, 1, Color.white, board);
+		Queen newQueen = new Queen(3, 0, TurnColor.black, board);
+		Rook newRook = new Rook(3, 1, TurnColor.white, board);
 		assertFalse(newQueen.canMove(3, 3));
 	}
 	
@@ -55,7 +56,7 @@ public class QueenTest extends TestCase {
 	 */
 	public void testInvalidQueenMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Queen newQueen = new Queen(1, 2, Color.black, board);
+		Queen newQueen = new Queen(1, 2, TurnColor.black, board);
 		assertFalse(newQueen.canMove(2, 4));
 	}
 

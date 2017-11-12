@@ -1,6 +1,6 @@
 package chessGame;
 
-import chessGame.Board.Color;
+import chessGame.Board.TurnColor;
 
 /**
  * Subclass of a Piece specific to a King. This handles all movements the king is capable
@@ -15,11 +15,11 @@ public class King extends Piece {
 	 * initialized by superclass.
 	 * @param initX
 	 * @param initY
-	 * @param color
+	 * @param turnColor
 	 * @param board
 	 */
-	public King(int initX, int initY, Color color, StandardBoard board) {
-		super(initX, initY, color, board);
+	public King(int initX, int initY, TurnColor turnColor, StandardBoard board) {
+		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "king";
 	}
 	

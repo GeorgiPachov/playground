@@ -6,7 +6,6 @@ import java.awt.Graphics;
 import javax.swing.JPanel;
 
 import chessGame.Board;
-import chessGame.Piece;
 import chessGame.Square;
 import chessGame.StandardBoard;
 
@@ -38,7 +37,7 @@ public class GameDisplay extends JPanel {
 		for(int i = 0; i < board.numXSquares; i++){
 			for(int j = 0; j < board.numYSquares; j++){
 				Square squareToDraw = board.squaresList[i][j];
-				if(squareToDraw.color.equals(Board.Color.black)){
+				if(squareToDraw.turnColor.equals(Board.TurnColor.black)){
 					graphic.setColor(new Color(58,95,205));
 					graphic.fillRect((squareSize*i), (7-j)*squareSize, squareSize, squareSize);
 					if(squareToDraw.isOccupied)

@@ -1,6 +1,7 @@
 package chessTests;
 
-import chessGame.Board.Color;
+import chessGame.Board;
+import chessGame.Board.TurnColor;
 import chessGame.Pawn;
 import chessGame.Rook;
 import chessGame.StandardBoard;
@@ -18,7 +19,7 @@ public class RookTest extends TestCase {
 	 */
 	public void testValidVerticalRookMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Rook newRook = new Rook(0, 0, Color.white, board);
+		Rook newRook = new Rook(0, 0, TurnColor.white, board);
 		assertTrue(newRook.canMove(0, 6));
 	}
 	
@@ -27,7 +28,7 @@ public class RookTest extends TestCase {
 	 */
 	public void testValidHorizontalRookMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Rook newRook = new Rook(0, 0, Color.white, board);
+		Rook newRook = new Rook(0, 0, Board.TurnColor.white, board);
 		assertTrue(newRook.canMove(7, 0));
 	}
 	
@@ -36,7 +37,7 @@ public class RookTest extends TestCase {
 	 */
 	public void testInvalidRookMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Rook newRook = new Rook(1, 5, Color.black, board);
+		Rook newRook = new Rook(1, 5, TurnColor.black, board);
 		assertFalse(newRook.canMove(7, 0));
 	}
 	
@@ -45,8 +46,8 @@ public class RookTest extends TestCase {
 	 */
 	public void testInvalidAllyPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Rook newRook = new Rook(0, 0, Color.black, board);
-		Rook allyRook = new Rook(4, 0, Color.black, board);
+		Rook newRook = new Rook(0, 0, Board.TurnColor.black, board);
+		Rook allyRook = new Rook(4, 0, Board.TurnColor.black, board);
 		assertFalse(newRook.canMove(4, 0));
 	}
 	
@@ -55,8 +56,8 @@ public class RookTest extends TestCase {
 	 */
 	public void testValidEnemyPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Rook newRook = new Rook(0, 0, Color.black, board);
-		Rook enemyRook = new Rook(4, 0, Color.white, board);
+		Rook newRook = new Rook(0, 0, Board.TurnColor.black, board);
+		Rook enemyRook = new Rook(4, 0, Board.TurnColor.white, board);
 		assertTrue(newRook.canMove(4, 0));
 	}
 	
@@ -65,8 +66,8 @@ public class RookTest extends TestCase {
 	 */
 	public void testBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Rook newRook = new Rook(2, 1, Color.white, board);
-		Pawn blockingPawn = new Pawn(4, 1, Color.white, board);
+		Rook newRook = new Rook(2, 1, Board.TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(4, 1, Board.TurnColor.white, board);
 		assertFalse(newRook.canMove(6, 1));
 	}
 

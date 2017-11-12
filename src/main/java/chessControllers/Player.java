@@ -1,7 +1,6 @@
 package chessControllers;
 
 import chessGame.Board;
-import chessGame.Board.Color;
 
 /**
  * Class reprensenting a Chess Player.
@@ -13,21 +12,21 @@ public class Player {
 	/**
 	 * Global variables of a chess Player
 	 * - Name
-	 * - Color being played.
+	 * - TurnColor being played.
 	 * - Score of the player in game.
 	 */
 	public String playerName;
-	Color playerColor;
+	Board.TurnColor playerTurnColor;
 	public int playerScore;
 
 	/**
 	 * Constructor to add a new player to the game.
 	 * @param playerName
-	 * @param playerColor
+	 * @param playerTurnColor
 	 */
-	public Player(String playerName, Color playerColor) {
+	public Player(String playerName, Board.TurnColor playerTurnColor) {
 		this.playerName = playerName;
-		this.playerColor = playerColor;
+		this.playerTurnColor = playerTurnColor;
 		this.playerScore = 0;
 		
 	}

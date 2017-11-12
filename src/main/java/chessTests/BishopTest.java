@@ -1,8 +1,8 @@
 package chessTests;
 
 import chessGame.Bishop;
+import chessGame.Board;
 import chessGame.Pawn;
-import chessGame.Board.Color;
 import chessGame.StandardBoard;
 import junit.framework.TestCase;
 
@@ -18,7 +18,7 @@ public class BishopTest extends TestCase {
 	 */
 	public void testValidBishopMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Bishop newBishop = new Bishop(5, 3, Color.black, board);
+		Bishop newBishop = new Bishop(5, 3, Board.TurnColor.black, board);
 		assertTrue(newBishop.canMove(1, 7));
 	}
 	
@@ -27,7 +27,7 @@ public class BishopTest extends TestCase {
 	 */
 	public void testInvalidBishopMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Bishop newBishop = new Bishop(5, 3, Color.white, board);
+		Bishop newBishop = new Bishop(5, 3, Board.TurnColor.white, board);
 		assertFalse(newBishop.canMove(4, 5));
 	}
 	
@@ -36,8 +36,8 @@ public class BishopTest extends TestCase {
 	 */
 	public void testValidBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Bishop testBishop = new Bishop(1, 0, Color.white, board);
-		Pawn blockingPawn = new Pawn(1, 1, Color.white, board);
+		Bishop testBishop = new Bishop(1, 0, Board.TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(1, 1, Board.TurnColor.white, board);
 		assertTrue(testBishop.canMove(0, 1));
 	}
 	
@@ -46,8 +46,8 @@ public class BishopTest extends TestCase {
 	 */
 	public void testInvalidBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Bishop testBishop = new Bishop(1, 0, Color.white, board);
-		Pawn blockingPawn = new Pawn(2, 1, Color.white, board);
+		Bishop testBishop = new Bishop(1, 0, Board.TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(2, 1, Board.TurnColor.white, board);
 		assertFalse(testBishop.canMove(3, 2));
 	}
 }
