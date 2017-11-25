@@ -221,7 +221,7 @@ public class StandardBoard extends Board {
 	public List<Move> listPossibleMovesWhite() {
 		List<Square> squares = Arrays.stream(squaresList).flatMap(s -> Arrays.stream(s))
 				.filter(s1 -> s1.isOccupied)
-				.filter(p -> p.turnColor.equals(TurnColor.white))
+				.filter(p -> p.occupyingPiece.turnColor.equals(TurnColor.white))
 				.collect(Collectors.toList());
 
 		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> getAllowedMoves(p).stream()).collect(Collectors.toList());
@@ -259,7 +259,7 @@ public class StandardBoard extends Board {
 		for (int x = 0; x <= 8; x++) {
 			for (int y = 0; y <= 8; y++) {
 				if (piece.canMove(x, y)) {
-					result.add(new Move(piece.xLocation, piece.yLocation, x, y);
+					result.add(new Move(piece.xLocation, piece.yLocation, x, y));
 				}
 			}
 		}
@@ -284,5 +284,15 @@ public class StandardBoard extends Board {
 
 	private List<Move> getAllowedMoves(Bishop bishop) {
 		return genericCheckMoves(bishop);
+	}
+
+	public List<Move> listPossibleMovesBlack() {
+		List<Square> squares = Arrays.stream(squaresList).flatMap(s -> Arrays.stream(s))
+				.filter(s1 -> s1.isOccupied)
+				.filter(p -> p.occupyingPiece.turnColor.equals(TurnColor.black))
+				.collect(Collectors.toList());
+
+		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> getAllowedMoves(p).stream()).collect(Collectors.toList());
+		return moves;
 	}
 }

@@ -76,14 +76,14 @@ public class Game {
 	 * Helper method to instantiate players of the current game.
 	 */
 	private static void getGamePlayers() {
-		String whiteName = JOptionPane.showInputDialog("Please input White player name");
-		if(whiteName == "" || whiteName == null)
-			whiteName = "Bob Dylan";
-		String blackName = JOptionPane.showInputDialog("Please input Black player name");
-		if(blackName == "" || blackName == null)
-			blackName = "Frank Sinatra";
-		whitePlayer = new Player(whiteName, Board.TurnColor.white);
-		blackPlayer = new Player(blackName, Board.TurnColor.black);
+//		String whiteName = JOptionPane.showInputDialog("Please input White player name");
+//		if(whiteName == "" || whiteName == null)
+//			whiteName = "Bob Dylan";
+//		String blackName = JOptionPane.showInputDialog("Please input Black player name");
+//		if(blackName == "" || blackName == null)
+//			blackName = "Frank Sinatra";
+		whitePlayer = new Player("A", Board.TurnColor.white);
+		blackPlayer = new Player("B", Board.TurnColor.black);
 	}
 	
 	/**
@@ -91,12 +91,15 @@ public class Game {
 	 * @return boolean true if special game
 	 */
 	private static boolean getGameType() {
-		int response = JOptionPane.showConfirmDialog(null, "Do you want to play a Special Game?", "Game Type", JOptionPane.YES_NO_OPTION);
-		if(response == JOptionPane.YES_OPTION)
-			gameType = true;
-		else
-			gameType = false;
-		return gameType;
+//		int response = JOptionPane.showConfirmDialog(null, "Do you want to play a Special Game?", "Game Type", JOptionPane.YES_NO_OPTION);
+//		if(response == JOptionPane.YES_OPTION)
+//			gameType = true;
+//		else
+//			gameType = false;
+//		return gameType;
+
+		// we don't need a special game here!
+		return false;
 	}
 	
 	/**
@@ -236,15 +239,16 @@ public class Game {
 			public void mouseReleased(MouseEvent me) {
 			    int xDestination = me.getX();
 				int yDestination = me.getY();
+				xDestination = xDestination/squareSize;
+				yDestination = yDestination/squareSize;
+				yDestination = 7 - yDestination;
                 executeMove(xDestination, yDestination);
 			}
 		});
 	}
 
     private void executeMove(int xDestination, int yDestination) {
-        xDestination = xDestination/squareSize;
-        yDestination = yDestination/squareSize;
-        yDestination = 7 - yDestination;
+		log("Executing move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation+ "] to [" + xDestination + ", " + yDestination + "]");
         if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)){
             Piece enemyPiece = null;
             if(gameBoard.squaresList[xDestination][yDestination].isOccupied)
@@ -271,7 +275,11 @@ public class Game {
         }
     }
 
-    /**
+	private void log(String s) {
+		System.err.println(s);
+	}
+
+	/**
 	 * Helper method to check if the passed king is in check.
 	 * It calls the respective check and checkmate helper methods in our library 
 	 * and displays appropriate messages and updates the score.
@@ -376,21 +384,39 @@ public class Game {
 	}
 
 	private static void playSelf(Game game) {
-        if (game.gameTurn == Board.TurnColor.white) {
-            playWhite(game);
-        } else {
-            playBlack(game);
-        }
+		new Thread(() -> {
+            while (!game.gameOver) {
+                if (game.gameTurn == Board.TurnColor.white) {
+                    playWhite(game);
+                    game.gameTurn = Board.TurnColor.black;
+                } else {
+                    playBlack(game);
+                    game.gameTurn = Board.TurnColor.white;
+                }
+				try {
+					Thread.sleep(2000L);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+        }).start();
+
 	}
 
     private static void playBlack(Game game) {
-
+		List<Move> moves = game.gameBoard.listPossibleMovesBlack();
+		int rnd = new Random().nextInt(moves.size());
+		Move move = moves.get(rnd);
+		game.movingPiece = game.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
+		game.executeMove(move.newX, move.newY);
     }
 
     private static void playWhite(Game game) {
         List<Move> moves = game.gameBoard.listPossibleMovesWhite();
         int rnd = new Random().nextInt(moves.size());
         Move move = moves.get(rnd);
+        game.movingPiece = game.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
+		game.executeMove(move.newX, move.newY);
 
     }
 
