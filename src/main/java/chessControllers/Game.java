@@ -8,9 +8,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.Color;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -75,7 +77,7 @@ public class Game {
 	/**
 	 * Helper method to instantiate players of the current game.
 	 */
-	private static void getGamePlayers() {
+	private static void setGamePlayers() {
 //		String whiteName = JOptionPane.showInputDialog("Please input White player name");
 //		if(whiteName == "" || whiteName == null)
 //			whiteName = "Bob Dylan";
@@ -101,32 +103,8 @@ public class Game {
 		// we don't need a special game here!
 		return false;
 	}
-	
-	/**
-	 * Method to start off a game thread and start running a game loop.
-	 */
-	public void gameStart(){
-		Thread gameThread = new Thread(){
-			@Override
-			public void run(){
-				gameLoop();
-			}
-		};
-		gameThread.start();
-		
-	}
 
-	/**
-	 * Helper method to run the main game loop. If the game is over the game loop breaks
-	 * and the gamePanel stops getting repainted (updated).
-	 */
-	private void gameLoop(){
-		while(true){
-			if(gameOver)
-				break;
-			gamePanel.repaint();
-		}
-	}
+
 	
 	/**
 	 * Method to setup initial display of the Board. Sets up the gamePanel and sidePanel in the
@@ -228,26 +206,30 @@ public class Game {
 		gamePanel.addMouseListener(new MouseAdapter(){
 			
 			public void mousePressed(MouseEvent me){
-				int xOrigin = me.getX();
-				int yOrigin = me.getY();
-				xOrigin = xOrigin/squareSize;
-				yOrigin = yOrigin/squareSize;
-				yOrigin = 7 - yOrigin;
-				movingPiece = gameBoard.squaresList[xOrigin][yOrigin].occupyingPiece;
+//				int xOrigin = me.getX();
+//				int yOrigin = me.getY();
+//				xOrigin = xOrigin/squareSize;
+//				yOrigin = yOrigin/squareSize;
+//				yOrigin = 7 - yOrigin;
+//				movingPiece = gameBoard.squaresList[xOrigin][yOrigin].occupyingPiece;
 			}
 			
 			public void mouseReleased(MouseEvent me) {
-			    int xDestination = me.getX();
-				int yDestination = me.getY();
-				xDestination = xDestination/squareSize;
-				yDestination = yDestination/squareSize;
-				yDestination = 7 - yDestination;
-                executeMove(xDestination, yDestination);
+//			    int xDestination = me.getX();
+//				int yDestination = me.getY();
+//				xDestination = xDestination/squareSize;
+//				yDestination = yDestination/squareSize;
+//				yDestination = 7 - yDestination;
+//                executeMove(xDestination, yDestination);
 			}
 		});
 	}
 
-    private void executeMove(int xDestination, int yDestination) {
+    public void executeMove(Move move) {
+		int xDestination = move.getNewX();
+		int yDestination = move.getNewY();
+		this.movingPiece = this.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
+
 		log("Executing move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation+ "] to [" + xDestination + ", " + yDestination + "]");
         if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)){
             Piece enemyPiece = null;
@@ -275,7 +257,7 @@ public class Game {
         }
     }
 
-	private void log(String s) {
+	public void log(String s) {
 		System.err.println(s);
 	}
 
@@ -305,7 +287,7 @@ public class Game {
 				blackScore.setText(blackPlayer.playerName + " Score : " + blackPlayer.playerScore);
 				return;
 			}
-			messageBox(currentPlayer.playerName + " ,Your King is in Check", "King in Check!!");
+//			messageBox(currentPlayer.playerName + " ,Your King is in Check", "King in Check!!");
 		}
 	}
 	
@@ -314,7 +296,7 @@ public class Game {
 	 * and executes it's reverse using the undo helper method in our MoveCommand class.
 	 * It also switches the game turn accordingly.
 	 */
-	private void undoMove(){
+	public void undoMove(){
 		if(!commandStack.isEmpty()){
 			MoveCommand move = commandStack.pop();
 			move.undo();
@@ -378,47 +360,44 @@ public class Game {
 	 * @param args
 	 */
 	public static void main(String args[]){
-		getGamePlayers();
+		PlayingStrategy whiteStrategy = new GreedyStrategy();
+		PlayingStrategy blackStrategy = new GreedyStrategy();
+		setGamePlayers();
 		Game game = startNewGame();
-		playSelf(game);
+		playSelf(game, whiteStrategy, blackStrategy);
 	}
 
-	private static void playSelf(Game game) {
+	private static void playSelf(Game game, PlayingStrategy whiteStrategy, PlayingStrategy blackStrategy) {
 		new Thread(() -> {
             while (!game.gameOver) {
                 if (game.gameTurn == Board.TurnColor.white) {
-                    playWhite(game);
+                	whiteStrategy.playWhite(game);
                     game.gameTurn = Board.TurnColor.black;
                 } else {
-                    playBlack(game);
-                    game.gameTurn = Board.TurnColor.white;
+					blackStrategy.playBlack(game);
+					game.gameTurn = Board.TurnColor.white;
                 }
 				try {
-					Thread.sleep(2000L);
+                	game.gamePanel.repaint();
+					Thread.sleep(250L);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
         }).start();
 
+//		while(true){
+//			if(gameOver)
+//				break;
+//			gamePanel.repaint();
+//			try {
+//				Thread.sleep(100L);
+//			} catch (InterruptedException e) {
+//				e.printStackTrace();
+//			}
+//		}
+
 	}
-
-    private static void playBlack(Game game) {
-		List<Move> moves = game.gameBoard.listPossibleMovesBlack();
-		int rnd = new Random().nextInt(moves.size());
-		Move move = moves.get(rnd);
-		game.movingPiece = game.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
-		game.executeMove(move.newX, move.newY);
-    }
-
-    private static void playWhite(Game game) {
-        List<Move> moves = game.gameBoard.listPossibleMovesWhite();
-        int rnd = new Random().nextInt(moves.size());
-        Move move = moves.get(rnd);
-        game.movingPiece = game.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
-		game.executeMove(move.newX, move.newY);
-
-    }
 
     /**
 	 * Helper method to start off a new game.
@@ -428,10 +407,10 @@ public class Game {
 		Game newGame = new Game();
 		newGame.gameInit(getGameType());
 		newGame.setupDisplay();
-		newGame.gameStart();
 		newGame.mouseActions();
         return newGame;
 	}
+
 
 	/**
 	 * Helper method to display a warning message of illegal moves, check and checkmate!
@@ -442,5 +421,5 @@ public class Game {
     {
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
     }
-	
+
 }

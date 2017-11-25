@@ -1,10 +1,12 @@
 package chessGame;
 
 public class Move {
-   public int oldX, oldY;
+    private final Piece piece;
+    public int oldX, oldY;
    public int newX, newY;
 
-    public Move(int oldX, int oldY, int newX, int newY) {
+    public Move(Piece piece, int oldX, int oldY, int newX, int newY) {
+        this.piece = piece;
         this.oldX = oldX;
         this.oldY = oldY;
         this.newX = newX;

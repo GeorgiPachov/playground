@@ -259,7 +259,7 @@ public class StandardBoard extends Board {
 		for (int x = 0; x <= 8; x++) {
 			for (int y = 0; y <= 8; y++) {
 				if (piece.canMove(x, y)) {
-					result.add(new Move(piece.xLocation, piece.yLocation, x, y));
+					result.add(new Move(piece, piece.xLocation, piece.yLocation, x, y));
 				}
 			}
 		}
@@ -295,4 +295,18 @@ public class StandardBoard extends Board {
 		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> getAllowedMoves(p).stream()).collect(Collectors.toList());
 		return moves;
 	}
+
+	public List<Square> getBlackPieces() {
+		return Arrays.stream(squaresList).flatMap(a -> Arrays.stream(a))
+				.filter(s -> s.isOccupied)
+				.filter(s -> s.occupyingPiece.turnColor == Board.TurnColor.black).collect(Collectors.toList());
+	}
+
+	public List<Square> getWhitePieces() {
+		return Arrays.stream(squaresList).flatMap(a -> Arrays.stream(a))
+				.filter(s -> s.isOccupied)
+				.filter(s -> s.occupyingPiece.turnColor == Board.TurnColor.white).collect(Collectors.toList());
+
+	}
+
 }
