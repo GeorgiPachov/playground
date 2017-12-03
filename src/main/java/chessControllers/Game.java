@@ -1,18 +1,11 @@
 package chessControllers;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Color;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
 import java.util.Stack;
-import java.util.stream.Collectors;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -40,21 +33,15 @@ public class Game {
 	 * - Reference to piece being moved.
 	 * - Moves stack.
 	 */
-	static Player whitePlayer;
-	static Player blackPlayer;
 	Board.TurnColor gameTurn;
 	StandardBoard gameBoard;
 	boolean gameOver;
-	static boolean gameType;
 	int squareSize;
 	JFrame window;
-	JPanel gamePanel;
+	public JPanel gamePanel;
 	JPanel sidePanel;
 	JLabel whiteLabel;
 	JLabel blackLabel;
-	JLabel whiteScore;
-	JLabel blackScore;
-	JButton forfeitButton;
 	JButton undoButton;
 	JButton restartButton;
 	Piece movingPiece;
@@ -74,38 +61,6 @@ public class Game {
 		commandStack = new Stack();
 	}
 
-	/**
-	 * Helper method to instantiate players of the current game.
-	 */
-	private static void setGamePlayers() {
-//		String whiteName = JOptionPane.showInputDialog("Please input White player name");
-//		if(whiteName == "" || whiteName == null)
-//			whiteName = "Bob Dylan";
-//		String blackName = JOptionPane.showInputDialog("Please input Black player name");
-//		if(blackName == "" || blackName == null)
-//			blackName = "Frank Sinatra";
-		whitePlayer = new Player("A", Board.TurnColor.white);
-		blackPlayer = new Player("B", Board.TurnColor.black);
-	}
-	
-	/**
-	 * Helper method to get the type of game. Special includes Archbishop and Chancellors.
-	 * @return boolean true if special game
-	 */
-	private static boolean getGameType() {
-//		int response = JOptionPane.showConfirmDialog(null, "Do you want to play a Special Game?", "Game Type", JOptionPane.YES_NO_OPTION);
-//		if(response == JOptionPane.YES_OPTION)
-//			gameType = true;
-//		else
-//			gameType = false;
-//		return gameType;
-
-		// we don't need a special game here!
-		return false;
-	}
-
-
-	
 	/**
 	 * Method to setup initial display of the Board. Sets up the gamePanel and sidePanel in the
 	 * game's main frame.
@@ -131,8 +86,12 @@ public class Game {
 	 * @return A JPanel instance of the game Board window.
 	 */
 	private JPanel initializeGamePanel(StandardBoard gameBoard) {
-        GameDisplay gameDisplay = new GameDisplay(gameBoard, squareSize);
-        gameDisplay.setPreferredSize(new Dimension(640,640));
+		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		int width = (int) screenSize.getWidth();
+		int height = (int) screenSize.getHeight();
+		float squareSize = Math.min(width, height)/9f;
+        GameDisplay gameDisplay = new GameDisplay(gameBoard, (int) squareSize);
+        gameDisplay.setPreferredSize(new Dimension(width,height));
         gameDisplay.setLayout(new BorderLayout());
         return gameDisplay;
     }
@@ -149,21 +108,15 @@ public class Game {
 		JPanel sideDisplay = new JPanel();
 		undoButton = new JButton("Undo Move");
 		restartButton = new JButton("Restart Game");
-		forfeitButton = new JButton("Forfeit Game");
 		setupButtonListeners();
-		whiteLabel = new JLabel("WHITE PLAYER : ".concat(whitePlayer.playerName) + " ");
+		whiteLabel = new JLabel("WHITE PLAYER : ");
 		whiteLabel.setForeground(Color.BLUE);
-		blackLabel = new JLabel("BLACK PLAYER : ".concat(blackPlayer.playerName) + " ");
-		whiteScore = new JLabel(whitePlayer.playerName + " Score : " + whitePlayer.playerScore);
-		blackScore = new JLabel(blackPlayer.playerName + " Score : " + blackPlayer.playerScore);
+		blackLabel = new JLabel("BLACK PLAYER : ");
 		sideDisplay.setLayout(new BoxLayout(sideDisplay, BoxLayout.PAGE_AXIS));
 		sideDisplay.add(whiteLabel);
 		sideDisplay.add(blackLabel);
 		sideDisplay.add(undoButton);
-		sideDisplay.add(forfeitButton);
 		sideDisplay.add(restartButton);
-		sideDisplay.add(whiteScore);
-		sideDisplay.add(blackScore);
 		return sideDisplay;
 	}
 	
@@ -181,15 +134,10 @@ public class Game {
 				restartGame();
 			}
 		});
-		forfeitButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				forfeitGame();
-			}
-		});
 	}
 
 	/**
-	 * Main method to control and update results of Mouse Actions. 
+	 * TaggerMain method to control and update results of Mouse Actions.
 	 * It implements a Mouse Adapter to analyze moves made on the chess board.
 	 * Mouse Pressed : 
 	 * - Calculates Origin x and y of the move
@@ -268,26 +216,16 @@ public class Game {
 	 * @param kingToCheck
 	 */
 	protected void checkKingStatus(King kingToCheck) {
-		Player currentPlayer;
-		Player otherPlayer;
 		if(kingToCheck.turnColor == Board.TurnColor.white){
-			currentPlayer = whitePlayer;
-			otherPlayer = blackPlayer;
 		}
 		else{
-			currentPlayer = blackPlayer;
-			otherPlayer = whitePlayer;
 		}
 		if(kingToCheck.isKingInCheck(kingToCheck)) {
 			if(kingToCheck.isKingCheckmate(kingToCheck)) {
-				messageBox(currentPlayer.playerName + " ,Your King is in Checkmate\nYou Lost\nPlease Click Restart to Play again", "GAME OVER!!");
+				messageBox(" ,Your King is in Checkmate\nYou Lost\nPlease Click Restart to Play again", "GAME OVER!!");
 				gameOver = true;
-				otherPlayer.playerScore++;
-				whiteScore.setText(whitePlayer.playerName + " Score : " + whitePlayer.playerScore);
-				blackScore.setText(blackPlayer.playerName + " Score : " + blackPlayer.playerScore);
 				return;
 			}
-//			messageBox(currentPlayer.playerName + " ,Your King is in Check", "King in Check!!");
 		}
 	}
 	
@@ -317,57 +255,11 @@ public class Game {
 	 * and if so it starts a new game.
 	 */
 	private void restartGame(){
-		String player;
-		if(gameTurn.equals(Board.TurnColor.white))
-			player = blackPlayer.playerName;
-		else
-			player = whitePlayer.playerName;
-		int response = JOptionPane.showConfirmDialog(null, player + " , would you like to restart?", "Restart", JOptionPane.YES_NO_OPTION);
-		if(response == JOptionPane.YES_OPTION){
-			gameOver = true;
-			window.setVisible(false);
-			startNewGame();
-		}
-	}
-	
-	/**
-	 * Forfeit button calls this method to forfeit the game.
-	 * Asks the forfeiting player if they are sure. If yes updates the score of their opponent. 
-	 */
-	private void forfeitGame() {
-		Player currentPlayer;
-		Player otherPlayer;
-		if(gameTurn == Board.TurnColor.white){
-			currentPlayer = whitePlayer;
-			otherPlayer = blackPlayer;
-		}
-		else{
-			currentPlayer = blackPlayer;
-			otherPlayer = whitePlayer;
-		}
-		int response = JOptionPane.showConfirmDialog(null, currentPlayer.playerName + " , Are you sure you want to forfeit", "Forfeit", JOptionPane.YES_NO_OPTION);
-		if(response == JOptionPane.YES_OPTION){
-			gameOver = true;
-			otherPlayer.playerScore++;
-			whiteScore.setText(whitePlayer.playerName + " Score : " + whitePlayer.playerScore);
-			blackScore.setText(blackPlayer.playerName + " Score : " + blackPlayer.playerScore);
-			messageBox(currentPlayer.playerName + " ,You Lost\nPlease Click Restart to Play again", "GAME OVER!!");
-		}
-	}
+        startNewGame();
+    }
 
-	/**
-	 * Main method to get the game players and start a new game.
-	 * @param args
-	 */
-	public static void main(String args[]){
-		PlayingStrategy whiteStrategy = new GreedyStrategy();
-		PlayingStrategy blackStrategy = new GreedyStrategy();
-		setGamePlayers();
-		Game game = startNewGame();
-		playSelf(game, whiteStrategy, blackStrategy);
-	}
-
-	private static void playSelf(Game game, PlayingStrategy whiteStrategy, PlayingStrategy blackStrategy) {
+	public void playSelf(PlayingStrategy whiteStrategy, PlayingStrategy blackStrategy) {
+	    Game game = this;
 		new Thread(() -> {
             while (!game.gameOver) {
                 if (game.gameTurn == Board.TurnColor.white) {
@@ -385,27 +277,15 @@ public class Game {
 				}
 			}
         }).start();
-
-//		while(true){
-//			if(gameOver)
-//				break;
-//			gamePanel.repaint();
-//			try {
-//				Thread.sleep(100L);
-//			} catch (InterruptedException e) {
-//				e.printStackTrace();
-//			}
-//		}
-
 	}
 
     /**
 	 * Helper method to start off a new game.
 	 * Called when the players want to restart or when new players join in initially.
 	 */
-	private static Game startNewGame() {
+	public static Game startNewGame() {
 		Game newGame = new Game();
-		newGame.gameInit(getGameType());
+		newGame.gameInit(false);
 		newGame.setupDisplay();
 		newGame.mouseActions();
         return newGame;
@@ -421,5 +301,4 @@ public class Game {
     {
         JOptionPane.showMessageDialog(null, message, title, JOptionPane.WARNING_MESSAGE);
     }
-
 }

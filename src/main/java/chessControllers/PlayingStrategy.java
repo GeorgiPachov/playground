@@ -1,6 +1,8 @@
 package chessControllers;
 
+import chessGame.Move;
+
 public interface PlayingStrategy {
-    void playBlack(Game game);
-    void playWhite(Game game);
+    Move playBlack(Game game);
+    Move playWhite(Game game);
 }

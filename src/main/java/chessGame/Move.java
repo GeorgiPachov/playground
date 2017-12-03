@@ -1,12 +1,10 @@
 package chessGame;
 
 public class Move {
-    private final Piece piece;
     public int oldX, oldY;
    public int newX, newY;
 
-    public Move(Piece piece, int oldX, int oldY, int newX, int newY) {
-        this.piece = piece;
+    public Move(int oldX, int oldY, int newX, int newY) {
         this.oldX = oldX;
         this.oldY = oldY;
         this.newX = newX;
@@ -19,6 +17,16 @@ public class Move {
 
     public void setOldX(int oldX) {
         this.oldX = oldX;
+    }
+
+    @Override
+    public String toString() {
+        return "Move{" +
+                "oldX=" + oldX +
+                ", oldY=" + oldY +
+                ", newX=" + newX +
+                ", newY=" + newY +
+                '}';
     }
 
     public int getOldY() {
@@ -44,4 +52,6 @@ public class Move {
     public void setNewY(int newY) {
         this.newY = newY;
     }
+
+
 }

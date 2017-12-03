@@ -259,7 +259,7 @@ public class StandardBoard extends Board {
 		for (int x = 0; x <= 8; x++) {
 			for (int y = 0; y <= 8; y++) {
 				if (piece.canMove(x, y)) {
-					result.add(new Move(piece, piece.xLocation, piece.yLocation, x, y));
+					result.add(new Move(piece.xLocation, piece.yLocation, x, y));
 				}
 			}
 		}

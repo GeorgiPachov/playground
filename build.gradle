@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'eu.appsatori:gradle-fatjar-plugin:0.3'
+    }
+}
+
+apply plugin: 'eu.appsatori.fatjar'
+
 group 'gpachov'
 version '1.0-SNAPSHOT'
 
@@ -17,6 +29,13 @@ repositories {
 
     flatDir {
         dirs 'lib'
+    }
+}
+
+fatJar {
+    classifier 'fat'
+    manifest {
+        attributes 'Main-Class': 'chessControllers.Main'
     }
 }
 

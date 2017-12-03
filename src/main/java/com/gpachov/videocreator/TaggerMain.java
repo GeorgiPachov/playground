@@ -7,7 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
-public class Main {
+public class TaggerMain {
     private static Path scriptPath = Paths.get("/home/aneline/Desktop/experiment/create-video.sh");
 
     public static void main(String[] args) throws IOException {

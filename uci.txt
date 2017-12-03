@@ -1,0 +1,6 @@
+xboardprotover 2
+newrandomlevel 40 5 0
+posthardforcenewrandomlevel 40 5 0
+posthardtime 30000
+otim 30000
+e2e4
