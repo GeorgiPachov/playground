@@ -5,8 +5,7 @@ import chessGame.*;
 import java.util.*;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    private static final int MAX_DEPTH = 3;
-    private RandomStrategy backup = new RandomStrategy();
+    private static final int MAX_DEPTH = 4;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[][][] pawnPositionMap = new short[][][] {
@@ -154,38 +153,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
     };
     private Move lastChosenMove;
 
-    // black
-    public int maxi(Game game, int depth) {
-        if (depth == 0) { //I am maxi
-            return -countPiecesScore(game, game.gameTurn.opposite());
-        }
-        int max = Integer.MIN_VALUE;
-        List<Move> moves = new ArrayList<>();
-        if (game.gameTurn == Board.TurnColor.white) {
-            moves = game.gameBoard.listPossibleMovesWhite();
-        } else if (game.gameTurn == Board.TurnColor.black) {
-            moves = game.gameBoard.listPossibleMovesBlack();
-        }
-
-        Collections.shuffle(moves);
-        Move chosenMove = moves.iterator().next();
-        for (Move potentialMove : moves) {
-            game.preexecuteMove(potentialMove);
-            int score = mini(game, depth - 1);
-            game.undoMove();
-            if (score > max) {
-                max = score;
-                chosenMove = potentialMove;
-            }
-        }
-
-        this.lastChosenMove = chosenMove;
-        return max;
-    }
-
     private int negaMax(Game game, int depth ) {
-        if ( depth == 0 ) {
-            return -countPiecesScore(game, game.gameTurn);
+        if (depth == 0) {
+            return estimateBoard(game);
         }
         int max = Integer.MIN_VALUE;
         List<Move> moves = null;
@@ -197,109 +167,101 @@ public class MiniMaxStrategy implements PlayingStrategy {
                 moves = game.gameBoard.listPossibleMovesWhite();
                 break;
         }
+        Collections.shuffle(moves);
+        Move maxMove = null;
         for (Move move : moves)  {
-            game.executeMove(move);
+            game.preexecuteMove(move);
             int score = -negaMax(game,depth - 1 );
             game.undoMove();
-            if( score > max )
+            if( score > max ) {
                 max = score;
+                maxMove = move;
+            }
         }
+        this.lastChosenMove = maxMove;
         return max;
     }
 
-    // white
-    public int mini(Game game, int depth) {
-        if (depth == 0) {
-            return -countPiecesScore(game, game.gameTurn.opposite());
+    private int estimateBoard(Game game) {
+        int myPiecesScore = countPiecesScore(game, game.gameTurn);
+        int opponentPieceScore = countPiecesScore(game, game.gameTurn.opposite());
+
+        int myPositionalScore = getPositionalBias(game, game.gameTurn);
+        int opponentPositionalScore = getPositionalBias(game, game.gameTurn.opposite());
+        if (Game.DEBUG) {
+            System.out.println("Pieces score for : " + game.gameTurn + (myPiecesScore - opponentPieceScore));
+            System.out.println("Positional score for : " + game.gameTurn + (myPositionalScore - opponentPositionalScore));
         }
-        int min = Integer.MAX_VALUE;
-        List<Move> moves = game.gameBoard.listPossibleMovesWhite();
-        for (Move potentialMove : moves) {
-            game.preexecuteMove(potentialMove);
-            int score = maxi(game, depth - 1);
-            game.undoMove();
-            if (score < min) {
-                min = score;
-            }
-        }
-        return min;
+
+        return 100*(myPiecesScore - opponentPieceScore)
+                + (myPositionalScore - opponentPositionalScore); //opening book simulation
     }
 
 
     @Override
     public Move playBlack(Game game) {
-        List<Move> moves = game.gameBoard.listPossibleMovesBlack();
-        Collections.shuffle(moves);
-//        Move move = moves.stream().sorted((m1, m2) -> greedyEvaluation(m1, m2, game)).findFirst().get();
-//        game.executeMove(move);
-        maxi(game, MAX_DEPTH);
+        long start = System.currentTimeMillis();
+        negaMax(game, MAX_DEPTH);
         Move chosenMove = lastChosenMove;
         game.executeMove(chosenMove);
+        long end = System.currentTimeMillis();
+        System.out.println("Thinking took " + (end-start) + "milliseconds");
         return chosenMove;
     }
 
     @Override
     public Move playWhite(Game game) {
-        List<Move> moves = game.gameBoard.listPossibleMovesWhite();
-        Collections.shuffle(moves);
-//        Move move = moves.stream().sorted((m1, m2) -> greedyEvaluation(m1, m2, game)).findFirst().get();
-//        game.executeMove(move);
-        maxi(game, MAX_DEPTH);
+        negaMax(game, MAX_DEPTH);
         Move chosenMove = lastChosenMove;
         game.executeMove(chosenMove);
         return chosenMove;
-//        List<Move> moves = game.gameBoard.listPossibleMovesWhite();
-//        Move move = moves.stream().sorted((m1, m2) -> greedyEvaluation(m1, m2, game)).findFirst().get();
+    }
+
+//    private int greedyEvaluation(Move move1, Move move2, Game game) {
+//        double score1 = estimateBoardScore(move1, game);
+//        double score2 = estimateBoardScore(move2, game);
+//        return (int)  (-1 * Math.signum(score1 - score2));
+//    }
+//
+//    private double estimateBoardScore(Move move, Game game) {
+//        Board.TurnColor otherColor = game.gameTurn.opposite();
+//        long oppositePiecesScoreNow = countPiecesScore(game, otherColor);
+//        long teritorialCoverageNow = getTeritorialCoverage(game);
+//        long positionalBiasNow = getPositionalBias(game);
+//        double forwardScoreNow = getForwardScore(game);
 //
 //        game.executeMove(move);
-//        return move;
-    }
+//
+//        long oppositePiecesScoreAfter = countPiecesScore(game, otherColor);
+//        long teritorialCoverageAfter = getTeritorialCoverage(game);
+//        long positionalBiasAfter = getPositionalBias(game);
+//        double forwardScoreAfter = getForwardScore(game);
+//
+//
+//        game.undoMove();
+//
+//        long finalScore = 0;
+//        if (oppositePiecesScoreAfter < oppositePiecesScoreNow) {
+//            finalScore += (int) 1000 * (oppositePiecesScoreNow - oppositePiecesScoreAfter);
+//        } else if (oppositePiecesScoreAfter == oppositePiecesScoreNow) {
+//            finalScore += 25* (positionalBiasNow - positionalBiasAfter);
+//            if (teritorialCoverageAfter > teritorialCoverageNow) {
+//                finalScore += (int) 100 * (teritorialCoverageAfter - teritorialCoverageNow);
+//            } else {
+//                finalScore+= 100 *(forwardScoreAfter - forwardScoreNow);
+//            }
+//        }
+//        return finalScore;
+//    }
 
-    private int greedyEvaluation(Move move1, Move move2, Game game) {
-        double score1 = estimateBoardScore(move1, game);
-        double score2 = estimateBoardScore(move2, game);
-        return (int)  (-1 * Math.signum(score1 - score2));
-    }
-
-    private double estimateBoardScore(Move move, Game game) {
-        Board.TurnColor otherColor = game.gameTurn.opposite();
-        long oppositePiecesScoreNow = countPiecesScore(game, otherColor);
-        long teritorialCoverageNow = getTeritorialCoverage(game);
-        long positionalBiasNow = getPositionalBias(game);
-        double forwardScoreNow = getForwardScore(game);
-
-        game.executeMove(move);
-
-        long oppositePiecesScoreAfter = countPiecesScore(game, otherColor);
-        long teritorialCoverageAfter = getTeritorialCoverage(game);
-        long positionalBiasAfter = getPositionalBias(game);
-        double forwardScoreAfter = getForwardScore(game);
-
-
-        game.undoMove();
-
-        long finalScore = 0;
-        if (oppositePiecesScoreAfter < oppositePiecesScoreNow) {
-            finalScore += (int) 1000 * (oppositePiecesScoreNow - oppositePiecesScoreAfter);
-        } else if (oppositePiecesScoreAfter == oppositePiecesScoreNow) {
-            finalScore += 25* (positionalBiasNow - positionalBiasAfter);
-            if (teritorialCoverageAfter > teritorialCoverageNow) {
-                finalScore += (int) 100 * (teritorialCoverageAfter - teritorialCoverageNow);
-            } else {
-                finalScore+= 100 *(forwardScoreAfter - forwardScoreNow);
-            }
-        }
-        return finalScore;
-    }
-
-    private long getPositionalBias(Game game) {
-        long positionalBias = 0;
+    private int getPositionalBias(Game game, Board.TurnColor ofColor) {
+        int positionalBias = 0;
         int colorPointer = -1;
         Collection<Square> squares = null;
-        if (game.gameTurn.equals(Board.TurnColor.white)) {
+        if (ofColor.equals(Board.TurnColor.white)) {
             colorPointer = WHITE;
             squares = game.gameBoard.getWhitePieces();
-        } else if (game.gameTurn.equals(Board.TurnColor.black)) {
+        } else if (ofColor.equals(Board.TurnColor.black)) {
             colorPointer = BLACK;
             squares = game.gameBoard.getBlackPieces();
         }
@@ -328,10 +290,10 @@ public class MiniMaxStrategy implements PlayingStrategy {
         return positionalBias;
     }
 
-    private Integer countPiecesScore(Game game, Board.TurnColor otherColor) {
+    private Integer countPiecesScore(Game game, Board.TurnColor ofColor) {
         return Arrays.stream(game.gameBoard.squaresList).flatMap(a -> Arrays.stream(a))
                 .filter(square -> square.isOccupied)
-                .filter(square -> square.occupyingPiece.turnColor == otherColor)
+                .filter(square -> square.occupyingPiece.turnColor == ofColor)
                 .map(square -> pieceScore(square.occupyingPiece)).reduce(Integer::sum).get();
     }
 

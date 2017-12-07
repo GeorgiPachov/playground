@@ -24,7 +24,8 @@ import chessViews.GameDisplay;
  *
  */
 public class Game {
-	
+
+	public static final boolean DEBUG = false;
 	/**
 	 * Global variables of the game 
 	 * - Players
@@ -43,7 +44,6 @@ public class Game {
 	JLabel whiteLabel;
 	JLabel blackLabel;
 	JButton undoButton;
-	Piece movingPiece;
 	Stack<MoveCommand> commandStack;
 	
 	/**
@@ -132,7 +132,9 @@ public class Game {
 		int yDestination = move.getNewY();
 		Piece movingPiece = this.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
 
-		log("Preexecuting move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation+ "] to [" + xDestination + ", " + yDestination + "]");
+		if (DEBUG) {
+			log("Preexecuting move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation + "] to [" + xDestination + ", " + yDestination + "]");
+		}
 		if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)) {
 			Piece enemyPiece = null;
 			if (gameBoard.squaresList[xDestination][yDestination].isOccupied)
@@ -148,9 +150,11 @@ public class Game {
     public void executeMove(Move move) {
 		int xDestination = move.getNewX();
 		int yDestination = move.getNewY();
-		this.movingPiece = this.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
+		Piece movingPiece = this.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
 
-		log("Executing move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation+ "] to [" + xDestination + ", " + yDestination + "]");
+		if (DEBUG) {
+			log("Executing move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation + "] to [" + xDestination + ", " + yDestination + "]");
+		}
         if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)){
             Piece enemyPiece = null;
             if(gameBoard.squaresList[xDestination][yDestination].isOccupied)

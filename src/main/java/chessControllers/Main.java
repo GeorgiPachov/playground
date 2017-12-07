@@ -14,9 +14,7 @@ public class Main {
         }
 
     private static void runSelf() throws FileNotFoundException {
-        String inputFile = "/home/aneline/IdeaProjects/video-creator/src/main/resources/stdin";
-        System.setIn(new UCITestStream(new FileInputStream(inputFile)));
-        PlayingStrategy whiteStrategy = new RandomStrategy();
+        PlayingStrategy whiteStrategy = new MiniMaxStrategy();
         PlayingStrategy blackStrategy = new MiniMaxStrategy();
         Game game = Game.startNewGame();
         game.playSelf(whiteStrategy, blackStrategy);
