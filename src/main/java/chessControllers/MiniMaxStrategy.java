@@ -5,7 +5,7 @@ import chessGame.*;
 import java.util.*;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    private static final int MAX_DEPTH = 4;
+    private static final int MAX_DEPTH = 5;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[][][] pawnPositionMap = new short[][][] {
@@ -152,8 +152,26 @@ public class MiniMaxStrategy implements PlayingStrategy {
             }
     };
     private Move lastChosenMove;
+//    function negamax(node, depth, α, β, color)
+//02     if depth = 0 or node is a terminal node
+//03         return color * the heuristic value of node
+//
+//04     childNodes := GenerateMoves(node)
+//05     childNodes := OrderMoves(childNodes)
+//06     bestValue := −∞
+//            07     foreach child in childNodes
+//08         v := −negamax(child, depth − 1, −β, −α, −color)
+//09         bestValue := max( bestValue, v )
+//10         α := max( α, v )
+//11         if α ≥ β
+//12             break
+//        13     return bestValue
+//
+//    Initial call for Player A's root node
+//    rootNegamaxValue := negamax( rootNode, depth, −∞, +∞, 1)
 
-    private int negaMax(Game game, int depth ) {
+
+    private int negaMax(Game game, int depth, float alpha, float beta) {
         if (depth == 0) {
             return estimateBoard(game);
         }
@@ -167,15 +185,19 @@ public class MiniMaxStrategy implements PlayingStrategy {
                 moves = game.gameBoard.listPossibleMovesWhite();
                 break;
         }
-        Collections.shuffle(moves);
+//        Collections.sort(moves, (c1, c2) -> );
         Move maxMove = null;
         for (Move move : moves)  {
             game.preexecuteMove(move);
-            int score = -negaMax(game,depth - 1 );
+            int score = -negaMax(game,depth - 1, -beta, -alpha);
             game.undoMove();
             if( score > max ) {
                 max = score;
                 maxMove = move;
+            }
+            alpha = Math.max(max, alpha);
+            if (alpha > beta) {
+                return score;
             }
         }
         this.lastChosenMove = maxMove;
@@ -201,7 +223,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
     @Override
     public Move playBlack(Game game) {
         long start = System.currentTimeMillis();
-        negaMax(game, MAX_DEPTH);
+        negaMax(game, MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE);
         Move chosenMove = lastChosenMove;
         game.executeMove(chosenMove);
         long end = System.currentTimeMillis();
@@ -211,7 +233,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     @Override
     public Move playWhite(Game game) {
-        negaMax(game, MAX_DEPTH);
+        negaMax(game, MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE);
         Move chosenMove = lastChosenMove;
         game.executeMove(chosenMove);
         return chosenMove;
@@ -222,7 +244,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 //        double score2 = estimateBoardScore(move2, game);
 //        return (int)  (-1 * Math.signum(score1 - score2));
 //    }
-//
+
 //    private double estimateBoardScore(Move move, Game game) {
 //        Board.TurnColor otherColor = game.gameTurn.opposite();
 //        long oppositePiecesScoreNow = countPiecesScore(game, otherColor);
