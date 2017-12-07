@@ -6,27 +6,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-/**
- * Subclass of a board. Standard version of a chess Board. Has methods for creating a standard
- * chess board and populating it with regular chess pieces.
- * Can be used to create a standard game of chess.
- * @author Pratik Naik
- */
 public class StandardBoard extends Board {
 	
-	/**
-	 * Trackers for the white and black kings for check, checkmate and game ending conditions.
-	 */
 	public King whiteKingTracker;
 	public King blackKingTracker;
-	
-	/**
-	 * Method to initialize the chess board.
-	 * @param xSquares
-	 * @param ySquares
-	 */
-	public StandardBoard(int xSquares, int ySquares) {
 
+	public StandardBoard(int xSquares, int ySquares) {
 		this.numXSquares = xSquares;
 		this.numYSquares = ySquares;
 		this.totalSquares = this.numXSquares * this.numYSquares;

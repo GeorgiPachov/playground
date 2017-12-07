@@ -43,7 +43,6 @@ public class Game {
 	JLabel whiteLabel;
 	JLabel blackLabel;
 	JButton undoButton;
-	JButton restartButton;
 	Piece movingPiece;
 	Stack<MoveCommand> commandStack;
 	
@@ -59,6 +58,17 @@ public class Game {
 		gameOver = false;
 		squareSize = 80;
 		commandStack = new Stack();
+	}
+
+	/**
+	 * Helper method to start off a new game.
+	 * Called when the players want to restart or when new players join in initially.
+	 */
+	public static Game startNewGame() {
+		Game newGame = new Game();
+		newGame.gameInit(false);
+		newGame.setupDisplay();
+		return newGame;
 	}
 
 	/**
@@ -107,8 +117,6 @@ public class Game {
 	private JPanel initializeSidePanel(){
 		JPanel sideDisplay = new JPanel();
 		undoButton = new JButton("Undo Move");
-		restartButton = new JButton("Restart Game");
-		setupButtonListeners();
 		whiteLabel = new JLabel("WHITE PLAYER : ");
 		whiteLabel.setForeground(Color.BLUE);
 		blackLabel = new JLabel("BLACK PLAYER : ");
@@ -116,63 +124,27 @@ public class Game {
 		sideDisplay.add(whiteLabel);
 		sideDisplay.add(blackLabel);
 		sideDisplay.add(undoButton);
-		sideDisplay.add(restartButton);
 		return sideDisplay;
 	}
+
+	public void preexecuteMove(Move move) {
+		int xDestination = move.getNewX();
+		int yDestination = move.getNewY();
+		Piece movingPiece = this.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
+
+		log("Preexecuting move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation+ "] to [" + xDestination + ", " + yDestination + "]");
+		if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)) {
+			Piece enemyPiece = null;
+			if (gameBoard.squaresList[xDestination][yDestination].isOccupied)
+				enemyPiece = gameBoard.squaresList[xDestination][yDestination].occupyingPiece;
+			MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
+			commandStack.add(newCommand);
+			newCommand.execute();
+		}
+		gameTurn = gameTurn.opposite();
+
+	}
 	
-	/**
-	 * Helper method to setup the button listeners for Undo, Restart and Forfeit buttons.
-	 */
-	private void setupButtonListeners() {
-		undoButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				undoMove();
-			}
-		});
-		restartButton.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				restartGame();
-			}
-		});
-	}
-
-	/**
-	 * TaggerMain method to control and update results of Mouse Actions.
-	 * It implements a Mouse Adapter to analyze moves made on the chess board.
-	 * Mouse Pressed : 
-	 * - Calculates Origin x and y of the move
-	 * - Get reference to moving piece.
-	 * Mouse Released : 
-	 * - Calculate Destination x and y of the move
-	 * - Check for valid gameTurn and valid move of the moving piece.
-	 * - Make the move and add it to the move commandStack
-	 * - Change the gameTurn and update it visually on the sideDisplay.
-	 * - Check King in check or Checkmate using helper method.
-	 * - If illegal move display error message.
-	 */
-	public void mouseActions(){
-		gamePanel.addMouseListener(new MouseAdapter(){
-			
-			public void mousePressed(MouseEvent me){
-//				int xOrigin = me.getX();
-//				int yOrigin = me.getY();
-//				xOrigin = xOrigin/squareSize;
-//				yOrigin = yOrigin/squareSize;
-//				yOrigin = 7 - yOrigin;
-//				movingPiece = gameBoard.squaresList[xOrigin][yOrigin].occupyingPiece;
-			}
-			
-			public void mouseReleased(MouseEvent me) {
-//			    int xDestination = me.getX();
-//				int yDestination = me.getY();
-//				xDestination = xDestination/squareSize;
-//				yDestination = yDestination/squareSize;
-//				yDestination = 7 - yDestination;
-//                executeMove(xDestination, yDestination);
-			}
-		});
-	}
-
     public void executeMove(Move move) {
 		int xDestination = move.getNewX();
 		int yDestination = move.getNewY();
@@ -249,14 +221,6 @@ public class Game {
 			gameTurn = gameTurn.opposite();
 		}
 	}
-	
-	/**
-	 * Restart button calls this method which checks if your opponent wants to restart as well 
-	 * and if so it starts a new game.
-	 */
-	private void restartGame(){
-        startNewGame();
-    }
 
 	public void playSelf(PlayingStrategy whiteStrategy, PlayingStrategy blackStrategy) {
 	    Game game = this;
@@ -279,17 +243,6 @@ public class Game {
         }).start();
 	}
 
-    /**
-	 * Helper method to start off a new game.
-	 * Called when the players want to restart or when new players join in initially.
-	 */
-	public static Game startNewGame() {
-		Game newGame = new Game();
-		newGame.gameInit(false);
-		newGame.setupDisplay();
-		newGame.mouseActions();
-        return newGame;
-	}
 
 
 	/**

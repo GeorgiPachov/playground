@@ -1,14 +1,12 @@
 package com.gpachov.videocreator;
 
 import chessControllers.Game;
-import chessControllers.GreedyStrategy;
+import chessControllers.MiniMaxStrategy;
 import chessControllers.PlayingStrategy;
 import chessGame.Move;
 import com.fluxchess.jcpi.AbstractEngine;
 import com.fluxchess.jcpi.commands.*;
-import com.fluxchess.jcpi.models.GenericFile;
 import com.fluxchess.jcpi.models.GenericMove;
-import com.fluxchess.jcpi.models.GenericPosition;
 import com.fluxchess.jcpi.models.IllegalNotationException;
 
 import java.io.FileNotFoundException;
@@ -20,7 +18,7 @@ public class ChessEngine extends AbstractEngine {
     int commandNumber = 0;
     private FileOutputStream uciCommandLog = new FileOutputStream("/tmp/uci.log");
     private Move lastMove;
-    private PlayingStrategy playingStrategy = new GreedyStrategy();
+    private PlayingStrategy playingStrategy = new MiniMaxStrategy();
 
     public ChessEngine() throws FileNotFoundException {
     }
@@ -154,4 +152,7 @@ public class ChessEngine extends AbstractEngine {
     private void respond(String response) {
         System.out.println(response);
     }
+
+
+
 }
