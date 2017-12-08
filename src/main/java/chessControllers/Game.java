@@ -1,22 +1,11 @@
 package chessControllers;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.Stack;
 
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 
 import chessGame.*;
-import chessViews.GameDisplay;
 
 /**
  * Game class to setup a complete Chess Game. Will move to Controllers once implemented properly.
@@ -153,13 +142,6 @@ public class Game {
 		if (!commandStack.isEmpty()) {
 			MoveCommand move = commandStack.pop();
 			move.undo();
-			if (gameTurn == Board.TurnColor.white) {
-				blackLabel.setForeground(Color.BLUE);
-				whiteLabel.setForeground(Color.BLACK);
-			} else {
-				whiteLabel.setForeground(Color.BLUE);
-				blackLabel.setForeground(Color.BLACK);
-			}
 			gameTurn = gameTurn.opposite();
 		}
 	}
