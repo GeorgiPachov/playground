@@ -1,5 +1,7 @@
 package chessGame;
 
+import chessControllers.TurnColor;
+
 /**
  * Subclass of a Piece specific to a Rook. This handles all movements the rook is capable
  * of making.
@@ -15,7 +17,7 @@ public class Rook extends Piece {
 	 * @param turnColor
 	 * @param board
 	 */
-	public Rook(int initX, int initY, Board.TurnColor turnColor, StandardBoard board) {
+	public Rook(int initX, int initY, TurnColor turnColor, StandardBoard board) {
 		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "rook";
 	}

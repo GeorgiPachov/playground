@@ -1,12 +1,18 @@
 package chessGame;
 
+import chessControllers.TurnColor;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
 
-public class StandardBoard extends Board {
+public class StandardBoard {
+	public int numXSquares;
+	public int numYSquares;
+	public int totalSquares;
+	public Square squaresList[][];
 	
 	public King whiteKingTracker;
 	public King blackKingTracker;
@@ -48,49 +54,14 @@ public class StandardBoard extends Board {
 	 * Method to populate our chess board with standard pieces.
 	 */
 	public void populateBoardWithPieces(boolean special) {
-		if(special)
-			setupSpecialPieces();
-		else{
-			setupKnights();
-			setupBishops();
-		}
+		setupKnights();
+		setupBishops();
 		setupPawns();
 		setupRooks();
 		setupQueens();
 		setupKings();
 	}
 	
-	/**
-	 * Method to setup Archbishop and Chancellor as special pieces in special game.
-	 */
-	public void setupSpecialPieces() {
-		Archbishop whiteArchbishopOne = new Archbishop(2, 0, TurnColor.white, this);
-		Archbishop whiteArchbishopTwo = new Archbishop(5, 0, TurnColor.white, this);
-		Archbishop blackArchbishopOne = new Archbishop(2, 7, TurnColor.black, this);
-		Archbishop blackArchbishopTwo = new Archbishop(5, 7, TurnColor.black, this);
-		this.squaresList[2][0].isOccupied = true;
-		this.squaresList[5][0].isOccupied = true;
-		this.squaresList[2][0].occupyingPiece = whiteArchbishopOne;
-		this.squaresList[5][0].occupyingPiece = whiteArchbishopTwo;
-		this.squaresList[2][7].isOccupied = true;
-		this.squaresList[5][7].isOccupied = true;
-		this.squaresList[2][7].occupyingPiece = blackArchbishopOne;
-		this.squaresList[5][7].occupyingPiece = blackArchbishopTwo;
-		
-		Chancellor whiteKnightOne = new Chancellor(1, 0, TurnColor.white, this);
-		Chancellor whiteKnightTwo = new Chancellor(6, 0, TurnColor.white, this);
-		Chancellor blackKnightOne = new Chancellor(1, 7, TurnColor.black, this);
-		Chancellor blackKnightTwo = new Chancellor(6, 7, TurnColor.black, this);
-		this.squaresList[1][0].isOccupied = true;
-		this.squaresList[6][0].isOccupied = true;
-		this.squaresList[1][0].occupyingPiece = whiteKnightOne;
-		this.squaresList[6][0].occupyingPiece = whiteKnightTwo;
-		this.squaresList[1][7].isOccupied = true;
-		this.squaresList[6][7].isOccupied = true;
-		this.squaresList[1][7].occupyingPiece = blackKnightOne;
-		this.squaresList[6][7].occupyingPiece = blackKnightTwo;
-		
-	}
 
 	/**
 	 * Setup 8 black and 8 white pawns in their initial positions.
@@ -190,7 +161,6 @@ public class StandardBoard extends Board {
 	
 	/**
 	 * Helper method to check if locations passed in are mapped on our generated board.
-	 * @see Board#inBoardBounds(int, int)
 	 * @param newX
 	 * @param newY
 	 * @return boolean true if move is in board bounds
@@ -284,13 +254,13 @@ public class StandardBoard extends Board {
 	public List<Square> getBlackPieces() {
 		return Arrays.stream(squaresList).flatMap(a -> Arrays.stream(a))
 				.filter(s -> s.isOccupied)
-				.filter(s -> s.occupyingPiece.turnColor == Board.TurnColor.black).collect(Collectors.toList());
+				.filter(s -> s.occupyingPiece.turnColor == TurnColor.black).collect(Collectors.toList());
 	}
 
 	public List<Square> getWhitePieces() {
 		return Arrays.stream(squaresList).flatMap(a -> Arrays.stream(a))
 				.filter(s -> s.isOccupied)
-				.filter(s -> s.occupyingPiece.turnColor == Board.TurnColor.white).collect(Collectors.toList());
+				.filter(s -> s.occupyingPiece.turnColor == TurnColor.white).collect(Collectors.toList());
 
 	}
 

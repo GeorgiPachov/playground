@@ -1,6 +1,6 @@
 package chessGame;
 
-import chessGame.Board.TurnColor;
+import chessControllers.TurnColor;
 
 /**
  * Subclass of a Piece specific to a King. This handles all movements the king is capable

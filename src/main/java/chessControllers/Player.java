@@ -1,7 +1,5 @@
 package chessControllers;
 
-import chessGame.Board;
-
 /**
  * Class reprensenting a Chess Player.
  * @author Pratik Naik
@@ -16,7 +14,7 @@ public class Player {
 	 * - Score of the player in game.
 	 */
 	public String playerName;
-	Board.TurnColor playerTurnColor;
+	TurnColor playerTurnColor;
 	public int playerScore;
 
 	/**
@@ -24,7 +22,7 @@ public class Player {
 	 * @param playerName
 	 * @param playerTurnColor
 	 */
-	public Player(String playerName, Board.TurnColor playerTurnColor) {
+	public Player(String playerName, TurnColor playerTurnColor) {
 		this.playerName = playerName;
 		this.playerTurnColor = playerTurnColor;
 		this.playerScore = 0;

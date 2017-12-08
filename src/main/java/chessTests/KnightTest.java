@@ -1,7 +1,6 @@
 package chessTests;
 
-import chessGame.Board;
-import chessGame.Board.TurnColor;
+import chessControllers.TurnColor;
 import chessGame.Knight;
 import chessGame.Pawn;
 import chessGame.StandardBoard;
@@ -28,7 +27,7 @@ public class KnightTest extends TestCase {
 	 */
 	public void testValidHorizontalKnightMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Knight newKnight = new Knight(1, 0, Board.TurnColor.white, board);
+		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
 		assertTrue(newKnight.canMove(3, 1));
 	}
 	
@@ -57,7 +56,7 @@ public class KnightTest extends TestCase {
 	public void testInvalidAllyBlockingPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
 		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
-		Pawn blockingPawn = new Pawn(2, 2, Board.TurnColor.white, board);
+		Pawn blockingPawn = new Pawn(2, 2, TurnColor.white, board);
 		assertFalse(newKnight.canMove(2, 2));
 	}
 

@@ -1,7 +1,7 @@
 package chessTests;
 
+import chessControllers.TurnColor;
 import chessGame.*;
-import chessGame.Board.TurnColor;
 import junit.framework.TestCase;
 
 /**
@@ -17,7 +17,7 @@ public class PieceTest extends TestCase {
 	public void testEnemyCapture() {
 		StandardBoard board = new StandardBoard(8,8);
 		Pawn whitePawn = new Pawn(1, 1, TurnColor.white, board);
-		Pawn blackPawn = new Pawn(2, 2, Board.TurnColor.black, board);
+		Pawn blackPawn = new Pawn(2, 2, TurnColor.black, board);
 		assertTrue(whitePawn.canMove(2, 2));
 		whitePawn.executeCaptureOrMove(2,2);
 		assertTrue(whitePawn.xLocation == 2 && whitePawn.yLocation == 2);
@@ -37,7 +37,7 @@ public class PieceTest extends TestCase {
 	 */
 	public void testInvalidNegativeBoundsMove() {
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn whitePawn = new Pawn(0, 1, Board.TurnColor.white, board);
+		Pawn whitePawn = new Pawn(0, 1, TurnColor.white, board);
 		assertFalse(whitePawn.canMove(0, -1));
 	}
 	
@@ -48,8 +48,8 @@ public class PieceTest extends TestCase {
 		StandardBoard board = new StandardBoard(8,8);
 		King newKing = new King(3, 7, TurnColor.black, board);
 		board.blackKingTracker = newKing;
-		Pawn allyPawn = new Pawn(5, 5, Board.TurnColor.black, board);
-		Bishop enemyBishop = new Bishop(7, 3, Board.TurnColor.white, board);
+		Pawn allyPawn = new Pawn(5, 5, TurnColor.black, board);
+		Bishop enemyBishop = new Bishop(7, 3, TurnColor.white, board);
 		assertFalse(allyPawn.canMove(5, 4));
 	}
 	

@@ -1,7 +1,6 @@
 package chessTests;
 
-import chessGame.Board;
-import chessGame.Board.TurnColor;
+import chessControllers.TurnColor;
 import chessGame.Pawn;
 import chessGame.StandardBoard;
 import junit.framework.TestCase;
@@ -27,7 +26,7 @@ public class PawnTest extends TestCase {
 	 */
 	public void testValidBlackPawnMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(0, 1, Board.TurnColor.black, board);
+		Pawn newPawn = new Pawn(0, 1, TurnColor.black, board);
 		assertTrue(newPawn.canMove(0, 0));
 	}
 	
@@ -45,8 +44,8 @@ public class PawnTest extends TestCase {
 	 */
 	public void testValidEnemyPieceMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Pawn newPawn = new Pawn(2, 2, Board.TurnColor.white, board);
-		Pawn enemyPawn = new Pawn(3, 3, Board.TurnColor.black, board);
+		Pawn newPawn = new Pawn(2, 2, TurnColor.white, board);
+		Pawn enemyPawn = new Pawn(3, 3, TurnColor.black, board);
 		assertTrue(newPawn.canMove(3, 3));
 	}
 	
@@ -74,7 +73,7 @@ public class PawnTest extends TestCase {
 	public void testValidFirstPawnEnemyMove(){
 		StandardBoard board = new StandardBoard(8,8);
 		Pawn newPawn = new Pawn(0, 1, TurnColor.white, board);
-		Pawn enemyPawn = new Pawn(1, 2, Board.TurnColor.black, board);
+		Pawn enemyPawn = new Pawn(1, 2, TurnColor.black, board);
 		assertTrue(newPawn.canMove(1, 2));
 	}
 

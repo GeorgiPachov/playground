@@ -1,6 +1,7 @@
 package chessGame;
 
-import chessGame.Board.TurnColor;
+
+import chessControllers.TurnColor;
 
 /**
  * This class represents a square on the chess board.

@@ -1,7 +1,6 @@
 package chessTests;
 
-import chessGame.Board;
-import chessGame.Board.TurnColor;
+import chessControllers.TurnColor;
 import chessGame.Queen;
 import chessGame.Rook;
 import chessGame.StandardBoard;
@@ -19,7 +18,7 @@ public class QueenTest extends TestCase {
 	 */
 	public void testValidVerticalQueenMove(){
 		StandardBoard board = new StandardBoard(8,8);
-		Queen newQueen = new Queen(3, 0, Board.TurnColor.black, board);
+		Queen newQueen = new Queen(3, 0, TurnColor.black, board);
 		assertTrue(newQueen.canMove(7, 0));
 	}
 	

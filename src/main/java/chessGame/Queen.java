@@ -1,6 +1,6 @@
 package chessGame;
 
-import chessGame.Board.TurnColor;
+import chessControllers.TurnColor;
 
 /**
  * Subclass of a Piece specific to a Queen. This handles all movements the queen is capable

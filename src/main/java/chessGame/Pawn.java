@@ -1,6 +1,6 @@
 package chessGame;
 
-import chessGame.Board.TurnColor;
+import chessControllers.TurnColor;
 
 /**
  * Subclass of a Piece specific to a Pawn. This handles all movements the pawn is capable
@@ -101,7 +101,7 @@ public class Pawn extends Piece {
 		// White pawns can only move upwards.
 		if(turnColor.equals(TurnColor.white)){
 			// Two step without capture.
-			if((yDisplacement == 1 || yDisplacement == 2) && (xDisplacement == 0))
+			if((yDisplacement == 1 || yDisplacement == 2) && (xDisplacement == 0) && !isBlocked(yDisplacement))
 				return true;
 			// One step plus capture.
 			else if(yDisplacement == 1 && Math.abs(xDisplacement) == 1)
@@ -111,12 +111,28 @@ public class Pawn extends Piece {
 		}
 		// Black pawns can only move downwards.
 		else{
-			if((yDisplacement == -1 || yDisplacement == -2) && (xDisplacement == 0))
+			if((yDisplacement == -1 || yDisplacement == -2) && (xDisplacement == 0) && !isBlocked(yDisplacement))
 				return true;
 			else if(yDisplacement == -1 && Math.abs(xDisplacement) == 1)
 				return true;
 			else
 				return false;
 		}
+	}
+
+	private boolean isBlocked(int yDisplacement) {
+		if (yDisplacement == 1 || yDisplacement == -1) {
+			if (currentBoard.squaresList[xLocation][yLocation + yDisplacement].isOccupied) {
+				return true;
+			}
+		} else if (yDisplacement == 2 || yDisplacement == -2) {
+			if (currentBoard.squaresList[xLocation][yLocation + yDisplacement/2].isOccupied) {
+				return true;
+			}
+			if (currentBoard.squaresList[xLocation][yLocation + yDisplacement].isOccupied) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

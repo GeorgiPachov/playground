@@ -94,7 +94,6 @@ public class ChessEngine extends AbstractEngine {
         System.out.println("<<<" + lastMove.toString());
 
         game.executeMove(lastMove);
-        game.gamePanel.repaint();
 
     }
 
@@ -105,7 +104,6 @@ public class ChessEngine extends AbstractEngine {
         GenericMove bestMove = toGenericMove(blackMove);
         ProtocolBestMoveCommand bestMoveCommand = new ProtocolBestMoveCommand(bestMove, bestMove);
         super.getProtocol().send(bestMoveCommand);
-        game.gamePanel.repaint();
     }
 
     private GenericMove toGenericMove(Move blackMove) {

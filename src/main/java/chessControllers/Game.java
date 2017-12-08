@@ -15,30 +15,17 @@ import chessGame.*;
 public class Game {
 
 	public static final boolean DEBUG = false;
-	/**
-	 * Global variables of the game 
-	 * - Players
-	 * - Game board, turn, type, board square size.
-	 * - References of gamepanel, sidepanels, buttons, score labels.
-	 * - Reference to piece being moved.
-	 * - Moves stack.
-	 */
-	Board.TurnColor gameTurn;
+	TurnColor gameTurn;
 	StandardBoard gameBoard;
 	boolean gameOver;
 	int squareSize;
 	public JPanel gamePanel;
 	Stack<MoveCommand> commandStack;
 	
-	/**
-	 * Method to initialize gameBoard, populate it with pieces according to gameType 
-	 * and start a new move stack.
-	 * @param gameType 
-	 */
 	public void gameInit(boolean gameType) {
 		gameBoard = new StandardBoard(8,8);
 		gameBoard.populateBoardWithPieces(gameType);
-		gameTurn = Board.TurnColor.white;
+		gameTurn = TurnColor.white;
 		gameOver = false;
 		squareSize = 80;
 		commandStack = new Stack();
@@ -90,7 +77,7 @@ public class Game {
             commandStack.add(newCommand);
             newCommand.execute();
             boolean gameOver = false;
-            if(movingPiece.turnColor.equals(Board.TurnColor.white)){
+            if(movingPiece.turnColor.equals(TurnColor.white)){
                 gameTurn = gameTurn.opposite();
                 gameOver = checkKingStatus(gameBoard.blackKingTracker);
              }
