@@ -3,9 +3,10 @@ package chessControllers;
 import chessGame.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    private static final int MAX_DEPTH = 5;
+    private static final int MAX_DEPTH = 3;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[][][] pawnPositionMap = new short[][][] {
@@ -185,7 +186,17 @@ public class MiniMaxStrategy implements PlayingStrategy {
                 moves = game.gameBoard.listPossibleMovesWhite();
                 break;
         }
-//        Collections.sort(moves, (c1, c2) -> );
+        Collections.sort(moves, (c1, c2) -> {
+            game.executeMove(c1);
+            int estimate1 =  estimateBoard(game);
+            game.undoMove();;
+
+            game.executeMove(c2);
+            int estimate2 = estimateBoard(game);
+            game.undoMove();
+
+            return -1 *(estimate1 - estimate2);
+        });
         Move maxMove = null;
         for (Move move : moves)  {
             game.preexecuteMove(move);
@@ -205,6 +216,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int estimateBoard(Game game) {
+        int isOpponentKingCheckMated = checkKingCheckMateScore(game, game.gameTurn);
+        int isOpponentKingInCheck = checkKingCheckStatus(game, game.gameTurn);
+
         int myPiecesScore = countPiecesScore(game, game.gameTurn);
         int opponentPieceScore = countPiecesScore(game, game.gameTurn.opposite());
 
@@ -215,8 +229,54 @@ public class MiniMaxStrategy implements PlayingStrategy {
             System.out.println("Positional score for : " + game.gameTurn + (myPositionalScore - opponentPositionalScore));
         }
 
-        return 100*(myPiecesScore - opponentPieceScore)
+        return isOpponentKingCheckMated + isOpponentKingInCheck +  100*(myPiecesScore - opponentPieceScore)
                 + (myPositionalScore - opponentPositionalScore); //opening book simulation
+    }
+
+    private int checkKingCheckStatus(Game game, Board.TurnColor gameTurn) {
+        Square kingSquare = game.gameBoard.getPieces(gameTurn).stream().filter(s -> s.occupyingPiece instanceof King).collect(Collectors.toList()).get(0);
+        switch (gameTurn) {
+            case white:
+                if (game.gameBoard.whiteKingTracker.isKingInCheck((King) kingSquare.occupyingPiece)) {
+                    return 2000;
+                }
+            case black:
+                if (game.gameBoard.blackKingTracker.isKingInCheck((King) kingSquare.occupyingPiece)) {
+                    return 2000;
+                }
+            }
+        return 0;
+
+    }
+
+    private int checkKingCheckMateScore(Game game, Board.TurnColor gameTurn) {
+        List<Square> squares = game.gameBoard.getPieces(gameTurn);
+        Square kingSquare = squares.stream().filter(s -> s.occupyingPiece instanceof King).collect(Collectors.toList()).get(0);
+        int kx = kingSquare.occupyingPiece.xLocation;
+        int ky = kingSquare.occupyingPiece.yLocation;
+        short possibleMoves = 0;
+        for (int i = -1; i < 2; i++) {
+            for (int j = -1; j < 2; j++) {
+                if (i== 0 && j == 0) {
+                    continue;
+                }
+                if (kingSquare.occupyingPiece.canMove(kx +i, ky+j)){
+                    possibleMoves++;
+                }
+            }
+        }
+
+        switch (possibleMoves) {
+            case 0:
+                return Integer.MAX_VALUE;
+            case 1:
+                return 500;
+            case 2:
+                return 250;
+            case 3:
+                return 150;
+        }
+        return 0;
     }
 
 

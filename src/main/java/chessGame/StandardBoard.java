@@ -294,4 +294,13 @@ public class StandardBoard extends Board {
 
 	}
 
+	public List<Square> getPieces(TurnColor gameTurn) {
+		switch (gameTurn) {
+			case white:
+				return getWhitePieces();
+			case black:
+				return getBlackPieces();
+		}
+		return null;
+	}
 }

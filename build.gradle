@@ -39,6 +39,17 @@ fatJar {
     }
 }
 
+task bundle(dependsOn: ':fatJar') {
+    doFirst {
+        new File("${project.buildDir}/bundle/").mkdirs()
+        new File("${project.buildDir}/bundle/chess.sh").text = "java -jar chess.jar \$@"
+        new File("${project.buildDir}/bundle/chess.jar").bytes= new File("${project.buildDir}/libs/AI-playground-1.0-SNAPSHOT-fat.jar").bytes
+    }
+    doLast {
+        println 'EXECUTEDDD######'
+    }
+}
+
 dependencies {
     compile 'com.fluxchess:jcpi:1.4.+'
     compile name: "stanford-postagger"
