@@ -3,6 +3,10 @@ package chessGame;
 
 import chessControllers.TurnColor;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
  * Subclass of a Piece specific to a Knight. This handles all movements the knight is capable
  * of making.
@@ -21,6 +25,22 @@ public class Knight extends Piece {
 	public Knight(int initX, int initY, TurnColor turnColor, StandardBoard board) {
 		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "knight";
+	}
+
+	public List<Move> getAllowedMoves() {
+		int[][] possibleMoves = new int[][] {
+				{-2, 1},
+				{-2, -1},
+				{-1, 2},
+				{-1, -2},
+				{1, 2},
+				{1, -2},
+				{2, 1},
+				{2, -1}
+		};
+		return Arrays.stream(possibleMoves)
+				.filter(move -> canMove(move[0], move[1]))
+				.map(m -> new Move(xLocation, yLocation, m[0], m[1])).collect(Collectors.toList());
 	}
 
 	/**

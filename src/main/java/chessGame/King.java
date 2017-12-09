@@ -2,6 +2,9 @@ package chessGame;
 
 import chessControllers.TurnColor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Subclass of a Piece specific to a King. This handles all movements the king is capable
  * of making.
@@ -61,4 +64,18 @@ public class King extends Piece {
 			return false;
 	}
 
+	public List<Move> getAllowedMoves() {
+		List<Move> moves = new ArrayList<>();
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				if (i == 0 && j == 0) {
+					continue;
+				}
+				if (canMove(xLocation + i, yLocation + j)){
+					moves.add(new Move(xLocation,yLocation, xLocation + i, yLocation + j));
+				}
+			}
+		}
+		return moves;
+	}
 }

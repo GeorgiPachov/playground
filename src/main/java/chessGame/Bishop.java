@@ -2,6 +2,9 @@ package chessGame;
 
 import chessControllers.TurnColor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Subclass of a Piece specific to a Bishop. This handles all movements the bishop is capable
  * of making.
@@ -21,7 +24,25 @@ public class Bishop extends Piece {
 		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "bishop";
 	}
-	
+
+	@Override
+	public List<Move> getAllowedMoves() {
+		List<Move> allowedMoves = new ArrayList<>();
+		int[] steps = new int[] {-1, 1};
+		for (int xStep: steps) {
+			for (int yStep: steps) {
+				int nx = xLocation + xStep;
+				int ny = yLocation + yStep;
+				while (canMove(nx, ny)) {
+					allowedMoves.add(new Move(xLocation, yLocation, nx,ny));
+					nx+=xStep;
+					ny+=yStep;
+				}
+			}
+		}
+		return allowedMoves;
+	}
+
 	/**
 	 * Bishop specific implementation of abstract method.
 	 * @see Piece#isValidSpecialMove(int, int)

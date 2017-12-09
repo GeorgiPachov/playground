@@ -2,6 +2,9 @@ package chessGame;
 
 import chessControllers.TurnColor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Subclass of a Piece specific to a Pawn. This handles all movements the pawn is capable
  * of making.
@@ -20,6 +23,33 @@ public class Pawn extends Piece {
 	public Pawn(int initX, int initY, TurnColor turnColor, StandardBoard board) {
 		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "pawn";
+	}
+
+	@Override
+	public List<Move> getAllowedMoves() {
+		List<Move> allowedMoves = new ArrayList<>();
+		int[][] possibleMovesXY = null;
+		if (turnColor == TurnColor.white) {
+			possibleMovesXY = new int[][] {
+					{xLocation, yLocation+1},
+					{xLocation, yLocation+2},
+					{xLocation+1, yLocation+1},
+					{xLocation-1, yLocation+1}
+			};
+		} else if (turnColor == TurnColor.black) {
+			possibleMovesXY = new int[][] {
+					{xLocation, yLocation-1},
+					{xLocation, yLocation-2},
+					{xLocation+1, yLocation-1},
+					{xLocation-1, yLocation-1}
+			};
+		}
+		for (int[] possibleMove : possibleMovesXY) {
+			if (canMove(possibleMove[0],possibleMove[1])) {
+				allowedMoves.add(new Move(xLocation, yLocation, possibleMove[0], possibleMove[1]));
+			}
+		}
+		return allowedMoves;
 	}
 
 	/**

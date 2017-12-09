@@ -2,6 +2,9 @@ package chessGame;
 
 import chessControllers.TurnColor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Subclass of a Piece specific to a Queen. This handles all movements the queen is capable
  * of making.
@@ -20,6 +23,38 @@ public class Queen extends Piece {
 	public Queen(int initX, int initY, TurnColor turnColor, StandardBoard board) {
 		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "queen";
+	}
+
+	@Override
+	public List<Move> getAllowedMoves() {
+		int[][] possibleDirections = new int[][] {
+				// bishop
+				{-1, -1},
+				{-1, 1},
+				{1, -1},
+				{1, 1},
+
+				// rook
+				{-1, 0},
+				{1, 0},
+				{0, -1},
+				{0, 1}
+		};
+
+		List<Move> allowedMoves = new ArrayList<>();
+		for (int[] direction: possibleDirections) {
+			int xStep = direction[0];
+			int yStep = direction[1];
+
+			int nx = xLocation + xStep;
+			int ny = yLocation + yStep;
+			while (canMove(nx, ny)) {
+				allowedMoves.add(new Move(xLocation, yLocation, nx, ny));
+				nx+=xStep;
+				ny+=yStep;
+			}
+		}
+		return allowedMoves;
 	}
 
 	/**

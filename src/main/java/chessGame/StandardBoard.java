@@ -179,7 +179,7 @@ public class StandardBoard {
 				.filter(p -> p.occupyingPiece.turnColor.equals(TurnColor.white))
 				.collect(Collectors.toList());
 
-		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> getAllowedMoves(p).stream()).collect(Collectors.toList());
+		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> p.getAllowedMoves().stream()).collect(Collectors.toList());
 		return moves;
 	}
 
@@ -206,9 +206,9 @@ public class StandardBoard {
 	}
 
 	private List<Move> getAllowedMoves(King king) {
-		return genericCheckMoves(king);
+		return king.getAllowedMoves();
 	}
-
+//
 	private List<Move> genericCheckMoves(Piece piece) {
 		List<Move> result = new ArrayList<>();
 		for (int x = 0; x <= 8; x++) {
@@ -222,23 +222,23 @@ public class StandardBoard {
 	}
 
 	private List<Move> getAllowedMoves(Queen queen) {
-		return genericCheckMoves(queen);
+		return queen.getAllowedMoves();
 	}
 
 	private List<Move> getAllowedMoves(Pawn pawn) {
-		return genericCheckMoves(pawn);
+		return pawn.getAllowedMoves();
 	}
 
 	private List<Move> getAllowedMoves(Rook rook) {
-		return genericCheckMoves(rook);
+		return rook.getAllowedMoves();
 	}
 
 	private List<Move> getAllowedMoves(Knight knight) {
-		return genericCheckMoves(knight);
+		return knight.getAllowedMoves();
 	}
 
 	private List<Move> getAllowedMoves(Bishop bishop) {
-		return genericCheckMoves(bishop);
+		return bishop.getAllowedMoves();
 	}
 
 	public List<Move> listPossibleMovesBlack() {
@@ -247,8 +247,8 @@ public class StandardBoard {
 				.filter(p -> p.occupyingPiece.turnColor.equals(TurnColor.black))
 				.collect(Collectors.toList());
 
-		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> getAllowedMoves(p).stream()).collect(Collectors.toList());
-		return moves;
+		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> p.getAllowedMoves().stream()).collect(Collectors.toList());
+        return moves;
 	}
 
 	public List<Square> getBlackPieces() {

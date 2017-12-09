@@ -155,10 +155,16 @@ public class MiniMaxStrategy implements PlayingStrategy {
     private Move lastChosenMove;
     private int negaMax(Game game, int depth, float alpha, float beta) {
         if (depth == 0) {
-            return estimateBoard(game);
+            long s = System.currentTimeMillis();
+            int estimation = estimateBoard(game);
+            long e = System.currentTimeMillis();
+//            System.out.println("Pure estimation took " + (e - s) + " milliseconds");
+            return estimation;
         }
         int max = Integer.MIN_VALUE;
         List<Move> moves = null;
+        long s = System.currentTimeMillis();
+
         switch (game.gameTurn) {
             case black:
                 moves = game.gameBoard.listPossibleMovesBlack();
@@ -167,7 +173,17 @@ public class MiniMaxStrategy implements PlayingStrategy {
                 moves = game.gameBoard.listPossibleMovesWhite();
                 break;
         }
+        long e = System.currentTimeMillis();
+        if (depth ==MAX_DEPTH) {
+            System.out.println("Move generation estimation took " + (e - s) + " milliseconds");
+        }
+        s = System.currentTimeMillis();
         moves.sort((c1, c2) -> cmp(game, c1, c2));
+        e = System.currentTimeMillis();
+        if (depth == MAX_DEPTH) {
+            System.out.println("Sorting took " + (e - s) + " milliseconds");
+        }
+
         Move maxMove = null;
         for (Move move : moves)  {
             game.preexecuteMove(move);
@@ -200,7 +216,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     private int estimateBoard(Game game) {
         int isOpponentKingCheckMated = checkKingCheckMateScore(game, game.gameTurn);
-//        int isOpponentKingInCheck = checkKingCheckStatus(game, game.gameTurn);
+        int isOpponentKingInCheck = checkKingCheckStatus(game, game.gameTurn);
 
         int myPiecesScore = countPiecesScore(game, game.gameTurn);
         int opponentPieceScore = countPiecesScore(game, game.gameTurn.opposite());
@@ -211,7 +227,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
             System.out.println("Positional score for : " + game.gameTurn + (myPositionalScore));
         }
 
-        int finalScore = isOpponentKingCheckMated + /*isOpponentKingInCheck*/
+        int finalScore = isOpponentKingCheckMated + isOpponentKingInCheck
                 + 100 * (myPiecesScore - opponentPieceScore)
                 + (myPositionalScore);
         return finalScore; //opening book simulation
@@ -252,7 +268,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
         switch (possibleMoves) {
             case 0:
-                return Integer.MAX_VALUE;
+                return Integer.MAX_VALUE/2;
             case 1:
                 return 500;
             case 2:

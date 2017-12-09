@@ -2,6 +2,9 @@ package chessGame;
 
 import chessControllers.TurnColor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Subclass of a Piece specific to a Rook. This handles all movements the rook is capable
  * of making.
@@ -20,6 +23,30 @@ public class Rook extends Piece {
 	public Rook(int initX, int initY, TurnColor turnColor, StandardBoard board) {
 		super(initX, initY, turnColor, board);
 		this.nameOfPiece = "rook";
+	}
+
+	@Override
+	public List<Move> getAllowedMoves() {
+		List<Move> allowedMoves = new ArrayList<>();
+		int[][] directions= new int[][]{
+				{-1, 0},
+				{1, 0},
+				{0, -1},
+				{0, 1}
+		};
+		for (int[] direction : directions) {
+			int xStep = direction[0];
+			int yStep = direction[1];
+
+			int nx = xLocation + xStep;
+			int ny = yLocation + yStep;
+			while (canMove(nx, ny)) {
+				allowedMoves.add(new Move(xLocation, yLocation, nx,ny));
+				nx+=xStep;
+				ny+=yStep;
+			}
+		}
+		return allowedMoves;
 	}
 
 	/**
