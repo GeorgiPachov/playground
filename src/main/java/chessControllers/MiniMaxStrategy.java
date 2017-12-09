@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    private static final int MAX_DEPTH = 3;
+    private static final int MAX_DEPTH = 5;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[][][] pawnPositionMap = new short[][][] {
@@ -154,34 +154,20 @@ public class MiniMaxStrategy implements PlayingStrategy {
     };
     private Move lastChosenMove;
     private int negaMax(Game game, int depth, float alpha, float beta) {
+        long start = System.currentTimeMillis();
         if (depth == 0) {
-            long s = System.currentTimeMillis();
-            int estimation = estimateBoard(game);
-            long e = System.currentTimeMillis();
-//            System.out.println("Pure estimation took " + (e - s) + " milliseconds");
-            return estimation;
+            return estimateBoard(game);
         }
         int max = Integer.MIN_VALUE;
-        List<Move> moves = null;
-        long s = System.currentTimeMillis();
-
-        switch (game.gameTurn) {
-            case black:
-                moves = game.gameBoard.listPossibleMovesBlack();
-                break;
-            case white:
-                moves = game.gameBoard.listPossibleMovesWhite();
-                break;
-        }
+        List<Move> moves = game.gameBoard.populatePossibleMoves(game.gameTurn);
         long e = System.currentTimeMillis();
-        if (depth ==MAX_DEPTH) {
-            System.out.println("Move generation estimation took " + (e - s) + " milliseconds");
+        if (depth == MAX_DEPTH) {
+            System.out.println("Move generation: " + (e - start));
         }
-        s = System.currentTimeMillis();
         moves.sort((c1, c2) -> cmp(game, c1, c2));
         e = System.currentTimeMillis();
         if (depth == MAX_DEPTH) {
-            System.out.println("Sorting took " + (e - s) + " milliseconds");
+            System.out.println("Sorting:" + (e - start));
         }
 
         Move maxMove = null;
@@ -197,6 +183,10 @@ public class MiniMaxStrategy implements PlayingStrategy {
             if (alpha > beta) {
                 return score;
             }
+        }
+        e = System.currentTimeMillis();
+        if (depth == MAX_DEPTH) {
+            System.out.println("Negamax: " + (e - start));
         }
         this.lastChosenMove = maxMove;
         return max;
@@ -299,53 +289,14 @@ public class MiniMaxStrategy implements PlayingStrategy {
         return chosenMove;
     }
 
-//    private int greedyEvaluation(Move move1, Move move2, Game game) {
-//        double score1 = estimateBoardScore(move1, game);
-//        double score2 = estimateBoardScore(move2, game);
-//        return (int)  (-1 * Math.signum(score1 - score2));
-//    }
-
-//    private double estimateBoardScore(Move move, Game game) {
-//        TurnColor otherColor = game.gameTurn.opposite();
-//        long oppositePiecesScoreNow = countPiecesScore(game, otherColor);
-//        long teritorialCoverageNow = getTeritorialCoverage(game);
-//        long positionalBiasNow = getPositionalBias(game);
-//        double forwardScoreNow = getForwardScore(game);
-//
-//        game.executeMove(move);
-//
-//        long oppositePiecesScoreAfter = countPiecesScore(game, otherColor);
-//        long teritorialCoverageAfter = getTeritorialCoverage(game);
-//        long positionalBiasAfter = getPositionalBias(game);
-//        double forwardScoreAfter = getForwardScore(game);
-//
-//
-//        game.undoMove();
-//
-//        long finalScore = 0;
-//        if (oppositePiecesScoreAfter < oppositePiecesScoreNow) {
-//            finalScore += (int) 1000 * (oppositePiecesScoreNow - oppositePiecesScoreAfter);
-//        } else if (oppositePiecesScoreAfter == oppositePiecesScoreNow) {
-//            finalScore += 25* (positionalBiasNow - positionalBiasAfter);
-//            if (teritorialCoverageAfter > teritorialCoverageNow) {
-//                finalScore += (int) 100 * (teritorialCoverageAfter - teritorialCoverageNow);
-//            } else {
-//                finalScore+= 100 *(forwardScoreAfter - forwardScoreNow);
-//            }
-//        }
-//        return finalScore;
-//    }
-
     private int getPositionalBias(Game game, TurnColor ofColor) {
         int positionalBias = 0;
         int colorPointer = -1;
-        Collection<Square> squares = null;
+        Collection<Square> squares = game.gameBoard.getPieces(ofColor);;
         if (ofColor.equals(TurnColor.white)) {
             colorPointer = WHITE;
-            squares = game.gameBoard.getWhitePieces();
         } else if (ofColor.equals(TurnColor.black)) {
             colorPointer = BLACK;
-            squares = game.gameBoard.getBlackPieces();
         }
         for (Square square : squares){
             //FIXME rewrite pieces as pointers!!!
@@ -373,10 +324,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private Integer countPiecesScore(Game game, TurnColor ofColor) {
-        return Arrays.stream(game.gameBoard.squaresList).flatMap(a -> Arrays.stream(a))
-                .filter(square -> square.isOccupied)
-                .filter(square -> square.occupyingPiece.turnColor == ofColor)
-                .map(square -> pieceScore(square.occupyingPiece)).reduce(Integer::sum).get();
+        return game.gameBoard.getPieces(ofColor).stream()
+                .map(square -> pieceScore(square.occupyingPiece))
+                .reduce(Integer::sum).get();
     }
 
     private static int pieceScore(Piece occupyingPiece) {
@@ -395,44 +345,4 @@ public class MiniMaxStrategy implements PlayingStrategy {
         }
         return 0;
     }
-
-
-
-
-
-    private int getForwardScore(Game game) {
-        switch (game.gameTurn) {
-            case white:
-                return game.gameBoard.getWhitePieces().stream().mapToInt(p -> p.occupyingPiece.yLocation).reduce(Integer::sum).getAsInt();
-            case black:
-                return game.gameBoard.getBlackPieces().stream().mapToInt(p -> 8 - p.occupyingPiece.yLocation).reduce(Integer::sum).getAsInt();
-        }
-        return 0;
-    }
-
-
-    private long getTeritorialCoverage(Game game) {
-        int threatened = 0;
-        for (int y = 0; y < game.gameBoard.squaresList.length; y++) {
-            for (int x = 0; x < game.gameBoard.squaresList[0].length; x++) {
-                if (isThreatened(x, y, game)) {
-                    threatened++;
-                }
-            }
-        }
-        return threatened;
-    }
-
-    private boolean isThreatened(int x, int y, Game game) {
-        switch (game.gameTurn) {
-            case white:
-                return game.gameBoard.listPossibleMovesWhite().stream().anyMatch(move -> move.newX == x && move.newY == y);
-            case black:
-                return game.gameBoard.listPossibleMovesBlack().stream().anyMatch(move -> move.newX == x && move.newY == y);
-
-        }
-        return false;
-    }
-
-
 }

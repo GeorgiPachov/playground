@@ -17,6 +17,9 @@ public class StandardBoard {
 	public King whiteKingTracker;
 	public King blackKingTracker;
 
+	private List<Square> blackPieces;
+	private List<Square> whitePieces;
+
 	public StandardBoard(int xSquares, int ySquares) {
 		this.numXSquares = xSquares;
 		this.numYSquares = ySquares;
@@ -25,9 +28,13 @@ public class StandardBoard {
 		populateBoardWithSquares();
 		this.whiteKingTracker = null;
 		this.blackKingTracker = null;
+
+       initCaches();
 	}
 
-	/**
+
+
+    /**
 	 * Method to populate our board with Squares.
 	 * General pattern of white and black squares on the board.
 	 */
@@ -53,7 +60,7 @@ public class StandardBoard {
 	/**
 	 * Method to populate our chess board with standard pieces.
 	 */
-	public void populateBoardWithPieces(boolean special) {
+	public void populateBoardWithPieces() {
 		setupKnights();
 		setupBishops();
 		setupPawns();
@@ -173,42 +180,12 @@ public class StandardBoard {
 			return false;
 	}
 
-	public List<Move> listPossibleMovesWhite() {
-		List<Square> squares = Arrays.stream(squaresList).flatMap(s -> Arrays.stream(s))
-				.filter(s1 -> s1.isOccupied)
-				.filter(p -> p.occupyingPiece.turnColor.equals(TurnColor.white))
-				.collect(Collectors.toList());
-
+	public List<Move> populatePossibleMoves(TurnColor color) {
+	    List<Square> squares = getPieces(color);
 		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> p.getAllowedMoves().stream()).collect(Collectors.toList());
 		return moves;
 	}
 
-	private List<Move> getAllowedMoves(Piece p) {
-		if (p instanceof King) {
-			return getAllowedMoves((King) p);
-		} else if (p instanceof Queen) {
-			return getAllowedMoves((Queen) p);
-
-		} else if (p instanceof Pawn) {
-			return getAllowedMoves((Pawn) p);
-
-		} else if (p instanceof Knight) {
-			return getAllowedMoves((Knight) p);
-
-		} else if (p instanceof Bishop) {
-			return getAllowedMoves((Bishop) p);
-
-		} else if (p instanceof Rook) {
-			return getAllowedMoves((Rook) p);
-		}
-
-		return new ArrayList<>();
-	}
-
-	private List<Move> getAllowedMoves(King king) {
-		return king.getAllowedMoves();
-	}
-//
 	private List<Move> genericCheckMoves(Piece piece) {
 		List<Move> result = new ArrayList<>();
 		for (int x = 0; x <= 8; x++) {
@@ -221,56 +198,30 @@ public class StandardBoard {
 		return result;
 	}
 
-	private List<Move> getAllowedMoves(Queen queen) {
-		return queen.getAllowedMoves();
-	}
-
-	private List<Move> getAllowedMoves(Pawn pawn) {
-		return pawn.getAllowedMoves();
-	}
-
-	private List<Move> getAllowedMoves(Rook rook) {
-		return rook.getAllowedMoves();
-	}
-
-	private List<Move> getAllowedMoves(Knight knight) {
-		return knight.getAllowedMoves();
-	}
-
-	private List<Move> getAllowedMoves(Bishop bishop) {
-		return bishop.getAllowedMoves();
-	}
-
-	public List<Move> listPossibleMovesBlack() {
-		List<Square> squares = Arrays.stream(squaresList).flatMap(s -> Arrays.stream(s))
-				.filter(s1 -> s1.isOccupied)
-				.filter(p -> p.occupyingPiece.turnColor.equals(TurnColor.black))
-				.collect(Collectors.toList());
-
-		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> p.getAllowedMoves().stream()).collect(Collectors.toList());
-        return moves;
-	}
-
-	public List<Square> getBlackPieces() {
-		return Arrays.stream(squaresList).flatMap(a -> Arrays.stream(a))
-				.filter(s -> s.isOccupied)
-				.filter(s -> s.occupyingPiece.turnColor == TurnColor.black).collect(Collectors.toList());
-	}
-
-	public List<Square> getWhitePieces() {
-		return Arrays.stream(squaresList).flatMap(a -> Arrays.stream(a))
-				.filter(s -> s.isOccupied)
-				.filter(s -> s.occupyingPiece.turnColor == TurnColor.white).collect(Collectors.toList());
-
-	}
-
 	public List<Square> getPieces(TurnColor gameTurn) {
-		switch (gameTurn) {
-			case white:
-				return getWhitePieces();
-			case black:
-				return getBlackPieces();
-		}
-		return null;
+	    switch (gameTurn) {
+            case white:
+                return whitePieces;
+            case black:
+                return blackPieces;
+        }
+        return null;
 	}
+
+    public void initCaches() {
+        whitePieces = findWhitePieces();
+        blackPieces = findBlackPieces();
+    }
+
+    private List<Square> findBlackPieces() {
+        return Arrays.stream(squaresList).flatMap(Arrays::stream)
+                .filter(s -> s.isOccupied)
+                .filter(s -> s.occupyingPiece.turnColor == TurnColor.black).collect(Collectors.toList());
+    }
+
+    private List<Square> findWhitePieces() {
+        return Arrays.stream(squaresList).flatMap(Arrays::stream)
+                .filter(s -> s.isOccupied)
+                .filter(s -> s.occupyingPiece.turnColor == TurnColor.white).collect(Collectors.toList());
+    }
 }

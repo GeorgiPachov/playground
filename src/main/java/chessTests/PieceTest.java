@@ -58,7 +58,7 @@ public class PieceTest extends TestCase {
 	 */
 	public void testCheckmate(){
 		StandardBoard board = new StandardBoard(8,8);
-		board.populateBoardWithPieces(false);
+		board.populateBoardWithPieces();
 		Piece wpawn1 = board.squaresList[5][1].occupyingPiece;
 		wpawn1.executeCaptureOrMove(5, 2);
 		assertTrue(wpawn1.xLocation == 5 && wpawn1.yLocation == 2);

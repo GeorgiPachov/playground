@@ -1,0 +1,1 @@
+java -jar chess.jar -Xms2g -Xmx4g $@

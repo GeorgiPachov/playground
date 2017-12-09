@@ -2,9 +2,6 @@ package chessControllers;
 
 import java.util.Stack;
 
-import javax.swing.JPanel;
-
-
 import chessGame.*;
 
 /**
@@ -19,16 +16,15 @@ public class Game {
 	StandardBoard gameBoard;
 	boolean gameOver;
 	int squareSize;
-	public JPanel gamePanel;
 	Stack<MoveCommand> commandStack;
 	
 	public void gameInit(boolean gameType) {
 		gameBoard = new StandardBoard(8,8);
-		gameBoard.populateBoardWithPieces(gameType);
+		gameBoard.populateBoardWithPieces();
 		gameTurn = TurnColor.white;
 		gameOver = false;
 		squareSize = 80;
-		commandStack = new Stack();
+		commandStack = new Stack<>();
 	}
 
 	/**
@@ -41,7 +37,7 @@ public class Game {
 		return newGame;
 	}
 
-	public void preexecuteMove(Move move) {
+	void preexecuteMove(Move move) {
 		int xDestination = move.getNewX();
 		int yDestination = move.getNewY();
 		Piece movingPiece = this.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
@@ -56,7 +52,8 @@ public class Game {
 			MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
 			commandStack.add(newCommand);
 			newCommand.execute();
-		}
+            gameBoard.initCaches();
+        }
 		gameTurn = gameTurn.opposite();
 
 	}
@@ -76,14 +73,16 @@ public class Game {
             MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
             commandStack.add(newCommand);
             newCommand.execute();
+            gameBoard.initCaches();
+
             boolean gameOver = false;
             if(movingPiece.turnColor.equals(TurnColor.white)){
                 gameTurn = gameTurn.opposite();
                 gameOver = checkKingStatus(gameBoard.blackKingTracker);
              }
              else{
-                 gameTurn = gameTurn.opposite();
-                 gameOver = checkKingStatus(gameBoard.whiteKingTracker);
+                gameTurn = gameTurn.opposite();
+                gameOver = checkKingStatus(gameBoard.whiteKingTracker);
              }
              if (gameOver) {
             	stopGame();
@@ -98,7 +97,6 @@ public class Game {
 	private void stopGame() {
 		System.out.println("GAME ENDED!!!!" + gameTurn + " WON");
 		this.gameOver = true;
-		gamePanel.repaint();
 	}
 
 	public void log(String s) {

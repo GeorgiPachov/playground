@@ -1,0 +1,27 @@
+Manifest-Version: 1.0
+Bundle-Description: Simple, Intelligent, Object Mapping
+Bundle-License: http://apache.org/licenses/LICENSE-2.0
+Bundle-SymbolicName: modelmapper
+Archiver-Version: Plexus Archiver
+Built-By: jonathan
+Bnd-LastModified: 1475946558193
+Bundle-ManifestVersion: 2
+Import-Package: javax.xml.datatype,org.modelmapper.builder,org.modelma
+ pper.config,org.objectweb.asm;version="[5.1,6)",org.objectweb.asm.tre
+ e;version="[5.1,6)",org.objenesis;version="[2.1,3)"
+Tool: Bnd-1.50.0
+Export-Package: org.modelmapper.internal.cglib.proxy;version=3.2.4,   
+             org.modelmapper.internal.cglib.core;version=3.2.4,       
+         org.modelmapper.internal.cglib.transform;version=3.2.4,      
+          org.modelmapper;uses:="org.modelmapper.spi,org.modelmapper.c
+ onfig,org.modelmapper.builder";version="0.7.7",org.modelmapper.builde
+ r;uses:="org.modelmapper";version="0.7.7",org.modelmapper.config;uses
+ :="org.modelmapper,org.modelmapper.spi";version="0.7.7",org.modelmapp
+ er.convention;uses:="org.modelmapper.spi";version="0.7.7",org.modelma
+ pper.spi;uses:="org.modelmapper";version="0.7.7"
+Bundle-Name: ModelMapper
+Bundle-Version: 0.7.7
+Ignore-Package: net.sf.cglib.proxy,net.sf.cglib.core
+Created-By: Apache Maven Bundle Plugin
+Build-Jdk: 1.8.0_60
+
