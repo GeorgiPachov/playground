@@ -27,7 +27,7 @@ public class Knight extends Piece {
 		this.nameOfPiece = "knight";
 	}
 
-	public List<Move> getAllowedMoves() {
+	public void addAllowedMoves(List<Integer> moves) {
 		int[][] possibleMoves = new int[][] {
 				{-2, 1},
 				{-2, -1},
@@ -38,9 +38,14 @@ public class Knight extends Piece {
 				{2, 1},
 				{2, -1}
 		};
-		return Arrays.stream(possibleMoves)
+		Arrays.stream(possibleMoves)
 				.filter(move -> canMove(move[0], move[1]))
-				.map(m -> new Move(xLocation, yLocation, m[0], m[1])).collect(Collectors.toList());
+				.forEach(m -> {
+					moves.add(xLocation);
+					moves.add(yLocation);
+					moves.add(m[0]);
+					moves.add(m[1]);
+				});
 	}
 
 	/**

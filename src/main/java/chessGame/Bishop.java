@@ -26,21 +26,22 @@ public class Bishop extends Piece {
 	}
 
 	@Override
-	public List<Move> getAllowedMoves() {
-		List<Move> allowedMoves = new ArrayList<>();
+	public void addAllowedMoves(List<Integer> moves) {
 		int[] steps = new int[] {-1, 1};
 		for (int xStep: steps) {
 			for (int yStep: steps) {
 				int nx = xLocation + xStep;
 				int ny = yLocation + yStep;
 				while (canMove(nx, ny)) {
-					allowedMoves.add(new Move(xLocation, yLocation, nx,ny));
+					moves.add(xLocation);
+					moves.add(yLocation);
+					moves.add(nx);
+					moves.add(ny);
 					nx+=xStep;
 					ny+=yStep;
 				}
 			}
 		}
-		return allowedMoves;
 	}
 
 	/**

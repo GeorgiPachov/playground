@@ -332,7 +332,7 @@ public abstract class Piece {
 		return true;
 	}
 
-	public abstract List<Move> getAllowedMoves();
+	public abstract void addAllowedMoves(List<Integer> moves);
 
 }
 

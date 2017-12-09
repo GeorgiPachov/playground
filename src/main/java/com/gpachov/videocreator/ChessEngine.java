@@ -17,7 +17,7 @@ public class ChessEngine extends AbstractEngine {
     private Game game;
     int commandNumber = 0;
     private FileOutputStream uciCommandLog = new FileOutputStream("/tmp/uci.log");
-    private Move lastMove;
+    private int[] lastMove;
     private PlayingStrategy playingStrategy = new MiniMaxStrategy();
 
     public ChessEngine() throws FileNotFoundException {
@@ -90,7 +90,7 @@ public class ChessEngine extends AbstractEngine {
         int toXIndex = toLetter - 97;
         int toYIndex = toRank - 49;
 
-        this.lastMove = new Move(fromXIndex, fromYIndex, toXIndex, toYIndex);
+        this.lastMove = new int[]{fromXIndex, fromYIndex, toXIndex, toYIndex};
         System.out.println("<<<" + lastMove.toString());
 
         game.executeMove(lastMove);
@@ -100,13 +100,13 @@ public class ChessEngine extends AbstractEngine {
     @Override
     public void receive(EngineStartCalculatingCommand command) {
         log(command);
-        Move blackMove = playingStrategy.playBlack(game);
+        int[] blackMove = playingStrategy.playBlack(game);
         GenericMove bestMove = toGenericMove(blackMove);
         ProtocolBestMoveCommand bestMoveCommand = new ProtocolBestMoveCommand(bestMove, bestMove);
         super.getProtocol().send(bestMoveCommand);
     }
 
-    private GenericMove toGenericMove(Move blackMove) {
+    private GenericMove toGenericMove(int[] blackMove) {
 //X = Letter
         // Y = Rank
 //        int fromXIndex = fromLetter - 97;
@@ -114,11 +114,11 @@ public class ChessEngine extends AbstractEngine {
 //
 //        int toXIndex = toLetter - 97;
 //        int toYIndex = toRank - 49;
-        int fromX = blackMove.oldX;
-        int fromY = blackMove.oldY;
+        int fromX = blackMove[0];
+        int fromY = blackMove[1];
 
-        int toX = blackMove.newX;
-        int toY = blackMove.newY;
+        int toX = blackMove[2];
+        int toY = blackMove[3];
 
         int fromXLetter = 97 + fromX;
         int fromYRank = 49 + fromY;

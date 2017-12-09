@@ -26,8 +26,7 @@ public class Pawn extends Piece {
 	}
 
 	@Override
-	public List<Move> getAllowedMoves() {
-		List<Move> allowedMoves = new ArrayList<>();
+	public void addAllowedMoves(List<Integer> moves) {
 		int[][] possibleMovesXY = null;
 		if (turnColor == TurnColor.white) {
 			possibleMovesXY = new int[][] {
@@ -46,10 +45,12 @@ public class Pawn extends Piece {
 		}
 		for (int[] possibleMove : possibleMovesXY) {
 			if (canMove(possibleMove[0],possibleMove[1])) {
-				allowedMoves.add(new Move(xLocation, yLocation, possibleMove[0], possibleMove[1]));
+				moves.add(xLocation);
+				moves.add(yLocation);
+				moves.add(possibleMove[0]);
+				moves.add(possibleMove[1]);
 			}
 		}
-		return allowedMoves;
 	}
 
 	/**

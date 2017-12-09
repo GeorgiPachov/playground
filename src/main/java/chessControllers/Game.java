@@ -37,10 +37,10 @@ public class Game {
 		return newGame;
 	}
 
-	void preexecuteMove(Move move) {
-		int xDestination = move.getNewX();
-		int yDestination = move.getNewY();
-		Piece movingPiece = this.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
+	void preexecuteMove(int[] move) {
+		int xDestination = move[2];
+		int yDestination = move[3];
+		Piece movingPiece = this.gameBoard.squaresList[move[0]][move[1]].occupyingPiece;
 
 		if (DEBUG) {
 			log("Preexecuting move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation + "] to [" + xDestination + ", " + yDestination + "]");
@@ -58,10 +58,10 @@ public class Game {
 
 	}
 	
-    public void executeMove(Move move) {
-		int xDestination = move.getNewX();
-		int yDestination = move.getNewY();
-		Piece movingPiece = this.gameBoard.squaresList[move.oldX][move.oldY].occupyingPiece;
+    public void executeMove(int[]  move) {
+        int xDestination = move[2];
+        int yDestination = move[3];
+		Piece movingPiece = this.gameBoard.squaresList[move[0]][move[1]].occupyingPiece;
 
 		if (DEBUG) {
 			log("Executing move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation + "] to [" + xDestination + ", " + yDestination + "]");

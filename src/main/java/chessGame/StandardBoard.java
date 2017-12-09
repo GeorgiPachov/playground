@@ -5,7 +5,6 @@ import chessControllers.TurnColor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class StandardBoard {
@@ -180,10 +179,9 @@ public class StandardBoard {
 			return false;
 	}
 
-	public List<Move> populatePossibleMoves(TurnColor color) {
+	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
 	    List<Square> squares = getPieces(color);
-		List<Move> moves = squares.stream().map(s -> s.occupyingPiece).flatMap(p -> p.getAllowedMoves().stream()).collect(Collectors.toList());
-		return moves;
+		squares.stream().map(s -> s.occupyingPiece).forEach(p -> p.addAllowedMoves(moves));
 	}
 
 	private List<Move> genericCheckMoves(Piece piece) {

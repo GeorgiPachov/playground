@@ -26,7 +26,7 @@ public class Queen extends Piece {
 	}
 
 	@Override
-	public List<Move> getAllowedMoves() {
+	public void addAllowedMoves(List<Integer> moves) {
 		int[][] possibleDirections = new int[][] {
 				// bishop
 				{-1, -1},
@@ -41,7 +41,6 @@ public class Queen extends Piece {
 				{0, 1}
 		};
 
-		List<Move> allowedMoves = new ArrayList<>();
 		for (int[] direction: possibleDirections) {
 			int xStep = direction[0];
 			int yStep = direction[1];
@@ -49,12 +48,14 @@ public class Queen extends Piece {
 			int nx = xLocation + xStep;
 			int ny = yLocation + yStep;
 			while (canMove(nx, ny)) {
-				allowedMoves.add(new Move(xLocation, yLocation, nx, ny));
+				moves.add(xLocation);
+				moves.add(yLocation);
+				moves.add(nx);
+				moves.add(ny);
 				nx+=xStep;
 				ny+=yStep;
 			}
 		}
-		return allowedMoves;
 	}
 
 	/**

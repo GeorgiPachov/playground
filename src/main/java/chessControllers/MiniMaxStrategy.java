@@ -152,26 +152,39 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
             }
     };
-    private Move lastChosenMove;
+    private int[] lastChosenMove;
     private int negaMax(Game game, int depth, float alpha, float beta) {
         long start = System.currentTimeMillis();
         if (depth == 0) {
             return estimateBoard(game);
         }
         int max = Integer.MIN_VALUE;
-        List<Move> moves = game.gameBoard.populatePossibleMoves(game.gameTurn);
+        List<Integer> moves = new ArrayList<>();
+        game.gameBoard.populatePossibleMoves(game.gameTurn, moves);
         long e = System.currentTimeMillis();
         if (depth == MAX_DEPTH) {
             System.out.println("Move generation: " + (e - start));
         }
-        moves.sort((c1, c2) -> cmp(game, c1, c2));
+
+        List<int[]> packedMoves = new ArrayList<>();
+        int[] c = new int[4];
+        int counter = 0;
+        for (int number: moves) {
+            c[counter++] = number;
+            if (counter == 4) {
+                packedMoves.add(c);
+                c = new int[4];
+                counter = 0;
+            }
+        }
+        packedMoves.sort((c1, c2) -> cmp(game, c1, c2));
         e = System.currentTimeMillis();
         if (depth == MAX_DEPTH) {
             System.out.println("Sorting:" + (e - start));
         }
 
-        Move maxMove = null;
-        for (Move move : moves)  {
+        int[] maxMove = null;
+        for (int[] move : packedMoves)  {
             game.preexecuteMove(move);
             int score = -negaMax(game,depth - 1, -beta, -alpha);
             game.undoMove();
@@ -192,7 +205,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
         return max;
     }
 
-    private int cmp(Game game, Move c1, Move c2) {
+    private int cmp(Game game, int[] c1, int[] c2) {
         game.preexecuteMove(c1);
         int estimate1 = estimateBoard(game);
         game.undoMove();
@@ -271,10 +284,10 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
 
     @Override
-    public Move playBlack(Game game) {
+    public int[] playBlack(Game game) {
         long start = System.currentTimeMillis();
         negaMax(game, MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE);
-        Move chosenMove = lastChosenMove;
+        int[] chosenMove = lastChosenMove;
         game.executeMove(chosenMove);
         long end = System.currentTimeMillis();
         System.out.println("Thinking took " + (end-start) + "milliseconds");
@@ -282,9 +295,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     @Override
-    public Move playWhite(Game game) {
+    public int[] playWhite(Game game) {
         negaMax(game, MAX_DEPTH, Integer.MIN_VALUE, Integer.MAX_VALUE);
-        Move chosenMove = lastChosenMove;
+        int[] chosenMove = lastChosenMove;
         game.executeMove(chosenMove);
         return chosenMove;
     }

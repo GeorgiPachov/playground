@@ -26,8 +26,7 @@ public class Rook extends Piece {
 	}
 
 	@Override
-	public List<Move> getAllowedMoves() {
-		List<Move> allowedMoves = new ArrayList<>();
+	public void addAllowedMoves(List<Integer> moves) {
 		int[][] directions= new int[][]{
 				{-1, 0},
 				{1, 0},
@@ -41,12 +40,14 @@ public class Rook extends Piece {
 			int nx = xLocation + xStep;
 			int ny = yLocation + yStep;
 			while (canMove(nx, ny)) {
-				allowedMoves.add(new Move(xLocation, yLocation, nx,ny));
+				moves.add(xLocation);
+				moves.add(yLocation);
+				moves.add(nx);
+				moves.add(ny);
 				nx+=xStep;
 				ny+=yStep;
 			}
 		}
-		return allowedMoves;
 	}
 
 	/**

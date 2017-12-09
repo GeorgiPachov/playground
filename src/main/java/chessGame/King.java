@@ -64,18 +64,19 @@ public class King extends Piece {
 			return false;
 	}
 
-	public List<Move> getAllowedMoves() {
-		List<Move> moves = new ArrayList<>();
+	public void addAllowedMoves(List<Integer> moves) {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				if (i == 0 && j == 0) {
 					continue;
 				}
 				if (canMove(xLocation + i, yLocation + j)){
-					moves.add(new Move(xLocation,yLocation, xLocation + i, yLocation + j));
+					moves.add(xLocation);
+					moves.add(yLocation);
+					moves.add(xLocation+i);
+					moves.add(yLocation+j);
 				}
 			}
 		}
-		return moves;
 	}
 }
