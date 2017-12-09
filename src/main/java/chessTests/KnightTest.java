@@ -17,7 +17,7 @@ public class KnightTest extends TestCase {
 	 * Test valid vertical Knight move
 	 */
 	public void testValidVerticalKnightMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
 		assertTrue(newKnight.canMove(2, 2));
 	}
@@ -26,7 +26,7 @@ public class KnightTest extends TestCase {
 	 * Test valid horizontal Knight move
 	 */
 	public void testValidHorizontalKnightMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
 		assertTrue(newKnight.canMove(3, 1));
 	}
@@ -35,7 +35,7 @@ public class KnightTest extends TestCase {
 	 * Test invalid Knight move.	
 	 */
 	public void testInvalidKnightMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		Knight newKnight = new Knight(6, 2, TurnColor.white, board);
 		assertFalse(newKnight.canMove(5, 1));
 	}
@@ -44,7 +44,7 @@ public class KnightTest extends TestCase {
 	 * Test valid Hopping over blocking piece move.
 	 */
 	public void testBlockingPieceMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
 		Pawn blockingPawn = new Pawn(1, 1, TurnColor.white, board);
 		assertTrue(newKnight.canMove(2, 2));
@@ -54,7 +54,7 @@ public class KnightTest extends TestCase {
 	 * Test invalid ally at destination
 	 */
 	public void testInvalidAllyBlockingPieceMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		Knight newKnight = new Knight(1, 0, TurnColor.white, board);
 		Pawn blockingPawn = new Pawn(2, 2, TurnColor.white, board);
 		assertFalse(newKnight.canMove(2, 2));

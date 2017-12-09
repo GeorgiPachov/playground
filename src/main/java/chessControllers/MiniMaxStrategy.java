@@ -254,7 +254,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     private int checkKingCheckMateScore(Game game, TurnColor gameTurn) {
         List<Piece> pieces = game.gameBoard.getPieces(gameTurn);
-        Piece kingSquare = pieces.stream().filter(s -> s instanceof King).collect(Collectors.toList()).get(0);
+        Piece kingSquare = game.gameBoard.getKing(gameTurn);
         int kx = kingSquare.xLocation;
         int ky = kingSquare.yLocation;
         short possibleMoves = 0;

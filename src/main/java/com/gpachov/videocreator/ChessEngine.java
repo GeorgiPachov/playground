@@ -68,7 +68,7 @@ public class ChessEngine extends AbstractEngine {
     @Override
     public void receive(EngineNewGameCommand command) {
         log(command);
-        this.game = Game.startNewGame();
+        this.game = new Game();
     }
 
     @Override

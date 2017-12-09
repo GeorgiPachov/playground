@@ -17,7 +17,7 @@ public class KingTest extends TestCase {
 	 * Test valid horizontal move.
 	 */
 	public void testValidHorizontalKingMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		King newKing = new King(4, 0, TurnColor.white, board);
 		assertTrue(newKing.canMove(5, 0));
 	}
@@ -26,7 +26,7 @@ public class KingTest extends TestCase {
 	 * Test valid vertical move.
 	 */
 	public void testValidVerticalKingMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		King newKing = new King(4, 0, TurnColor.white, board);
 		assertTrue(newKing.canMove(4, 1));
 	}
@@ -35,7 +35,7 @@ public class KingTest extends TestCase {
 	 * Test valid Diagonal move
 	 */
 	public void testValidDiagonalKingMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		King newKing = new King(4, 1, TurnColor.white, board);
 		assertTrue(newKing.canMove(3, 2));
 	}
@@ -44,7 +44,7 @@ public class KingTest extends TestCase {
 	 * Test invalid King move.
 	 */
 	public void testInvalidKingMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		King newKing = new King(3, 7, TurnColor.black, board);
 		assertFalse(newKing.canMove(3, 5));
 	}
@@ -53,7 +53,7 @@ public class KingTest extends TestCase {
 	 * Test ally pice putting king in check
 	 */
 	public void testInvalidAllyPieceMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		King newKing = new King(3, 7, TurnColor.black, board);
 		Pawn allyPawn = new Pawn(2, 6, TurnColor.black, board);
 		assertFalse(newKing.canMove(2, 6));
@@ -63,7 +63,7 @@ public class KingTest extends TestCase {
 	 * Test king capturing enemy piece.
 	 */
 	public void testValidEnemyPieceMove(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		King newKing = new King(3, 7, TurnColor.black, board);
 		Pawn enemyPawn = new Pawn(2, 6, TurnColor.white, board);
 		assertTrue(newKing.canMove(2, 6));
@@ -73,7 +73,7 @@ public class KingTest extends TestCase {
 	 * Test King putting itself in check
 	 */
 	public void testInvalidMoveToCheckLocation(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		King newKing = new King(3, 7, TurnColor.black, board);
 		board.blackKingTracker = newKing;
 		Pawn enemyPawn = new Pawn(5, 5, TurnColor.white, board);
@@ -84,7 +84,7 @@ public class KingTest extends TestCase {
 	 * Test if King displays checked status
 	 */
 	public void testKingInCheck(){
-		StandardBoard board = new StandardBoard(8,8);
+		StandardBoard board = new StandardBoard();
 		King newKing = new King(3, 7, TurnColor.black, board);
 		Pawn enemyPawn = new Pawn(4, 6, TurnColor.white, board);
 		assertTrue(newKing.isKingInCheck(newKing));

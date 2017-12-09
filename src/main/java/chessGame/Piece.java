@@ -16,37 +16,14 @@ import javax.imageio.ImageIO;
  * @author Pratik Naik
  */
 public abstract class Piece {
-	
-	/**
-	 * Global variables that a piece needs to store.
-	 */
-	// Piece specific name will be stored here
 	String nameOfPiece;
-	// Black or White piece
 	public TurnColor turnColor;
-	// Reference to the board this piece is on to indirectly access squaresList
 	StandardBoard currentBoard;
-	// xLocation of piece on board.
 	public int xLocation;
-	// yLocation of piece on board.
 	public int yLocation;
 	
-	/**
-	 * Abstract method implemented by each subclass piece for their unique movement across the board.
-	 * Each piece defined it's own move and can be called to check if it's a valid move.
-	 * @param newX
-	 * @param newY
-	 * @return boolean true if piece has a valid special move
-	 */
 	abstract boolean isValidSpecialMove(int newX, int newY);
 
-	/**
-	 * Constructor to initialize the common parameters of a piece.
-	 * @param initX
-	 * @param initY
-	 * @param turnColor
-	 * @param board
-	 */
 	public Piece(int initX, int initY, TurnColor turnColor, StandardBoard board) {
 		this.turnColor = turnColor;
 		this.currentBoard = board;
@@ -54,17 +31,6 @@ public abstract class Piece {
 		this.yLocation = initY;
 	}
 
-	/**
-	 * IMPORTANT method which determines whether a piece can be moved on the board.
-	 * This method checks :
-	 * - Is piece within board boundaries
-	 * - Is piece following it's specific movement pattern
-	 * - Is destination location unoccupied or filled by enemy piece for valid move/capture
-	 * - Will moving this piece place it's king in danger (check) 
-	 * @param newX
-	 * @param newY
-	 * @return boolean if piece can move
-	 */
 	public boolean canMove(int newX, int newY){
 		if(!currentBoard.inBoardBounds(newX, newY))
 			return false;
@@ -77,12 +43,6 @@ public abstract class Piece {
 		return true;
 	}
 	
-	/**
-	 * Helper method to check if destination location is unoccupied or has an enemy piece.
-	 * @param newX
-	 * @param newY
-	 * @return boolean true if enemy is at destination
-	 */
 	private boolean isEnemyPieceAtDestination(int newX, int newY){
 		Piece piece = currentBoard.pieces[newX][newY];
 		if(piece != null){
@@ -91,31 +51,17 @@ public abstract class Piece {
 		return true;
 	}
 	
-	/**
-	 * Method which executes a capture or move.
-	 * Capture works similar to move if enemy piece is at destination.
-	 * @param newX
-	 * @param newY
-	 */
 	public void executeCaptureOrMove(int newX, int newY){
 		movePiece(this, newX, newY);
 	}
 	
-	/**
-	 * IMPORTANT method which determines if the king is in a check state.
-	 * Takes in the king(white or black) that we want to check and it's location.
-	 * @param kingXLocation
-	 * @param kingYLocation
-	 * @param kingToCheck
-	 * @return boolean true if given King is in check state
-	 */
 	public boolean isKingInCheck(King kingToCheck) {
 		int kingXLocation = kingToCheck.xLocation;
 		int kingYLocation = kingToCheck.yLocation;
 		TurnColor turnColorToCheck = kingToCheck.turnColor;
 		// Iterates through the squares on the board and checks if enemy pieces can attack king.
-		for(int i = 0; i < currentBoard.numXSquares; i++){
-			for(int j = 0; j < currentBoard.numYSquares; j++){
+		for(int i = 0; i < currentBoard.pieces.length; i++){
+			for(int j = 0; j < currentBoard.pieces[0].length; j++){
 				Piece piece = currentBoard.pieces[i][j];
 				if(piece != null){
 					if(isEnemyPiece(turnColorToCheck, piece)){
@@ -129,12 +75,6 @@ public abstract class Piece {
 		
 	}
 	
-	/**
-	 * Helper method which determines if moving a piece puts it's king in danger
-	 * @param newPieceX
-	 * @param newPieceY
-	 * @return boolean true if moving current piece puts king in danger.
-	 */
 	private boolean isKingInDanger(int newPieceX, int newPieceY) {
 		int oldPieceX = this.xLocation;
 		int oldPieceY = this.yLocation;
@@ -269,8 +209,8 @@ public abstract class Piece {
 		if(!isKingInCheck(kingToCheck))
 			return false;
 		TurnColor turnColorToCheck = kingToCheck.turnColor;
-		for(int i = 0; i < currentBoard.numXSquares; i++){
-			for(int j = 0; j < currentBoard.numYSquares; j++){
+		for(int i = 0; i < currentBoard.pieces.length; i++){
+			for(int j = 0; j < currentBoard.pieces[0].length; j++){
 				Piece pieceToCheck = currentBoard.pieces[i][j];
 				if(pieceToCheck != null){
 					if(!isEnemyPiece(turnColorToCheck, pieceToCheck)){
@@ -292,8 +232,8 @@ public abstract class Piece {
 	private boolean checkmateHelper(Piece allyPiece, King kingToCheck) {
 		int oldPieceX = allyPiece.xLocation;
 		int oldPieceY = allyPiece.yLocation;
-		for(int i = 0; i < currentBoard.numXSquares; i++){
-			for(int j = 0; j < currentBoard.numYSquares; j++){
+		for(int i = 0; i < currentBoard.pieces.length; i++){
+			for(int j = 0; j < currentBoard.pieces[0].length; j++){
 				Piece pieceToCheck = currentBoard.pieces[i][j];
 				if(isEnemyPieceAtDestination(i,j)){
 					if(allyPiece.isValidSpecialMove(i, j)){
