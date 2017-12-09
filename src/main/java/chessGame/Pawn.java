@@ -65,16 +65,16 @@ public class Pawn extends Piece {
 		int xDisplacement = newX - xLocation;
 		int yDisplacement = newY - yLocation;
 		if(isValidPawnMove(xDisplacement, yDisplacement)){
-			Square squareToCheck = currentBoard.squaresList[xLocation + xDisplacement][yLocation + yDisplacement];
+			Piece pieceToCheck = currentBoard.pieces[xLocation + xDisplacement][yLocation + yDisplacement];
 			// If the pawn moves forward the square should not be occupied
 			if(xDisplacement == 0){
-				if(squareToCheck.isOccupied)
+				if(pieceToCheck!=null)
 					return false;
 				return true;
 			}
 			// If the pawn moves to capture the square should be occupied
 			else{
-				if(squareToCheck.isOccupied)
+				if(pieceToCheck!= null)
 					return true;
 				return false;
 			}
@@ -153,14 +153,14 @@ public class Pawn extends Piece {
 
 	private boolean isBlocked(int yDisplacement) {
 		if (yDisplacement == 1 || yDisplacement == -1) {
-			if (currentBoard.squaresList[xLocation][yLocation + yDisplacement].isOccupied) {
+			if (currentBoard.pieces[xLocation][yLocation + yDisplacement]!=null) {
 				return true;
 			}
 		} else if (yDisplacement == 2 || yDisplacement == -2) {
-			if (currentBoard.squaresList[xLocation][yLocation + yDisplacement/2].isOccupied) {
+			if (currentBoard.pieces[xLocation][yLocation + yDisplacement/2]!=null) {
 				return true;
 			}
-			if (currentBoard.squaresList[xLocation][yLocation + yDisplacement].isOccupied) {
+			if (currentBoard.pieces[xLocation][yLocation + yDisplacement]!=null) {
 				return true;
 			}
 		}

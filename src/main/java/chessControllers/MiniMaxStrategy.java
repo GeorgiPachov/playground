@@ -237,14 +237,14 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int checkKingCheckStatus(Game game, TurnColor gameTurn) {
-        Square kingSquare = game.gameBoard.getPieces(gameTurn).stream().filter(s -> s.occupyingPiece instanceof King).collect(Collectors.toList()).get(0);
+        Piece king = game.gameBoard.getPieces(gameTurn).stream().filter(p -> p instanceof King).collect(Collectors.toList()).get(0);
         switch (gameTurn) {
             case white:
-                if (game.gameBoard.whiteKingTracker.isKingInCheck((King) kingSquare.occupyingPiece)) {
+                if (game.gameBoard.whiteKingTracker.isKingInCheck((King) king)) {
                     return 2000;
                 }
             case black:
-                if (game.gameBoard.blackKingTracker.isKingInCheck((King) kingSquare.occupyingPiece)) {
+                if (game.gameBoard.blackKingTracker.isKingInCheck((King) king)) {
                     return 2000;
                 }
             }
@@ -253,17 +253,17 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int checkKingCheckMateScore(Game game, TurnColor gameTurn) {
-        List<Square> squares = game.gameBoard.getPieces(gameTurn);
-        Square kingSquare = squares.stream().filter(s -> s.occupyingPiece instanceof King).collect(Collectors.toList()).get(0);
-        int kx = kingSquare.occupyingPiece.xLocation;
-        int ky = kingSquare.occupyingPiece.yLocation;
+        List<Piece> pieces = game.gameBoard.getPieces(gameTurn);
+        Piece kingSquare = pieces.stream().filter(s -> s instanceof King).collect(Collectors.toList()).get(0);
+        int kx = kingSquare.xLocation;
+        int ky = kingSquare.yLocation;
         short possibleMoves = 0;
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 if (i== 0 && j == 0) {
                     continue;
                 }
-                if (kingSquare.occupyingPiece.canMove(kx +i, ky+j)){
+                if (kingSquare.canMove(kx +i, ky+j)){
                     possibleMoves++;
                 }
             }
@@ -305,31 +305,31 @@ public class MiniMaxStrategy implements PlayingStrategy {
     private int getPositionalBias(Game game, TurnColor ofColor) {
         int positionalBias = 0;
         int colorPointer = -1;
-        Collection<Square> squares = game.gameBoard.getPieces(ofColor);;
+        Collection<Piece> pieces = game.gameBoard.getPieces(ofColor);;
         if (ofColor.equals(TurnColor.white)) {
             colorPointer = WHITE;
         } else if (ofColor.equals(TurnColor.black)) {
             colorPointer = BLACK;
         }
-        for (Square square : squares){
+        for (Piece piece : pieces){
             //FIXME rewrite pieces as pointers!!!
-            if (square.occupyingPiece instanceof Pawn) {
-                long score = pawnPositionMap[colorPointer][square.occupyingPiece.yLocation][square.occupyingPiece.xLocation];
+            if (piece instanceof Pawn) {
+                long score = pawnPositionMap[colorPointer][piece.yLocation][piece.xLocation];
                 positionalBias += score;
-            } else if (square.occupyingPiece instanceof Knight) {
-                long score = knightsPositionMap[colorPointer][square.occupyingPiece.yLocation][square.occupyingPiece.xLocation];
+            } else if (piece instanceof Knight) {
+                long score = knightsPositionMap[colorPointer][piece.yLocation][piece.xLocation];
                 positionalBias += score;
-            } else if (square.occupyingPiece instanceof Bishop) {
-                long score = bishopsPositionMap[colorPointer][square.occupyingPiece.yLocation][square.occupyingPiece.xLocation];
+            } else if (piece instanceof Bishop) {
+                long score = bishopsPositionMap[colorPointer][piece.yLocation][piece.xLocation];
                 positionalBias += score;
-            } else if (square.occupyingPiece instanceof Rook) {
-                long score = rooksPositionMap[colorPointer][square.occupyingPiece.yLocation][square.occupyingPiece.xLocation];
+            } else if (piece instanceof Rook) {
+                long score = rooksPositionMap[colorPointer][piece.yLocation][piece.xLocation];
                 positionalBias += score;
-            } else if (square.occupyingPiece instanceof Queen) {
-                long score = queenPositionMap[colorPointer][square.occupyingPiece.yLocation][square.occupyingPiece.xLocation];
+            } else if (piece instanceof Queen) {
+                long score = queenPositionMap[colorPointer][piece.yLocation][piece.xLocation];
                 positionalBias += score;
-            } else if (square.occupyingPiece instanceof King) {
-                long score = kingPositionMap[colorPointer][square.occupyingPiece.yLocation][square.occupyingPiece.xLocation];
+            } else if (piece instanceof King) {
+                long score = kingPositionMap[colorPointer][piece.yLocation][piece.xLocation];
                 positionalBias += score;
             }
         };
@@ -338,7 +338,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     private Integer countPiecesScore(Game game, TurnColor ofColor) {
         return game.gameBoard.getPieces(ofColor).stream()
-                .map(square -> pieceScore(square.occupyingPiece))
+                .map(MiniMaxStrategy::pieceScore)
                 .reduce(Integer::sum).get();
     }
 

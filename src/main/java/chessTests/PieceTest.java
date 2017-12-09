@@ -59,19 +59,19 @@ public class PieceTest extends TestCase {
 	public void testCheckmate(){
 		StandardBoard board = new StandardBoard(8,8);
 		board.populateBoardWithPieces();
-		Piece wpawn1 = board.squaresList[5][1].occupyingPiece;
+		Piece wpawn1 = board.pieces[5][1];
 		wpawn1.executeCaptureOrMove(5, 2);
 		assertTrue(wpawn1.xLocation == 5 && wpawn1.yLocation == 2);
-		Piece bpawn1 = board.squaresList[4][6].occupyingPiece;
+		Piece bpawn1 = board.pieces[4][6];
 		bpawn1.executeCaptureOrMove(4, 4);
 		assertTrue(bpawn1.xLocation == 4 && bpawn1.yLocation == 4);
-		Piece wpawn2 = board.squaresList[6][1].occupyingPiece;
+		Piece wpawn2 = board.pieces[6][1];
 		wpawn2.executeCaptureOrMove(6, 3);
 		assertTrue(wpawn2.xLocation == 6 && wpawn2.yLocation == 3);
-		Piece bqueen = board.squaresList[3][7].occupyingPiece;
+		Piece bqueen = board.pieces[3][7];
 		bqueen.executeCaptureOrMove(7, 3);
 		assertTrue(bqueen.xLocation == 7 && bqueen.yLocation == 3);
-		King wking = (King) board.squaresList[4][0].occupyingPiece;
+		King wking = (King) board.pieces[4][0];
 		assertTrue(wking.isKingInCheck(wking));
 		assertTrue(wking.isKingCheckmate(wking));
 	}

@@ -75,8 +75,8 @@ public class Queen extends Piece {
 			int yDirection = yDisplacement/steps;
 			// Check for obstacles in path of Queen.
 			for(int i = 1; i < steps; i++){
-				Square squareToCheck = currentBoard.squaresList[xLocation + i*xDirection][yLocation + i*yDirection];
-				if(squareToCheck.isOccupied)
+				Piece pieceToCheck = currentBoard.pieces[xLocation + i*xDirection][yLocation + i*yDirection];
+				if(pieceToCheck!=null)
 					return false;
 			}
 			return true;

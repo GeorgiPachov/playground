@@ -68,8 +68,8 @@ public class Rook extends Piece {
 			int yDirection = yDisplacement/steps;
 			// Check for obstacles in path of Rook.
 			for(int i = 1; i < steps; i++){
-				Square squareToCheck = currentBoard.squaresList[xLocation + i*xDirection][yLocation + i*yDirection];
-				if(squareToCheck.isOccupied)
+				Piece squareToCheck = currentBoard.pieces[xLocation + i*xDirection][yLocation + i*yDirection];
+				if(squareToCheck!=null)
 					return false;
 			}
 			return true;

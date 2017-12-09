@@ -49,8 +49,6 @@ public abstract class Piece {
 	 */
 	public Piece(int initX, int initY, TurnColor turnColor, StandardBoard board) {
 		this.turnColor = turnColor;
-		board.squaresList[initX][initY].isOccupied = true;
-		board.squaresList[initX][initY].occupyingPiece = this;
 		this.currentBoard = board;
 		this.xLocation = initX;
 		this.yLocation = initY;
@@ -86,9 +84,9 @@ public abstract class Piece {
 	 * @return boolean true if enemy is at destination
 	 */
 	private boolean isEnemyPieceAtDestination(int newX, int newY){
-		Square squareToCheck = currentBoard.squaresList[newX][newY];
-		if(squareToCheck.isOccupied){
-			return isEnemyPiece(this.turnColor, squareToCheck.occupyingPiece);
+		Piece piece = currentBoard.pieces[newX][newY];
+		if(piece != null){
+			return isEnemyPiece(this.turnColor, piece);
 		}
 		return true;
 	}
@@ -118,11 +116,10 @@ public abstract class Piece {
 		// Iterates through the squares on the board and checks if enemy pieces can attack king.
 		for(int i = 0; i < currentBoard.numXSquares; i++){
 			for(int j = 0; j < currentBoard.numYSquares; j++){
-				Square squareToCheck = currentBoard.squaresList[i][j];
-				if(squareToCheck.isOccupied){
-					if(isEnemyPiece(turnColorToCheck, squareToCheck.occupyingPiece)){
-						Piece enemyPiece = squareToCheck.occupyingPiece;
-						if(enemyPiece.isValidSpecialMove(kingXLocation, kingYLocation))
+				Piece piece = currentBoard.pieces[i][j];
+				if(piece != null){
+					if(isEnemyPiece(turnColorToCheck, piece)){
+						if(piece.isValidSpecialMove(kingXLocation, kingYLocation))
 							return true;
 					}
 				}
@@ -142,11 +139,10 @@ public abstract class Piece {
 		int oldPieceX = this.xLocation;
 		int oldPieceY = this.yLocation;
 		King kingToCheck;
-		Square squareToCheck = currentBoard.squaresList[newPieceX][newPieceY];
-		if(squareToCheck.isOccupied){
-			Piece pieceToCheck = squareToCheck.occupyingPiece;
+		Piece piece = currentBoard.pieces[newPieceX][newPieceY];
+		if(piece != null){
 			if(isEnemyPieceAtDestination(newPieceX, newPieceY)){
-				Piece enemyPiece = pieceToCheck;
+				Piece enemyPiece = piece;
 				if(this.turnColor.equals(TurnColor.white)){
 					if(currentBoard.whiteKingTracker == null)
 						return false;
@@ -198,12 +194,8 @@ public abstract class Piece {
 	 * @param newPieceY
 	 */
 	private void movePiece(Piece pieceToMove, int newPieceX, int newPieceY){
-		Square currentSquare = currentBoard.squaresList[pieceToMove.xLocation][pieceToMove.yLocation];
-		Square targetSquare = currentBoard.squaresList[newPieceX][newPieceY];
-		currentSquare.isOccupied = false;
-		currentSquare.occupyingPiece = null;
-		targetSquare.isOccupied = true;
-		targetSquare.occupyingPiece = pieceToMove;
+		currentBoard.pieces[pieceToMove.xLocation][pieceToMove.yLocation] = null;
+		currentBoard.pieces[newPieceX][newPieceY] = pieceToMove;
 		pieceToMove.xLocation = newPieceX;
 		pieceToMove.yLocation = newPieceY;
 	}
@@ -279,11 +271,10 @@ public abstract class Piece {
 		TurnColor turnColorToCheck = kingToCheck.turnColor;
 		for(int i = 0; i < currentBoard.numXSquares; i++){
 			for(int j = 0; j < currentBoard.numYSquares; j++){
-				Square squareToCheck = currentBoard.squaresList[i][j];
-				if(squareToCheck.isOccupied){
-					if(!isEnemyPiece(turnColorToCheck, squareToCheck.occupyingPiece)){
-						Piece allyPiece = squareToCheck.occupyingPiece;
-						 if(!checkmateHelper(allyPiece, kingToCheck))
+				Piece pieceToCheck = currentBoard.pieces[i][j];
+				if(pieceToCheck != null){
+					if(!isEnemyPiece(turnColorToCheck, pieceToCheck)){
+						if(!checkmateHelper(pieceToCheck, kingToCheck))
 							 return false;
 					}
 				}	
@@ -303,19 +294,18 @@ public abstract class Piece {
 		int oldPieceY = allyPiece.yLocation;
 		for(int i = 0; i < currentBoard.numXSquares; i++){
 			for(int j = 0; j < currentBoard.numYSquares; j++){
-				Square squareToCheck = currentBoard.squaresList[i][j];
+				Piece pieceToCheck = currentBoard.pieces[i][j];
 				if(isEnemyPieceAtDestination(i,j)){
 					if(allyPiece.isValidSpecialMove(i, j)){
-						if(squareToCheck.isOccupied){
-							Piece enemyPiece = squareToCheck.occupyingPiece;
+						if(pieceToCheck != null){
 							movePiece(allyPiece, i, j);
 							if(!isKingInCheck(kingToCheck)){
 								movePiece(allyPiece, oldPieceX, oldPieceY);
-								movePiece(enemyPiece, i, j);
+								movePiece(pieceToCheck, i, j);
 								return false;
 							}
 							movePiece(allyPiece, oldPieceX, oldPieceY);
-							movePiece(enemyPiece, i, j);
+							movePiece(pieceToCheck, i, j);
 						}
 						else{
 							movePiece(allyPiece, i, j);
@@ -333,7 +323,6 @@ public abstract class Piece {
 	}
 
 	public abstract void addAllowedMoves(List<Integer> moves);
-
 }
 
 

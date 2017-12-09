@@ -40,15 +40,15 @@ public class Game {
 	void preexecuteMove(int[] move) {
 		int xDestination = move[2];
 		int yDestination = move[3];
-		Piece movingPiece = this.gameBoard.squaresList[move[0]][move[1]].occupyingPiece;
+		Piece movingPiece = this.gameBoard.pieces[move[0]][move[1]];
 
 		if (DEBUG) {
 			log("Preexecuting move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation + "] to [" + xDestination + ", " + yDestination + "]");
 		}
 		if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)) {
 			Piece enemyPiece = null;
-			if (gameBoard.squaresList[xDestination][yDestination].isOccupied)
-				enemyPiece = gameBoard.squaresList[xDestination][yDestination].occupyingPiece;
+			if (gameBoard.pieces[xDestination][yDestination]!= null)
+				enemyPiece = gameBoard.pieces[xDestination][yDestination];
 			MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
 			commandStack.add(newCommand);
 			newCommand.execute();
@@ -61,15 +61,15 @@ public class Game {
     public void executeMove(int[]  move) {
         int xDestination = move[2];
         int yDestination = move[3];
-		Piece movingPiece = this.gameBoard.squaresList[move[0]][move[1]].occupyingPiece;
+		Piece movingPiece = this.gameBoard.pieces[move[0]][move[1]];
 
 		if (DEBUG) {
 			log("Executing move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation + "] to [" + xDestination + ", " + yDestination + "]");
 		}
         if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)){
             Piece enemyPiece = null;
-            if(gameBoard.squaresList[xDestination][yDestination].isOccupied)
-                enemyPiece = gameBoard.squaresList[xDestination][yDestination].occupyingPiece;
+            if(gameBoard.pieces[xDestination][yDestination]!= null)
+                enemyPiece = gameBoard.pieces[xDestination][yDestination];
             MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
             commandStack.add(newCommand);
             newCommand.execute();

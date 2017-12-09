@@ -5,25 +5,26 @@ import chessControllers.TurnColor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class StandardBoard {
 	public int numXSquares;
 	public int numYSquares;
 	public int totalSquares;
-	public Square squaresList[][];
+	public Piece pieces[][];
 	
 	public King whiteKingTracker;
 	public King blackKingTracker;
 
-	private List<Square> blackPieces;
-	private List<Square> whitePieces;
+	private List<Piece> blackPieces;
+	private List<Piece> whitePieces;
 
 	public StandardBoard(int xSquares, int ySquares) {
 		this.numXSquares = xSquares;
 		this.numYSquares = ySquares;
 		this.totalSquares = this.numXSquares * this.numYSquares;
-		this.squaresList = new Square[this.numXSquares][this.numYSquares];
+		this.pieces = new Piece[this.numXSquares][this.numYSquares];
 		populateBoardWithSquares();
 		this.whiteKingTracker = null;
 		this.blackKingTracker = null;
@@ -31,34 +32,12 @@ public class StandardBoard {
        initCaches();
 	}
 
-
-
-    /**
-	 * Method to populate our board with Squares.
-	 * General pattern of white and black squares on the board.
-	 */
 	public void populateBoardWithSquares() {
-		for (int i = 0; i < this.numXSquares; i++) {
-			for (int j = 0; j < this.numYSquares; j++) {
-				if (i % 2 == 0) {
-					if (j % 2 == 0)
-						squaresList[i][j] = new Square(false, TurnColor.black);
-					else
-						squaresList[i][j] = new Square(false, TurnColor.white);
-				} 
-				else {
-					if (j % 2 == 0)
-						squaresList[i][j] = new Square(false, TurnColor.white);
-					else
-						squaresList[i][j] = new Square(false, TurnColor.black);
-				}
-			}
-		}
+	    for (int i = 0; i < 8; i++) {
+	        pieces[i] = new Piece[8];
+        }
 	}
 	
-	/**
-	 * Method to populate our chess board with standard pieces.
-	 */
 	public void populateBoardWithPieces() {
 		setupKnights();
 		setupBishops();
@@ -76,11 +55,8 @@ public class StandardBoard {
 		for(int i = 0; i < 8; i++){
 			Pawn newWhitePawn = new Pawn(i, 1, TurnColor.white, this);
 			Pawn newBlackPawn = new Pawn(i, 6, TurnColor.black, this);
-			this.squaresList[i][1].isOccupied = true;
-			this.squaresList[i][6].isOccupied = true;
-			this.squaresList[i][1].occupyingPiece = newWhitePawn;
-			this.squaresList[i][6].occupyingPiece = newBlackPawn;
-			
+			this.pieces[i][1] = newWhitePawn;
+			this.pieces[i][6] = newBlackPawn;
 		}
 	}
 	
@@ -92,15 +68,10 @@ public class StandardBoard {
 		Rook whiteRookTwo = new Rook(7, 0, TurnColor.white, this);
 		Rook blackRookOne = new Rook(0, 7, TurnColor.black, this);
 		Rook blackRookTwo = new Rook(7, 7, TurnColor.black, this);
-		this.squaresList[0][0].isOccupied = true;
-		this.squaresList[7][0].isOccupied = true;
-		this.squaresList[0][0].occupyingPiece = whiteRookOne;
-		this.squaresList[7][0].occupyingPiece = whiteRookTwo;
-		this.squaresList[0][7].isOccupied = true;
-		this.squaresList[7][7].isOccupied = true;
-		this.squaresList[0][7].occupyingPiece = blackRookOne;
-		this.squaresList[7][7].occupyingPiece = blackRookTwo;
-		
+		this.pieces[0][0] = whiteRookOne;
+		this.pieces[7][0] = whiteRookTwo;
+		this.pieces[0][7] = blackRookOne;
+		this.pieces[7][7] = blackRookTwo;
 	}
 	
 	/**
@@ -111,14 +82,10 @@ public class StandardBoard {
 		Bishop whiteBishopTwo = new Bishop(5, 0, TurnColor.white, this);
 		Bishop blackBishopOne = new Bishop(2, 7, TurnColor.black, this);
 		Bishop blackBishopTwo = new Bishop(5, 7, TurnColor.black, this);
-		this.squaresList[2][0].isOccupied = true;
-		this.squaresList[5][0].isOccupied = true;
-		this.squaresList[2][0].occupyingPiece = whiteBishopOne;
-		this.squaresList[5][0].occupyingPiece = whiteBishopTwo;
-		this.squaresList[2][7].isOccupied = true;
-		this.squaresList[5][7].isOccupied = true;
-		this.squaresList[2][7].occupyingPiece = blackBishopOne;
-		this.squaresList[5][7].occupyingPiece = blackBishopTwo;
+		this.pieces[2][0] = whiteBishopOne;
+		this.pieces[5][0] = whiteBishopTwo;
+		this.pieces[2][7] = blackBishopOne;
+		this.pieces[5][7] = blackBishopTwo;
 	}
 	
 	/**
@@ -129,14 +96,10 @@ public class StandardBoard {
 		Knight whiteKnightTwo = new Knight(6, 0, TurnColor.white, this);
 		Knight blackKnightOne = new Knight(1, 7, TurnColor.black, this);
 		Knight blackKnightTwo = new Knight(6, 7, TurnColor.black, this);
-		this.squaresList[1][0].isOccupied = true;
-		this.squaresList[6][0].isOccupied = true;
-		this.squaresList[1][0].occupyingPiece = whiteKnightOne;
-		this.squaresList[6][0].occupyingPiece = whiteKnightTwo;
-		this.squaresList[1][7].isOccupied = true;
-		this.squaresList[6][7].isOccupied = true;
-		this.squaresList[1][7].occupyingPiece = blackKnightOne;
-		this.squaresList[6][7].occupyingPiece = blackKnightTwo;
+		this.pieces[1][0] = whiteKnightOne;
+		this.pieces[6][0] = whiteKnightTwo;
+		this.pieces[1][7] = blackKnightOne;
+		this.pieces[6][7] = blackKnightTwo;
 	}
 	
 	/**
@@ -145,10 +108,8 @@ public class StandardBoard {
 	public void setupQueens(){
 		Queen whiteQueen = new Queen(3, 0, TurnColor.white, this);
 		Queen blackQueen = new Queen(3, 7, TurnColor.black, this);
-		this.squaresList[3][0].isOccupied = true;
-		this.squaresList[3][7].isOccupied = true;
-		this.squaresList[3][0].occupyingPiece = whiteQueen;
-		this.squaresList[3][7].occupyingPiece = blackQueen;
+		this.pieces[3][0] = whiteQueen;
+		this.pieces[3][7] = blackQueen;
 	}
 	
 	/**
@@ -157,10 +118,8 @@ public class StandardBoard {
 	public void setupKings(){
 		King whiteKing = new King(4, 0, TurnColor.white, this);
 		King blackKing = new King(4, 7, TurnColor.black, this);
-		this.squaresList[4][0].isOccupied = true;
-		this.squaresList[4][7].isOccupied = true;
-		this.squaresList[4][0].occupyingPiece = whiteKing;
-		this.squaresList[4][7].occupyingPiece = blackKing;
+		this.pieces[4][0] = whiteKing;
+		this.pieces[4][7] = blackKing;
 		whiteKingTracker = whiteKing;
 		blackKingTracker = blackKing;
 	}
@@ -180,8 +139,8 @@ public class StandardBoard {
 	}
 
 	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
-	    List<Square> squares = getPieces(color);
-		squares.stream().map(s -> s.occupyingPiece).forEach(p -> p.addAllowedMoves(moves));
+	    List<Piece> squares = getPieces(color);
+		squares.stream().forEach(p -> p.addAllowedMoves(moves));
 	}
 
 	private List<Move> genericCheckMoves(Piece piece) {
@@ -196,7 +155,7 @@ public class StandardBoard {
 		return result;
 	}
 
-	public List<Square> getPieces(TurnColor gameTurn) {
+	public List<Piece> getPieces(TurnColor gameTurn) {
 	    switch (gameTurn) {
             case white:
                 return whitePieces;
@@ -211,15 +170,15 @@ public class StandardBoard {
         blackPieces = findBlackPieces();
     }
 
-    private List<Square> findBlackPieces() {
-        return Arrays.stream(squaresList).flatMap(Arrays::stream)
-                .filter(s -> s.isOccupied)
-                .filter(s -> s.occupyingPiece.turnColor == TurnColor.black).collect(Collectors.toList());
+    private List<Piece> findBlackPieces() {
+        return Arrays.stream(pieces).flatMap(Arrays::stream)
+                .filter(Objects::nonNull)
+                .filter(p -> p.turnColor == TurnColor.black).collect(Collectors.toList());
     }
 
-    private List<Square> findWhitePieces() {
-        return Arrays.stream(squaresList).flatMap(Arrays::stream)
-                .filter(s -> s.isOccupied)
-                .filter(s -> s.occupyingPiece.turnColor == TurnColor.white).collect(Collectors.toList());
+    private List<Piece> findWhitePieces() {
+        return Arrays.stream(pieces).flatMap(Arrays::stream)
+                .filter(Objects::nonNull)
+                .filter(p -> p.turnColor == TurnColor.white).collect(Collectors.toList());
     }
 }
