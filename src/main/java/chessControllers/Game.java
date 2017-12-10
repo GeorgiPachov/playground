@@ -5,7 +5,7 @@ import java.util.Stack;
 import chessGame.*;
 public class Game {
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 	StandardBoard gameBoard;
 	boolean gameOver;
 	Stack<MoveCommand> commandStack;
@@ -54,7 +54,7 @@ public class Game {
         int[] kingToCheck = gameBoard.getKing(movingPieceColor.opposite());
         boolean gameOver = gameBoard.isKingCheckmate(kingToCheck);
 
-         if (gameOver) {
+        if (gameOver) {
             stopGame();
          } else {
             gameBoard.flipTurn();

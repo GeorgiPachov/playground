@@ -17,13 +17,13 @@ public class MoveCommand {
 		this.yDestination = move[3];
 	}
 	
-	public void undo(){
+	public void undo() {
 		int pieceToUndo = board.pieces[xDestination][yDestination];
 		board.pieces[xOrigin][yOrigin] = pieceToUndo;
 		board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
 	}
 	
-	public void execute(){
+	public void execute() {
 		int pieceToMove = board.pieces[xOrigin][yOrigin];
 		board.pieces[xOrigin][yOrigin] = 0;
 		this.enemyRemoved = board.pieces[xDestination][yDestination];

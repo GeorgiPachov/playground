@@ -1,11 +1,14 @@
 package chessGame;
 
+import chessControllers.MoveCommand;
 import chessControllers.TurnColor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static chessControllers.Game.DEBUG;
 
 public class StandardBoard {
     public TurnColor gameTurn;
@@ -111,7 +114,7 @@ public class StandardBoard {
 
 	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
 	    List<int[]> pieces = getPieces(color);
-        System.out.println("Pieces of color " + color + " have size " + pieces.size());
+//        System.out.println("Pieces of color " + color + " have size " + pieces.size());
         pieces.forEach(p -> addAllowedMoves(p, moves));
 	}
 
@@ -195,7 +198,7 @@ public class StandardBoard {
             case white:
                 return findWhitePieces().stream().filter(this::isKing).collect(Collectors.toList()).get(0);
             case black:
-                return findBlackPieces().stream().peek(c -> System.out.println(Arrays.toString(c))).filter(this::isKing).collect(Collectors.toList()).get(0);
+                return findBlackPieces().stream().filter(this::isKing).collect(Collectors.toList()).get(0);
         }
         return null;
     }
@@ -204,11 +207,12 @@ public class StandardBoard {
         TurnColor myColor = getColor(oldX, oldY);
 	    if(!inBoardBounds(newX, newY))
             return false;
-        if (isValidMove(oldX, oldY, newX, newY)) {
+        if (!isValidMove(oldX, oldY, newX, newY)) {
             return false;
         }
-        if(getColor(newX, newY) == myColor)
+        if(getColor(newX, newY) == myColor) {
             return false;
+        }
         if(kingBecomesEndangered(oldX, oldY, newX, newY))
             return false;
         return true;
@@ -221,31 +225,37 @@ public class StandardBoard {
                 if (isValidPawnMove(oldX,oldY, newX,newY)) {
                     return true;
                 }
+                break;
             case WHITE_BISHOP:
             case BLACK_BISHOP:
                 if (isValidBishopMove(oldX, oldY, newX, newY)) {
                     return true;
                 }
+                break;
             case WHITE_ROOK:
             case BLACK_ROOK:
                 if (isValidRookMove(oldX, oldY, newX, newY)) {
                     return true;
                 }
+                break;
             case WHITE_KNIGHT:
             case BLACK_KNIGHT:
                 if (isValidKnightMove(oldX, oldY, newX, newY)) {
                     return true;
                 }
+                break;
             case WHITE_QUEEN:
             case BLACK_QUEEN:
                 if (isValidQueenMove(oldX, oldY, newX, newY)) {
                     return true;
                 }
+                break;
             case WHITE_KING:
             case BLACK_KING:
                 if (isValidKingMove(oldX, oldY, newX, newY)) {
                     return true;
                 }
+                break;
         }
         return false;
     }
@@ -272,7 +282,9 @@ public class StandardBoard {
 
     private boolean isValidPawnMove(int oldX, int oldY, int newX, int newY) {
         boolean validSpecialMove = Pawn.isValidSpecialMove(this, oldX, oldY, newX, newY);
-        System.out.println(String.format("Move [%d, %d] -> [%d, %d] was demed %b", oldX,oldY,newX,newY, validSpecialMove));
+        if (DEBUG) {
+            System.out.println(String.format("Move [%d, %d] -> [%d, %d] was demed %b", oldX, oldY, newX, newY, validSpecialMove));
+        }
         return validSpecialMove;
     }
 
@@ -286,22 +298,26 @@ public class StandardBoard {
 
     private boolean kingBecomesEndangered(int oldX, int oldY, int newPieceX, int newPieceY) {
         TurnColor turnColor = getColor(oldX, oldY);
-        int[] myKing = getKing(turnColor);
 
         int piece = pieces[newPieceX][newPieceY];
+        MoveCommand command = new MoveCommand(this, new int[] { oldX, oldY, newPieceX, newPieceY});
+
         if(piece != 0){
             if(isOfColor(piece, turnColor.opposite())){
                 // make move
-                int enemyRemoved = movePiece(oldX, oldY, newPieceX, newPieceY);
+                command.execute();
+//                int enemyRemoved = movePiece(oldX, oldY, newPieceX, newPieceY);
 
                 // check
+                int[] myKing = getKing(turnColor);
                 boolean kingIsInCheck = isKingInCheck(myKing);
 
                 // revert move
-                movePiece(newPieceX, newPieceY, oldX, oldY);
-                if (enemyRemoved != 0) {
-                    pieces[newPieceX][newPieceY] = enemyRemoved;
-                }
+                command.undo();
+//                movePiece(newPieceX, newPieceY, oldX, oldY);
+//                if (enemyRemoved != 0) {
+//                    pieces[newPieceX][newPieceY] = enemyRemoved;
+//                }
                 return kingIsInCheck;
             } else {
                 return false; //my piece is there :/
@@ -309,11 +325,14 @@ public class StandardBoard {
         }
         else{
             // apply
-            movePiece(oldX, oldY, newPieceX, newPieceY);
+//            movePiece(oldX, oldY, newPieceX, newPieceY);
             // check
+            command.execute();
+            int[] myKing = getKing(turnColor);
             boolean kingIsInCheck = isKingInCheck(myKing);
             // reverse
-            movePiece(newPieceX, newPieceY, oldX, oldY);
+            command.undo();
+//            movePiece(newPieceX, newPieceY, oldX, oldY);
 
             return kingIsInCheck;
         }
@@ -324,8 +343,7 @@ public class StandardBoard {
         int kingY = kingToCheck[1];
         TurnColor kingColor = getColor(kingToCheck);
         for (int[] coords: getPieces(kingColor.opposite())) {
-            if(canMove(coords[0], coords[1], kingX, kingY)) {
-                System.out.println(gameTurn + "king " + " can be attacked by " + "(" + coords[0] + ", " + coords[1] + ")");
+            if (isValidMove(coords[0], coords[1], kingX, kingY)) {
                 return true;
             }
         }
@@ -334,7 +352,6 @@ public class StandardBoard {
 
     public TurnColor getColor(int x, int y) {
         int figure = pieces[x][y];
-        System.out.println("Figure to get color from " + figure);
         if (isWhite(figure)) {
             return TurnColor.white;
         } else if (isBlack(figure)) {
