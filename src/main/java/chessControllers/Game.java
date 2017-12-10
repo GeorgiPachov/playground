@@ -53,11 +53,10 @@ public class Game {
 
         int[] kingToCheck = gameBoard.getKing(movingPieceColor.opposite());
         boolean gameOver = gameBoard.isKingCheckmate(kingToCheck);
+        gameBoard.flipTurn();
 
         if (gameOver) {
             stopGame();
-         } else {
-            gameBoard.flipTurn();
          }
 
     }

@@ -207,10 +207,10 @@ public class StandardBoard {
         TurnColor myColor = getColor(oldX, oldY);
 	    if(!inBoardBounds(newX, newY))
             return false;
-        if (!isValidMove(oldX, oldY, newX, newY)) {
+        if(pieces[newX][newY]!=0 && getColor(newX, newY) == myColor) {
             return false;
         }
-        if(getColor(newX, newY) == myColor) {
+	    if (!isValidMove(oldX, oldY, newX, newY)) {
             return false;
         }
         if(kingBecomesEndangered(oldX, oldY, newX, newY))
@@ -343,6 +343,8 @@ public class StandardBoard {
             return TurnColor.white;
         } else if (isBlack(figure)) {
             return TurnColor.black;
+        } else if (figure == 0) {
+            throw new RuntimeException("Attempted to get color of empty square!");
         }
         return null;
     }
@@ -351,40 +353,30 @@ public class StandardBoard {
         return getColor(coordinates[0], coordinates[1]);
     }
 
-    private int movePiece(int oldX, int oldY, int newPieceX, int newPieceY) {
-        int pieceToMove = pieces[oldX][oldY];
-        pieces[oldX][oldY] = 0;
-        int enemyRemoved = pieces[oldX][oldY];
-        pieces[newPieceX][newPieceY] = pieceToMove;
-        return enemyRemoved;
-    }
-
     public boolean isKingCheckmate(int[] kingToCheck){
         if(isKingInCheck(kingToCheck)) {
-            System.out.println("King " + getColor(kingToCheck) + " is in check");
-            TurnColor kingColor = getColor(kingToCheck);
-            for (int[] piece : getPieces(kingColor)) {
-                if (!possibleToMoveSomewhereToPreventMate(piece[0], piece[1], kingToCheck))
-                    return false;
-            }
-            return true;
-        }
-        return false;
-    }
-
-    private boolean possibleToMoveSomewhereToPreventMate(int myPieceX, int myPieceY, int[] kingToCheck) {
-        for(int i = 0; i < pieces.length; i++){
-            for(int j = 0; j < pieces[0].length; j++){
-                MoveCommand command = new MoveCommand(this, new int[] {myPieceX, myPieceY, i, j});
-                if(canMove(myPieceX, myPieceY, i, j)){
-                        command.execute();
-                        boolean kingIsInCheck = isKingInCheck(kingToCheck);
-                        command.undo();
-                        if (!kingIsInCheck) {
-                            return true;
-                        }
+            TurnColor color = getColor(kingToCheck);
+            System.out.println("King " + color + " is in check");
+            List<Integer> moves = new ArrayList<>();
+            populatePossibleMoves(color, moves);
+            for(int i = 0; i < moves.size(); i+=4){
+                int ox = moves.get(i);
+                int oy = moves.get(i+1);
+                int nx = moves.get(i+2);
+                int ny = moves.get(i+3);
+                MoveCommand command = new MoveCommand(this, new int[] {ox, oy, nx, ny});
+                if(canMove(ox, oy, nx, ny)){ // maybe only check if valid move, without endangering the king?
+                    command.execute();
+                    // we could have moved the king...
+                    kingToCheck = getKing(color);
+                    boolean kingIsInCheck = isKingInCheck(kingToCheck);
+                    command.undo();
+                    if (!kingIsInCheck) {
+                        return true;
+                    }
                 }
             }
+            return true;
         }
         return false;
     }
