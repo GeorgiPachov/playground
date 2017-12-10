@@ -112,9 +112,11 @@ public class StandardBoard {
 			return false;
 	}
 
+	public int[] whiteKing = new int[]{4,0};
+	public int[] blackKing = new int[]{4,7};
+
 	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
 	    List<int[]> pieces = getPieces(color);
-//        System.out.println("Pieces of color " + color + " have size " + pieces.size());
         pieces.forEach(p -> addAllowedMoves(p, moves));
 	}
 
@@ -196,9 +198,9 @@ public class StandardBoard {
     public int[] getKing(TurnColor gameTurn) {
         switch (gameTurn) {
             case white:
-                return findWhitePieces().stream().filter(this::isKing).collect(Collectors.toList()).get(0);
+                return whiteKing;
             case black:
-                return findBlackPieces().stream().filter(this::isKing).collect(Collectors.toList()).get(0);
+                return blackKing;
         }
         return null;
     }
@@ -329,7 +331,8 @@ public class StandardBoard {
         int kingX = kingToCheck[0];
         int kingY = kingToCheck[1];
         TurnColor kingColor = getColor(kingToCheck);
-        for (int[] coords: getPieces(kingColor.opposite())) {
+        List<int[]> oppositePieces = getPieces(kingColor.opposite());
+        for (int[] coords: oppositePieces) {
             if (isValidMove(coords[0], coords[1], kingX, kingY)) {
                 return true;
             }

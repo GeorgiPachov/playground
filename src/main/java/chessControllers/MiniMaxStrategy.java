@@ -7,7 +7,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    private static final int MAX_DEPTH = 3;
+    private static final int MAX_DEPTH = 5;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[][][] pawnPositionMap = new short[][][] {
@@ -162,10 +162,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
         int max = Integer.MIN_VALUE;
         List<Integer> moves = new ArrayList<>();
         game.gameBoard.populatePossibleMoves(game.gameBoard.gameTurn, moves);
-//        System.out.println("MOves size : " + moves.size());
         long e = System.currentTimeMillis();
         if (depth == MAX_DEPTH) {
-//            System.out.println("Move generation: " + (e - start));
+            System.out.println("Move generation: " + (e - start));
         }
 
         List<int[]> packedMoves = new ArrayList<>();
@@ -182,7 +181,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
         packedMoves.sort((c1, c2) -> cmp(game, c1, c2));
         e = System.currentTimeMillis();
         if (depth == MAX_DEPTH) {
-//            System.out.println("Sorting:" + (e - start));
+            System.out.println("Sorting:" + (e - start));
         }
 
         int[] maxMove = null;
@@ -192,7 +191,6 @@ public class MiniMaxStrategy implements PlayingStrategy {
             game.undoMove();
             if( score > max ) {
                 max = score;
-//                System.out.println("Assigning move: " + Arrays.toString(move));
                 maxMove = move;
             }
             alpha = Math.max(max, alpha);
@@ -202,7 +200,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
         }
         e = System.currentTimeMillis();
         if (depth == MAX_DEPTH) {
-//            System.out.println("Negamax: " + (e - start));
+            System.out.println("Negamax: " + (e - start));
         }
         this.lastChosenMove = maxMove;
         return max;

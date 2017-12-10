@@ -18,15 +18,40 @@ public class MoveCommand {
 	}
 	
 	public void undo() {
+        // update caches
+        TurnColor color = board.getColor(xDestination, yDestination);
+        int[] king = board.getKing(color);
+
+
+        // execute move
 		int pieceToUndo = board.pieces[xDestination][yDestination];
 		board.pieces[xOrigin][yOrigin] = pieceToUndo;
 		board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
+
+        if (xDestination == king[0] && yDestination == king[1]) {
+            king[0] = xOrigin;
+            king[1] = yOrigin;
+        }
+
 	}
 	
 	public void execute() {
-		int pieceToMove = board.pieces[xOrigin][yOrigin];
+        // update caches
+        TurnColor color = board.getColor(xOrigin, yOrigin);
+        int[] king = board.getKing(color);
+
+
+        // execute move
+        int pieceToMove = board.pieces[xOrigin][yOrigin];
 		board.pieces[xOrigin][yOrigin] = 0;
 		this.enemyRemoved = board.pieces[xDestination][yDestination];
 		board.pieces[xDestination][yDestination] = pieceToMove;
+
+        if (xOrigin == king[0] && yOrigin == king[1]) {
+            king[0] = xDestination;
+            king[1] = yDestination;
+        }
+
+
 	}
 }
