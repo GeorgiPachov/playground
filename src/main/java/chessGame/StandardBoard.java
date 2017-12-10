@@ -304,36 +304,23 @@ public class StandardBoard {
 
         if(piece != 0){
             if(isOfColor(piece, turnColor.opposite())){
-                // make move
                 command.execute();
-//                int enemyRemoved = movePiece(oldX, oldY, newPieceX, newPieceY);
-
                 // check
                 int[] myKing = getKing(turnColor);
                 boolean kingIsInCheck = isKingInCheck(myKing);
 
                 // revert move
                 command.undo();
-//                movePiece(newPieceX, newPieceY, oldX, oldY);
-//                if (enemyRemoved != 0) {
-//                    pieces[newPieceX][newPieceY] = enemyRemoved;
-//                }
                 return kingIsInCheck;
             } else {
                 return false; //my piece is there :/
             }
         }
         else{
-            // apply
-//            movePiece(oldX, oldY, newPieceX, newPieceY);
-            // check
             command.execute();
             int[] myKing = getKing(turnColor);
             boolean kingIsInCheck = isKingInCheck(myKing);
-            // reverse
             command.undo();
-//            movePiece(newPieceX, newPieceY, oldX, oldY);
-
             return kingIsInCheck;
         }
     }
@@ -373,59 +360,33 @@ public class StandardBoard {
     }
 
     public boolean isKingCheckmate(int[] kingToCheck){
-        if(!isKingInCheck(kingToCheck)) {
-            return false;
-        }
-        System.out.println("King " + getColor(kingToCheck) + " is in check");
-        TurnColor kingColor = getColor(kingToCheck);
-        for(int i = 0; i < pieces.length; i++){
-            for(int j = 0; j < pieces[0].length; j++){
-                int pieceToCheck = pieces[i][j];
-                if(pieceToCheck != 0){
-                    if(!isOfColor(pieceToCheck, kingColor.opposite())){
-                        if(!checkmateHelper(i, j, kingToCheck))
-                            return false;
-                    }
-                }
+        if(isKingInCheck(kingToCheck)) {
+            System.out.println("King " + getColor(kingToCheck) + " is in check");
+            TurnColor kingColor = getColor(kingToCheck);
+            for (int[] piece : getPieces(kingColor)) {
+                if (!possibleToMoveSomewhereToPreventMate(piece[0], piece[1], kingToCheck))
+                    return false;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
-    private boolean checkmateHelper(int myPieceX, int myPieceY, int[] kingToCheck) {
-        int oldPieceX = myPieceX;
-        int oldPieceY = myPieceY;
-        TurnColor kingColor = getColor(kingToCheck);
+    private boolean possibleToMoveSomewhereToPreventMate(int myPieceX, int myPieceY, int[] kingToCheck) {
         for(int i = 0; i < pieces.length; i++){
             for(int j = 0; j < pieces[0].length; j++){
-                int pieceToCheck = pieces[i][j];
-                if(isOfColor(pieces[i][j], kingColor)){
-                    if(canMove(myPieceX, myPieceY, i, j)){
-                        if(pieceToCheck != 0){
-                            // try move any piece anywhere to avoid checkmate... and that's just for the check!
-                            movePiece(myPieceX, myPieceY, i, j);
-                            if(!isKingInCheck(kingToCheck)){
-                                // restore phase
-                                movePiece(i, j, oldPieceX, oldPieceY);
-                                pieces[i][j] = pieceToCheck;
-                                return false;
-                            }
-                            movePiece(myPieceX, myPieceY, oldPieceX, oldPieceY);
-                            pieces[i][j] = pieceToCheck;
+                MoveCommand command = new MoveCommand(this, new int[] {myPieceX, myPieceY, i, j});
+                if(canMove(myPieceX, myPieceY, i, j)){
+                        command.execute();
+                        boolean kingIsInCheck = isKingInCheck(kingToCheck);
+                        command.undo();
+                        if (!kingIsInCheck) {
+                            return true;
                         }
-                        else{
-                            movePiece(myPieceX, myPieceY, i, j);
-                            if(!isKingInCheck(kingToCheck)){
-                                movePiece(i, j, oldPieceX, oldPieceY);
-                                return false;
-                            }
-                            movePiece(i, j, oldPieceX, oldPieceY);
-                        }
-                    }
                 }
             }
         }
-        return true;
+        return false;
     }
 
     public boolean isKing(int[] p) {
