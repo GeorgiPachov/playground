@@ -1,54 +1,32 @@
 package chessControllers;
-
-import chessGame.Piece;
-
-/**
- * Class to keep track of a move on the chess board.
- * @author Pratik Naik
- *
- */
+import chessGame.StandardBoard;
 public class MoveCommand {
-	
-	/**
-	 * Each move command consists of these variables.
-	 */
-	Piece movingPiece;
-	Piece enemyPiece;
+
+	private final StandardBoard board;
 	int xDestination;
 	int yDestination;
 	int xOrigin;
 	int yOrigin;
-	
-	/**
-	 * Constructor to initialize a new move command to add it to the stack of moves.
-	 * @param movingPiece
-	 * @param enemyPiece
-	 * @param xDestination
-	 * @param yDestination
-	 */
-	public MoveCommand(Piece movingPiece, Piece enemyPiece, int xDestination, int yDestination){
-		this.movingPiece = movingPiece;
-		this.enemyPiece = enemyPiece;
-		this.xOrigin = movingPiece.xLocation;
-		this.yOrigin = movingPiece.yLocation;
-		this.xDestination = xDestination;
-		this.yDestination = yDestination;
-	}
-	
-	/**
-	 * Method to undo the last move made on the move command stack.
-	 */
-	public void undo(){
-		this.movingPiece.executeCaptureOrMove(xOrigin, yOrigin);
-		if(this.enemyPiece != null)
-			this.enemyPiece.executeCaptureOrMove(xDestination, yDestination);
-	}
-	
-	/**
-	 * Method to execute a move in the chess game.
-	 */
-	public void execute(){
-		movingPiece.executeCaptureOrMove(xDestination, yDestination);
-	}
+	private int enemyRemoved;
 
+	public MoveCommand(StandardBoard board, int[] move){
+		this.board = board;
+		this.xOrigin = move[0];
+		this.yOrigin = move[1];
+		this.xDestination = move[2];
+		this.yDestination = move[3];
+	}
+	
+	public void undo(){
+		int pieceToUndo = board.pieces[xDestination][yDestination];
+		board.pieces[xOrigin][yOrigin] = pieceToUndo;
+		board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
+	}
+	
+	public void execute(){
+		int pieceToMove = board.pieces[xOrigin][yOrigin];
+		board.pieces[xOrigin][yOrigin] = 0;
+		this.enemyRemoved = board.pieces[xDestination][yDestination];
+		board.pieces[xDestination][yDestination] = pieceToMove;
+	}
 }

@@ -5,16 +5,13 @@ import java.util.Stack;
 import chessGame.*;
 public class Game {
 
-	public static final boolean DEBUG = false;
-	TurnColor gameTurn;
+	public static final boolean DEBUG = true;
 	StandardBoard gameBoard;
 	boolean gameOver;
 	Stack<MoveCommand> commandStack;
 	
 	public Game() {
 		gameBoard = new StandardBoard();
-		gameBoard.populateBoardWithPieces();
-		gameTurn = TurnColor.white;
 		gameOver = false;
 		commandStack = new Stack<>();
 	}
@@ -22,81 +19,75 @@ public class Game {
 	void preexecuteMove(int[] move) {
 		int xDestination = move[2];
 		int yDestination = move[3];
-		Piece movingPiece = this.gameBoard.pieces[move[0]][move[1]];
+		int movingPiece = this.gameBoard.pieces[move[0]][move[1]];
 
 		if (DEBUG) {
-			log("Preexecuting move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation + "] to [" + xDestination + ", " + yDestination + "]");
+			log("Preexecuting move for " + toString(movingPiece) + " [" + move[0] + ", " + move[1] + "] to [" + xDestination + ", " + yDestination + "]");
 		}
-		if(movingPiece.turnColor == gameTurn) {
-			Piece enemyPiece = null;
-			if (gameBoard.pieces[xDestination][yDestination]!= null)
-				enemyPiece = gameBoard.pieces[xDestination][yDestination];
-			MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
-			commandStack.add(newCommand);
-			newCommand.execute();
-            gameBoard.initCaches();
-        }
-		gameTurn = gameTurn.opposite();
-
+        MoveCommand newCommand = new MoveCommand(gameBoard, move);
+        commandStack.add(newCommand);
+        newCommand.execute();
+        gameBoard.flipTurn();
 	}
-	
+
+    private String toString(int movingPiece) {
+        return String.valueOf(movingPiece);
+    }
+
     public void executeMove(int[]  move) {
+	    printBoard();
         int xDestination = move[2];
         int yDestination = move[3];
-		Piece movingPiece = this.gameBoard.pieces[move[0]][move[1]];
+		int movingPiece = this.gameBoard.pieces[move[0]][move[1]];
+        TurnColor movingPieceColor = gameBoard.getColor(move[0], move[1]);
 
-		if (DEBUG) {
-			log("Executing move for " + movingPiece.turnColor + " [" + movingPiece.xLocation + ", " + movingPiece.yLocation + "] to [" + xDestination + ", " + yDestination + "]");
-		}
-        if(movingPiece.turnColor == gameTurn && movingPiece.canMove(xDestination, yDestination)){
-            Piece enemyPiece = null;
-            if(gameBoard.pieces[xDestination][yDestination]!= null)
-                enemyPiece = gameBoard.pieces[xDestination][yDestination];
-            MoveCommand newCommand = new MoveCommand(movingPiece, enemyPiece, xDestination, yDestination);
-            commandStack.add(newCommand);
-            newCommand.execute();
-            gameBoard.initCaches();
-
-            boolean gameOver = false;
-            if(movingPiece.turnColor.equals(TurnColor.white)){
-                gameTurn = gameTurn.opposite();
-                gameOver = checkKingStatus(gameBoard.blackKingTracker);
-             }
-             else{
-                gameTurn = gameTurn.opposite();
-                gameOver = checkKingStatus(gameBoard.whiteKingTracker);
-             }
-             if (gameOver) {
-            	stopGame();
-			 }
+        if (DEBUG) {
+		    log("Found piece " + movingPiece);
+            log("Executing move for " + toString(movingPiece) + " [" + move[0] + ", " + move[1] + "] to [" + xDestination + ", " + yDestination + "]");
         }
-        else{
-            log("This is an Illegal Move!" + "Illegal move message");
+        MoveCommand newCommand = new MoveCommand(gameBoard, move);
+        commandStack.add(newCommand);
+        newCommand.execute();
+        printBoard();
+
+
+        int[] kingToCheck = gameBoard.getKing(movingPieceColor.opposite());
+        boolean gameOver = gameBoard.isKingCheckmate(kingToCheck);
+
+         if (gameOver) {
+            stopGame();
+         } else {
+            gameBoard.flipTurn();
+         }
+
+    }
+
+    private void printBoard() {
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                System.out.print(gameBoard.pieces[j][i] + " ");
+            }
+            System.out.println();
         }
     }
 
-	private void stopGame() {
-		System.out.println("GAME ENDED!!!!" + gameTurn + " WON");
+
+    private void stopGame() {
+		System.out.println("GAME ENDED!!!!" + gameBoard.gameTurn + " WON");
 		this.gameOver = true;
 	}
 
-	public void log(String s) {
+	private void log(String s) {
 		System.err.println(s);
 	}
 
-	protected boolean checkKingStatus(King kingToCheck) {
-		if(kingToCheck.isKingInCheck(kingToCheck)) {
-			if(kingToCheck.isKingCheckmate(kingToCheck)) {
-				return true;
-			}
-		}
-		return false;
-	}
-	public void undoMove() {
+	void undoMove() {
 		if (!commandStack.isEmpty()) {
 			MoveCommand move = commandStack.pop();
 			move.undo();
-			gameTurn = gameTurn.opposite();
+			gameBoard.flipTurn();
 		}
 	}
+
+
 }

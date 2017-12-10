@@ -6,7 +6,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    private static final int MAX_DEPTH = 5;
+    private static final int MAX_DEPTH = 1;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[][][] pawnPositionMap = new short[][][] {
@@ -160,7 +160,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
         }
         int max = Integer.MIN_VALUE;
         List<Integer> moves = new ArrayList<>();
-        game.gameBoard.populatePossibleMoves(game.gameTurn, moves);
+        game.gameBoard.populatePossibleMoves(game.gameBoard.gameTurn, moves);
         long e = System.currentTimeMillis();
         if (depth == MAX_DEPTH) {
             System.out.println("Move generation: " + (e - start));
@@ -218,16 +218,16 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int estimateBoard(Game game) {
-        int isOpponentKingCheckMated = checkKingCheckMateScore(game, game.gameTurn);
-        int isOpponentKingInCheck = checkKingCheckStatus(game, game.gameTurn);
+        int isOpponentKingCheckMated = checkKingCheckMateScore(game, game.gameBoard.gameTurn);
+        int isOpponentKingInCheck = checkKingCheckStatus(game, game.gameBoard.gameTurn);
 
-        int myPiecesScore = countPiecesScore(game, game.gameTurn);
-        int opponentPieceScore = countPiecesScore(game, game.gameTurn.opposite());
+        int myPiecesScore = countPiecesScore(game, game.gameBoard.gameTurn);
+        int opponentPieceScore = countPiecesScore(game, game.gameBoard.gameTurn.opposite());
 
-        int myPositionalScore = getPositionalBias(game, game.gameTurn);
+        int myPositionalScore = getPositionalBias(game, game.gameBoard.gameTurn);
         if (Game.DEBUG) {
-            System.out.println("Pieces score for : " + game.gameTurn + (myPiecesScore - opponentPieceScore));
-            System.out.println("Positional score for : " + game.gameTurn + (myPositionalScore));
+            System.out.println("Pieces score for : " + game.gameBoard.gameTurn + (myPiecesScore - opponentPieceScore));
+            System.out.println("Positional score for : " + game.gameBoard.gameTurn + (myPositionalScore));
         }
 
         int finalScore = isOpponentKingCheckMated + isOpponentKingInCheck
@@ -237,33 +237,25 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int checkKingCheckStatus(Game game, TurnColor gameTurn) {
-        Piece king = game.gameBoard.getPieces(gameTurn).stream().filter(p -> p instanceof King).collect(Collectors.toList()).get(0);
-        switch (gameTurn) {
-            case white:
-                if (game.gameBoard.whiteKingTracker.isKingInCheck((King) king)) {
-                    return 2000;
-                }
-            case black:
-                if (game.gameBoard.blackKingTracker.isKingInCheck((King) king)) {
-                    return 2000;
-                }
-            }
+        int[] king = game.gameBoard.getPieces(gameTurn).stream().filter(p -> game.gameBoard.isKing(p)).collect(Collectors.toList()).get(0);
+        if (game.gameBoard.isKingInCheck(king)) {
+            return 2000;
+        }
         return 0;
 
     }
 
     private int checkKingCheckMateScore(Game game, TurnColor gameTurn) {
-        List<Piece> pieces = game.gameBoard.getPieces(gameTurn);
-        Piece kingSquare = game.gameBoard.getKing(gameTurn);
-        int kx = kingSquare.xLocation;
-        int ky = kingSquare.yLocation;
+        int[] king = game.gameBoard.getKing(gameTurn);
+        int kx = king[0];
+        int ky = king[1];
         short possibleMoves = 0;
         for (int i = -1; i < 2; i++) {
             for (int j = -1; j < 2; j++) {
                 if (i== 0 && j == 0) {
                     continue;
                 }
-                if (kingSquare.canMove(kx +i, ky+j)){
+                if (game.gameBoard.canMove(kx, ky,kx +i, ky+j)){
                     possibleMoves++;
                 }
             }
@@ -305,32 +297,48 @@ public class MiniMaxStrategy implements PlayingStrategy {
     private int getPositionalBias(Game game, TurnColor ofColor) {
         int positionalBias = 0;
         int colorPointer = -1;
-        Collection<Piece> pieces = game.gameBoard.getPieces(ofColor);;
+        List<int[]> pieces = game.gameBoard.getPieces(ofColor);;
         if (ofColor.equals(TurnColor.white)) {
             colorPointer = WHITE;
         } else if (ofColor.equals(TurnColor.black)) {
             colorPointer = BLACK;
         }
-        for (Piece piece : pieces){
+        for (int[] coords : pieces){
+            int x = coords[0];
+            int y = coords[1];
+            long score = 0;
             //FIXME rewrite pieces as pointers!!!
-            if (piece instanceof Pawn) {
-                long score = pawnPositionMap[colorPointer][piece.yLocation][piece.xLocation];
-                positionalBias += score;
-            } else if (piece instanceof Knight) {
-                long score = knightsPositionMap[colorPointer][piece.yLocation][piece.xLocation];
-                positionalBias += score;
-            } else if (piece instanceof Bishop) {
-                long score = bishopsPositionMap[colorPointer][piece.yLocation][piece.xLocation];
-                positionalBias += score;
-            } else if (piece instanceof Rook) {
-                long score = rooksPositionMap[colorPointer][piece.yLocation][piece.xLocation];
-                positionalBias += score;
-            } else if (piece instanceof Queen) {
-                long score = queenPositionMap[colorPointer][piece.yLocation][piece.xLocation];
-                positionalBias += score;
-            } else if (piece instanceof King) {
-                long score = kingPositionMap[colorPointer][piece.yLocation][piece.xLocation];
-                positionalBias += score;
+            switch (game.gameBoard.pieces[coords[0]][coords[1]]) {
+                case StandardBoard.WHITE_PAWN:
+                case StandardBoard.BLACK_PAWN:
+                    score = pawnPositionMap[colorPointer][y][x];
+                    positionalBias += score;
+                    break;
+                case StandardBoard.WHITE_BISHOP:
+                case StandardBoard.BLACK_BISHOP:
+                    score = bishopsPositionMap[colorPointer][y][x];
+                    positionalBias += score;
+                    break;
+                case StandardBoard.WHITE_KNIGHT:
+                case StandardBoard.BLACK_KNIGHT:
+                    score = knightsPositionMap[colorPointer][y][x];
+                    positionalBias += score;
+                    break;
+                case StandardBoard.WHITE_QUEEN:
+                case StandardBoard.BLACK_QUEEN:
+                    score = queenPositionMap[colorPointer][y][x];
+                    positionalBias += score;
+                    break;
+                case StandardBoard.WHITE_ROOK:
+                case StandardBoard.BLACK_ROOK:
+                    score = rooksPositionMap[colorPointer][y][x];
+                    positionalBias += score;
+                    break;
+                case StandardBoard.WHITE_KING:
+                case StandardBoard.BLACK_KING:
+                    score = kingPositionMap[colorPointer][y][x];
+                    positionalBias += score;
+                    break;
             }
         };
         return positionalBias;
@@ -338,23 +346,30 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     private Integer countPiecesScore(Game game, TurnColor ofColor) {
         return game.gameBoard.getPieces(ofColor).stream()
-                .map(MiniMaxStrategy::pieceScore)
-                .reduce(Integer::sum).get();
+                .mapToInt(coords -> pieceScore(game.gameBoard.pieces[coords[0]][coords[1]]))
+                .sum();
     }
 
-    private static int pieceScore(Piece occupyingPiece) {
-        if (occupyingPiece instanceof King) {
-            return 900;
-        } else if (occupyingPiece instanceof Queen) {
-            return 90;
-        } else if (occupyingPiece instanceof Rook) {
-            return 50;
-        } else if (occupyingPiece instanceof Knight) {
-            return 30;
-        } else if (occupyingPiece instanceof Bishop) {
-            return 30;
-        } else if (occupyingPiece instanceof Pawn) {
-            return 10;
+    private static int pieceScore(int piece) {
+        switch (piece) {
+            case StandardBoard.WHITE_PAWN:
+            case StandardBoard.BLACK_PAWN:
+                return 10;
+            case StandardBoard.WHITE_BISHOP:
+            case StandardBoard.BLACK_BISHOP:
+                return 30;
+            case StandardBoard.WHITE_KNIGHT:
+            case StandardBoard.BLACK_KNIGHT:
+                return 30;
+            case StandardBoard.WHITE_QUEEN:
+            case StandardBoard.BLACK_QUEEN:
+                return 90;
+            case StandardBoard.WHITE_ROOK:
+            case StandardBoard.BLACK_ROOK:
+                return 50;
+            case StandardBoard.WHITE_KING:
+            case StandardBoard.BLACK_KING:
+                return 900;
         }
         return 0;
     }

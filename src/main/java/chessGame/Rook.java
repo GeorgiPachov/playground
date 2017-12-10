@@ -1,32 +1,40 @@
 package chessGame;
 
-import chessControllers.TurnColor;
-
-import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Subclass of a Piece specific to a Rook. This handles all movements the rook is capable
- * of making.
- * @author Pratik Naik
- */
-public class Rook extends Piece {
-
-	/**
-	 * Rook constructor initializes name of piece to Rook. Every other parameter is
-	 * initialized by superclass.
-	 * @param initX
-	 * @param initY
-	 * @param turnColor
-	 * @param board
-	 */
-	public Rook(int initX, int initY, TurnColor turnColor, StandardBoard board) {
-		super(initX, initY, turnColor, board);
-		this.nameOfPiece = "rook";
+public class Rook  {
+	public static boolean isValidRookMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+		int xDisplacement = newX - oldX;
+		int yDisplacement = newY - oldY;
+		if(startightLineMove(xDisplacement, yDisplacement)){
+			// Total number of steps the piece has to take. Either x = 0 or y = 0.
+			int steps = Math.max(Math.abs(xDisplacement), Math.abs(yDisplacement));
+			int xDirection = xDisplacement/steps;
+			int yDirection = yDisplacement/steps;
+			// Check for obstacles in path of Rook.
+			for(int i = 1; i < steps; i++){
+				int squareToCheck = board.pieces[oldX+ i*xDirection][oldY+ i*yDirection];
+				if(squareToCheck!=0)
+					return false;
+			}
+			return true;
+		}
+		return false;
 	}
 
-	@Override
-	public void addAllowedMoves(List<Integer> moves) {
+	private static boolean startightLineMove(int xDisplacement, int yDisplacement) {
+		// Vertical
+		if(xDisplacement != 0 && yDisplacement == 0)
+			return true;
+			// Horizontal
+		else if(xDisplacement == 0 && yDisplacement != 0)
+			return true;
+		else
+			return false;
+	}
+
+	public static void addAllowedMoves(StandardBoard board, int[] coordinates, List<Integer> moves) {
+		int xLocation = coordinates[0];
+		int yLocation = coordinates[1];
 		int[][] directions= new int[][]{
 				{-1, 0},
 				{1, 0},
@@ -39,7 +47,7 @@ public class Rook extends Piece {
 
 			int nx = xLocation + xStep;
 			int ny = yLocation + yStep;
-			while (canMove(nx, ny)) {
+			while (board.canMove(xLocation, yLocation, nx, ny)) {
 				moves.add(xLocation);
 				moves.add(yLocation);
 				moves.add(nx);
@@ -49,50 +57,4 @@ public class Rook extends Piece {
 			}
 		}
 	}
-
-	/**
-	 * Rook specific implementation of abstract method.
-	 * @see chessGame.Piece#isValidSpecialMove(int, int)
-	 * @param newX
-	 * @param newY
-	 * @return boolean true if valid special move
-	 */
-	@Override
-	boolean isValidSpecialMove(int newX, int newY) {
-		int xDisplacement = newX - xLocation;
-		int yDisplacement = newY - yLocation;
-		if(isValidRookMove(xDisplacement, yDisplacement)){
-			// Total number of steps the piece has to take. Either x = 0 or y = 0.
-			int steps = Math.max(Math.abs(xDisplacement), Math.abs(yDisplacement));
-			int xDirection = xDisplacement/steps;
-			int yDirection = yDisplacement/steps;
-			// Check for obstacles in path of Rook.
-			for(int i = 1; i < steps; i++){
-				Piece squareToCheck = currentBoard.pieces[xLocation + i*xDirection][yLocation + i*yDirection];
-				if(squareToCheck!=null)
-					return false;
-			}
-			return true;
-		}
-		return false;
-			
-	}
-	
-	/**
-	 * Helper method for Rook specific move check (Vertical + Horizontal)
-	 * @param xDisplacement
-	 * @param yDisplacement
-	 * @return boolean true if valid Rook move
-	 */
-	public static boolean isValidRookMove(int xDisplacement, int yDisplacement) {
-		// Vertical
-		if(xDisplacement != 0 && yDisplacement == 0)
-			return true;
-		// Horizontal
-		else if(xDisplacement == 0 && yDisplacement != 0)
-			return true;
-		else
-			return false;
-	}
-
 }

@@ -2,7 +2,6 @@ package chessGame;
 
 import chessControllers.TurnColor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,71 +9,52 @@ import java.util.List;
  * of making.
  * @author Pratik Naik
  */
-public class Pawn extends Piece {
+public class Pawn {
 
-	/**
-	 * Pawn constructor initializes name of piece to pawn and sets firstMove. Every other parameter 
-	 * is initialized by superclass.
-	 * @param initX
-	 * @param initY
-	 * @param turnColor
-	 * @param board
-	 */
-	public Pawn(int initX, int initY, TurnColor turnColor, StandardBoard board) {
-		super(initX, initY, turnColor, board);
-		this.nameOfPiece = "pawn";
-	}
-
-	@Override
-	public void addAllowedMoves(List<Integer> moves) {
+	public static void addAllowedMoves(StandardBoard board, int[] coordinates, List<Integer> moves) {
 		int[][] possibleMovesXY = null;
-		if (turnColor == TurnColor.white) {
+		int oldX = coordinates[0];
+		int oldY = coordinates[1];
+		boolean isWhite = board.isWhite(board.pieces[coordinates[0]][coordinates[1]]);
+        boolean isBlack = board.isBlack(board.pieces[coordinates[0]][coordinates[1]]);
+
+        if (isWhite) {
 			possibleMovesXY = new int[][] {
-					{xLocation, yLocation+1},
-					{xLocation, yLocation+2},
-					{xLocation+1, yLocation+1},
-					{xLocation-1, yLocation+1}
+					{oldX, oldY+1},
+					{oldX, oldY+2},
+					{oldX+1, oldY+1},
+					{oldX-1, oldY+1}
 			};
-		} else if (turnColor == TurnColor.black) {
+		} else if (isBlack) {
 			possibleMovesXY = new int[][] {
-					{xLocation, yLocation-1},
-					{xLocation, yLocation-2},
-					{xLocation+1, yLocation-1},
-					{xLocation-1, yLocation-1}
+					{oldX, oldY-1},
+					{oldX, oldY-2},
+					{oldX+1, oldY-1},
+					{oldX-1, oldY-1}
 			};
 		}
 		for (int[] possibleMove : possibleMovesXY) {
-			if (canMove(possibleMove[0],possibleMove[1])) {
-				moves.add(xLocation);
-				moves.add(yLocation);
+			if (board.canMove(oldX, oldY, possibleMove[0],possibleMove[1])) {
+                moves.add(oldX);
+				moves.add(oldY);
 				moves.add(possibleMove[0]);
 				moves.add(possibleMove[1]);
 			}
 		}
 	}
-
-	/**
-	 * Pawn specific implementation of abstract method.
-	 * @see chessGame.Piece#isValidSpecialMove(int, int)
-	 * @param newX
-	 * @param newY
-	 * @return boolean true if valid special move
-	 */
-	@Override
-	boolean isValidSpecialMove(int newX, int newY) {
-		int xDisplacement = newX - xLocation;
-		int yDisplacement = newY - yLocation;
-		if(isValidPawnMove(xDisplacement, yDisplacement)){
-			Piece pieceToCheck = currentBoard.pieces[xLocation + xDisplacement][yLocation + yDisplacement];
+	public static boolean isValidSpecialMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+		int xDisplacement = newX - oldX;
+		if(isValidPawnMove(board, oldX, oldY, newX, newY)){
+			int pieceToCheck = board.pieces[newX][newY];
 			// If the pawn moves forward the square should not be occupied
 			if(xDisplacement == 0){
-				if(pieceToCheck!=null)
+				if(pieceToCheck!=0)
 					return false;
 				return true;
 			}
 			// If the pawn moves to capture the square should be occupied
 			else{
-				if(pieceToCheck!= null)
+				if(pieceToCheck!= 0)
 					return true;
 				return false;
 			}
@@ -84,18 +64,21 @@ public class Pawn extends Piece {
 
 	/**
 	 * Helper method for Pawn specific move check. (First Move + Regular Move)
-	 * @param xDisplacement
-	 * @param yDisplacement
 	 * @return boolean true if valid pawn move
 	 */
-	private boolean isValidPawnMove(int xDisplacement, int yDisplacement) {
-		// Two steps allowed in first move
-		if((this.yLocation == 6 && this.turnColor.equals(TurnColor.black)) || (this.yLocation == 1 && this.turnColor.equals(TurnColor.white))){
-			return handlePawnFirstMove(xDisplacement, yDisplacement);
+	private static boolean isValidPawnMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+		int xDisplacement = newX - oldX;
+		int yDisplacement = newY -oldY;
+		boolean isBlack = board.isBlack(board.pieces[oldX][oldY]);
+		boolean isWhite = board.isWhite(board.pieces[oldX][oldY]);
+
+        // Two steps allowed in first move
+		if((oldY== 6 && isBlack || (oldY == 1 && isWhite))) {
+			return handlePawnFirstMove(board, oldX, oldY, newX, newY);
 		}
 		// Single steps allowed in future moves.
 		else{
-			return handleRegularPawnMove(xDisplacement, yDisplacement);
+			return handleRegularPawnMove(isWhite, xDisplacement, yDisplacement);
 		}
 	}
 
@@ -105,8 +88,8 @@ public class Pawn extends Piece {
 	 * @param yDisplacement
 	 * @return boolean true if valid regular pawn move
 	 */
-	private boolean handleRegularPawnMove(int xDisplacement, int yDisplacement) {
-		if(turnColor.equals(TurnColor.white)){
+	private static boolean handleRegularPawnMove(boolean isWhite, int xDisplacement, int yDisplacement) {
+	    if(isWhite){
 			// White capture or move upwards.
 			if(yDisplacement == 1 && (xDisplacement == 0 || Math.abs(xDisplacement) == 1))
 				return true;
@@ -122,17 +105,14 @@ public class Pawn extends Piece {
 		}
 	}
 
-	/**
-	 * Helper method for first move of Pawn. Two steps allowed.
-	 * @param xDisplacement
-	 * @param yDisplacement
-	 * @return boolean true if valid first pawn move
-	 */
-	private boolean handlePawnFirstMove(int xDisplacement, int yDisplacement) {
+	private static boolean handlePawnFirstMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+        int xDisplacement = newX - oldX;
+        int yDisplacement = newY - oldY;
+        boolean isWhite = board.isWhite(board.pieces[oldX][oldY]);
 		// White pawns can only move upwards.
-		if(turnColor.equals(TurnColor.white)){
+		if(isWhite){
 			// Two step without capture.
-			if((yDisplacement == 1 || yDisplacement == 2) && (xDisplacement == 0) && !isBlocked(yDisplacement))
+			if((yDisplacement == 1 || yDisplacement == 2) && (xDisplacement == 0) && !isBlocked(board, oldX, oldY, newX, newY))
 				return true;
 			// One step plus capture.
 			else if(yDisplacement == 1 && Math.abs(xDisplacement) == 1)
@@ -142,7 +122,7 @@ public class Pawn extends Piece {
 		}
 		// Black pawns can only move downwards.
 		else{
-			if((yDisplacement == -1 || yDisplacement == -2) && (xDisplacement == 0) && !isBlocked(yDisplacement))
+			if((yDisplacement == -1 || yDisplacement == -2) && (xDisplacement == 0) && !isBlocked(board, oldX, oldY, newX, yDisplacement))
 				return true;
 			else if(yDisplacement == -1 && Math.abs(xDisplacement) == 1)
 				return true;
@@ -151,16 +131,18 @@ public class Pawn extends Piece {
 		}
 	}
 
-	private boolean isBlocked(int yDisplacement) {
+	private static boolean isBlocked(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+        int xDisplacement = newX - oldX;
+        int yDisplacement = newY - oldY;
 		if (yDisplacement == 1 || yDisplacement == -1) {
-			if (currentBoard.pieces[xLocation][yLocation + yDisplacement]!=null) {
+			if (board.pieces[oldX][oldY+ yDisplacement]!=0) {
 				return true;
 			}
 		} else if (yDisplacement == 2 || yDisplacement == -2) {
-			if (currentBoard.pieces[xLocation][yLocation + yDisplacement/2]!=null) {
+			if (board.pieces[oldX][oldY+ yDisplacement/2]!=0) {
 				return true;
 			}
-			if (currentBoard.pieces[xLocation][yLocation + yDisplacement]!=null) {
+			if (board.pieces[oldX][oldY+ yDisplacement]!=0) {
 				return true;
 			}
 		}

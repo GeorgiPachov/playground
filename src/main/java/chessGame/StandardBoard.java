@@ -5,30 +5,51 @@ import chessControllers.TurnColor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class StandardBoard {
-	public Piece pieces[][];
-	
-	public King whiteKingTracker;
-	public King blackKingTracker;
+    public TurnColor gameTurn;
+    public int pieces[][];
+	public static final int WHITE_PAWN = 1;
+    public static final int WHITE_ROOK = 2;
+    public static final int WHITE_KNIGHT = 3;
+    public static final int WHITE_BISHOP = 4;
+    public static final int WHITE_QUEEN = 5;
+    public static final int WHITE_KING = 6;
+    public static final int[] WHITES = new int[] {
+            WHITE_PAWN,
+            WHITE_ROOK,
+            WHITE_KNIGHT,
+            WHITE_BISHOP,
+            WHITE_QUEEN,
+            WHITE_KING
+    };
 
-	private List<Piece> blackPieces;
-	private List<Piece> whitePieces;
+    public static final int BLACK_PAWN = 17;
+    public static final int BLACK_ROOK = 18;
+    public static final int BLACK_KNIGHT = 19;
+    public static final int BLACK_BISHOP = 20;
+    public static final int BLACK_QUEEN = 21;
+    public static final int BLACK_KING = 22;
+    public static final int[] BLACKS = new int[] {
+            BLACK_PAWN,
+            BLACK_ROOK,
+            BLACK_KNIGHT,
+            BLACK_BISHOP,
+            BLACK_QUEEN,
+            BLACK_KING
+    };
 
 	public StandardBoard() {
-		this.pieces = new Piece[8][8];
-		populateBoardWithSquares();
-		this.whiteKingTracker = null;
-		this.blackKingTracker = null;
-
-       initCaches();
+		this.pieces = new int[8][8];
+        gameTurn = TurnColor.white;
+        populateBoardWithSquares();
+		populateBoardWithPieces();
 	}
 
 	public void populateBoardWithSquares() {
 	    for (int i = 0; i < 8; i++) {
-	        pieces[i] = new Piece[8];
+	        pieces[i] = new int[8];
         }
 	}
 	
@@ -44,60 +65,40 @@ public class StandardBoard {
 
 	public void setupPawns(){
 		for(int i = 0; i < 8; i++){
-			Pawn newWhitePawn = new Pawn(i, 1, TurnColor.white, this);
-			Pawn newBlackPawn = new Pawn(i, 6, TurnColor.black, this);
-			this.pieces[i][1] = newWhitePawn;
-			this.pieces[i][6] = newBlackPawn;
+			this.pieces[i][1] = WHITE_PAWN;
+			this.pieces[i][6] = BLACK_PAWN;
 		}
 	}
 	
 	public void setupRooks(){
-		Rook whiteRookOne = new Rook(0, 0, TurnColor.white, this);
-		Rook whiteRookTwo = new Rook(7, 0, TurnColor.white, this);
-		Rook blackRookOne = new Rook(0, 7, TurnColor.black, this);
-		Rook blackRookTwo = new Rook(7, 7, TurnColor.black, this);
-		this.pieces[0][0] = whiteRookOne;
-		this.pieces[7][0] = whiteRookTwo;
-		this.pieces[0][7] = blackRookOne;
-		this.pieces[7][7] = blackRookTwo;
+		this.pieces[0][0] = WHITE_ROOK;
+		this.pieces[7][0] = WHITE_ROOK;
+		this.pieces[0][7] = BLACK_ROOK;
+		this.pieces[7][7] = BLACK_ROOK;
 	}
 	
 	public void setupBishops(){
-		Bishop whiteBishopOne = new Bishop(2, 0, TurnColor.white, this);
-		Bishop whiteBishopTwo = new Bishop(5, 0, TurnColor.white, this);
-		Bishop blackBishopOne = new Bishop(2, 7, TurnColor.black, this);
-		Bishop blackBishopTwo = new Bishop(5, 7, TurnColor.black, this);
-		this.pieces[2][0] = whiteBishopOne;
-		this.pieces[5][0] = whiteBishopTwo;
-		this.pieces[2][7] = blackBishopOne;
-		this.pieces[5][7] = blackBishopTwo;
+		this.pieces[2][0] = WHITE_BISHOP;
+		this.pieces[5][0] = WHITE_BISHOP;
+		this.pieces[2][7] = BLACK_BISHOP;
+		this.pieces[5][7] = BLACK_BISHOP;
 	}
 	
 	public void setupKnights(){
-		Knight whiteKnightOne = new Knight(1, 0, TurnColor.white, this);
-		Knight whiteKnightTwo = new Knight(6, 0, TurnColor.white, this);
-		Knight blackKnightOne = new Knight(1, 7, TurnColor.black, this);
-		Knight blackKnightTwo = new Knight(6, 7, TurnColor.black, this);
-		this.pieces[1][0] = whiteKnightOne;
-		this.pieces[6][0] = whiteKnightTwo;
-		this.pieces[1][7] = blackKnightOne;
-		this.pieces[6][7] = blackKnightTwo;
+		this.pieces[1][0] = WHITE_KNIGHT;
+		this.pieces[6][0] = WHITE_KNIGHT;
+		this.pieces[1][7] = BLACK_KNIGHT;
+		this.pieces[6][7] = BLACK_KNIGHT;
 	}
 	
 	public void setupQueens(){
-		Queen whiteQueen = new Queen(3, 0, TurnColor.white, this);
-		Queen blackQueen = new Queen(3, 7, TurnColor.black, this);
-		this.pieces[3][0] = whiteQueen;
-		this.pieces[3][7] = blackQueen;
+		this.pieces[3][0] = WHITE_QUEEN;
+		this.pieces[3][7] = BLACK_QUEEN;
 	}
 	
 	public void setupKings(){
-		King whiteKing = new King(4, 0, TurnColor.white, this);
-		King blackKing = new King(4, 7, TurnColor.black, this);
-		this.pieces[4][0] = whiteKing;
-		this.pieces[4][7] = blackKing;
-		whiteKingTracker = whiteKing;
-		blackKingTracker = blackKing;
+		this.pieces[4][0] = WHITE_KING;
+		this.pieces[4][7] = BLACK_KING;
 	}
 	
 	public boolean inBoardBounds(int newX, int newY){
@@ -109,44 +110,313 @@ public class StandardBoard {
 	}
 
 	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
-	    List<Piece> squares = getPieces(color);
-		squares.stream().forEach(p -> p.addAllowedMoves(moves));
+	    List<int[]> pieces = getPieces(color);
+        System.out.println("Pieces of color " + color + " have size " + pieces.size());
+        pieces.forEach(p -> addAllowedMoves(p, moves));
 	}
 
-	public List<Piece> getPieces(TurnColor gameTurn) {
+    private void addAllowedMoves(int[] coordinates, List<Integer> moves) {
+        int x = coordinates[0];
+        int y = coordinates[1];
+
+        switch (pieces[x][y]) {
+            case WHITE_PAWN:
+            case BLACK_PAWN:
+                Pawn.addAllowedMoves(this, coordinates, moves);
+                break;
+            case WHITE_BISHOP:
+            case BLACK_BISHOP:
+                Bishop.addAllowedMoves(this, coordinates, moves);
+                break;
+            case WHITE_KNIGHT:
+            case BLACK_KNIGHT:
+                Knight.addAllowedMoves(this, coordinates, moves);
+                break;
+            case WHITE_ROOK:
+            case BLACK_ROOK:
+                Rook.addAllowedMoves(this, coordinates, moves);
+                break;
+            case WHITE_QUEEN:
+            case BLACK_QUEEN:
+                Queen.addAllowedMoves(this, coordinates, moves);
+                break;
+            case WHITE_KING:
+            case BLACK_KING:
+                King.addAllowedMoves(this, coordinates, moves);
+                break;
+        }
+    }
+
+    public List<int[]> getPieces(TurnColor gameTurn) {
 	    switch (gameTurn) {
             case white:
-                return whitePieces;
+                return findWhitePieces();
             case black:
-                return blackPieces;
+                return findBlackPieces();
         }
         return null;
 	}
 
-    public void initCaches() {
-        whitePieces = findWhitePieces();
-        blackPieces = findBlackPieces();
+    private List<int[]> findBlackPieces() {
+        List<int[]> blacks = new ArrayList<>();
+	    for (int i = 0; i < 8; i++) {
+	        for (int j = 0; j < 8; j++) {
+	            if (isBlack(pieces[i][j])) {
+                    blacks.add(new int[] {i, j});
+                }
+            }
+        }
+        return blacks;
     }
 
-    private List<Piece> findBlackPieces() {
-        return Arrays.stream(pieces).flatMap(Arrays::stream)
-                .filter(Objects::nonNull)
-                .filter(p -> p.turnColor == TurnColor.black).collect(Collectors.toList());
+    public boolean isBlack(int i) {
+        return i > 16 && i < 32;
     }
 
-    private     List<Piece> findWhitePieces() {
-        return Arrays.stream(pieces).flatMap(Arrays::stream)
-                .filter(Objects::nonNull)
-                .filter(p -> p.turnColor == TurnColor.white).collect(Collectors.toList());
+    private List<int[]> findWhitePieces() {
+        List<int[]> whites = new ArrayList<>();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                if (isWhite(pieces[i][j])) {
+                    whites.add(new int[] {i, j});
+                }
+            }
+        }
+        return whites;
+
     }
 
-    public Piece getKing(TurnColor gameTurn) {
+    public boolean isWhite(int i) {
+        return i > 0 && i < 16;
+    }
+
+    public int[] getKing(TurnColor gameTurn) {
         switch (gameTurn) {
             case white:
-                return whiteKingTracker;
+                return findWhitePieces().stream().filter(this::isKing).collect(Collectors.toList()).get(0);
             case black:
-                return blackKingTracker;
+                return findBlackPieces().stream().peek(c -> System.out.println(Arrays.toString(c))).filter(this::isKing).collect(Collectors.toList()).get(0);
         }
         return null;
+    }
+
+    public boolean canMove(int oldX, int oldY, int newX, int newY){
+        TurnColor myColor = getColor(oldX, oldY);
+	    if(!inBoardBounds(newX, newY))
+            return false;
+        if (isValidMove(oldX, oldY, newX, newY)) {
+            return false;
+        }
+        if(getColor(newX, newY) == myColor)
+            return false;
+        if(kingBecomesEndangered(oldX, oldY, newX, newY))
+            return false;
+        return true;
+    }
+
+    private boolean isValidMove(int oldX, int oldY, int newX, int newY) {
+        switch (pieces[oldX][oldY]){
+            case WHITE_PAWN:
+            case BLACK_PAWN:
+                if (isValidPawnMove(oldX,oldY, newX,newY)) {
+                    return true;
+                }
+            case WHITE_BISHOP:
+            case BLACK_BISHOP:
+                if (isValidBishopMove(oldX, oldY, newX, newY)) {
+                    return true;
+                }
+            case WHITE_ROOK:
+            case BLACK_ROOK:
+                if (isValidRookMove(oldX, oldY, newX, newY)) {
+                    return true;
+                }
+            case WHITE_KNIGHT:
+            case BLACK_KNIGHT:
+                if (isValidKnightMove(oldX, oldY, newX, newY)) {
+                    return true;
+                }
+            case WHITE_QUEEN:
+            case BLACK_QUEEN:
+                if (isValidQueenMove(oldX, oldY, newX, newY)) {
+                    return true;
+                }
+            case WHITE_KING:
+            case BLACK_KING:
+                if (isValidKingMove(oldX, oldY, newX, newY)) {
+                    return true;
+                }
+        }
+        return false;
+    }
+
+    private boolean isValidKingMove(int oldX, int oldY, int newX, int newY) {
+        return King.isValidKingMove(this, oldX, oldY, newX, newY);
+    }
+
+    private boolean isValidQueenMove(int oldX, int oldY, int newX, int newY) {
+        return Queen.isValidQueenMove(this, oldX, oldY, newX, newY);
+    }
+
+    private boolean isValidKnightMove(int oldX, int oldY, int newX, int newY) {
+        return Knight.isValidKnightMove(this, oldX, oldY, newX, newY);
+    }
+
+    private boolean isValidRookMove(int oldX, int oldY, int newX, int newY) {
+        return Rook.isValidRookMove(this, oldX, oldY, newX, newY);
+    }
+
+    private boolean isValidBishopMove(int oldX, int oldY, int newX, int newY) {
+        return Bishop.isValidBishopMove(this, oldX, oldY, newX, newY);
+    }
+
+    private boolean isValidPawnMove(int oldX, int oldY, int newX, int newY) {
+        boolean validSpecialMove = Pawn.isValidSpecialMove(this, oldX, oldY, newX, newY);
+        System.out.println(String.format("Move [%d, %d] -> [%d, %d] was demed %b", oldX,oldY,newX,newY, validSpecialMove));
+        return validSpecialMove;
+    }
+
+    public boolean isOfColor(int piece, TurnColor oppositeColor) {
+        return Arrays.binarySearch(oppositeColor.getPieces(), piece) > -1;
+    }
+
+    public void flipTurn() {
+        gameTurn = gameTurn.opposite();
+    }
+
+    private boolean kingBecomesEndangered(int oldX, int oldY, int newPieceX, int newPieceY) {
+        TurnColor turnColor = getColor(oldX, oldY);
+        int[] myKing = getKing(turnColor);
+
+        int piece = pieces[newPieceX][newPieceY];
+        if(piece != 0){
+            if(isOfColor(piece, turnColor.opposite())){
+                // make move
+                int enemyRemoved = movePiece(oldX, oldY, newPieceX, newPieceY);
+
+                // check
+                boolean kingIsInCheck = isKingInCheck(myKing);
+
+                // revert move
+                movePiece(newPieceX, newPieceY, oldX, oldY);
+                if (enemyRemoved != 0) {
+                    pieces[newPieceX][newPieceY] = enemyRemoved;
+                }
+                return kingIsInCheck;
+            } else {
+                return false; //my piece is there :/
+            }
+        }
+        else{
+            // apply
+            movePiece(oldX, oldY, newPieceX, newPieceY);
+            // check
+            boolean kingIsInCheck = isKingInCheck(myKing);
+            // reverse
+            movePiece(newPieceX, newPieceY, oldX, oldY);
+
+            return kingIsInCheck;
+        }
+    }
+
+    public boolean isKingInCheck(int[] kingToCheck) {
+        int kingX = kingToCheck[0];
+        int kingY = kingToCheck[1];
+        TurnColor kingColor = getColor(kingToCheck);
+        for (int[] coords: getPieces(kingColor.opposite())) {
+            if(canMove(coords[0], coords[1], kingX, kingY)) {
+                System.out.println(gameTurn + "king " + " can be attacked by " + "(" + coords[0] + ", " + coords[1] + ")");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public TurnColor getColor(int x, int y) {
+        int figure = pieces[x][y];
+        System.out.println("Figure to get color from " + figure);
+        if (isWhite(figure)) {
+            return TurnColor.white;
+        } else if (isBlack(figure)) {
+            return TurnColor.black;
+        }
+        return null;
+    }
+
+    private TurnColor getColor(int[] coordinates) {
+        return getColor(coordinates[0], coordinates[1]);
+    }
+
+    private int movePiece(int oldX, int oldY, int newPieceX, int newPieceY) {
+        int pieceToMove = pieces[oldX][oldY];
+        pieces[oldX][oldY] = 0;
+        int enemyRemoved = pieces[oldX][oldY];
+        pieces[newPieceX][newPieceY] = pieceToMove;
+        return enemyRemoved;
+    }
+
+    public boolean isKingCheckmate(int[] kingToCheck){
+        if(!isKingInCheck(kingToCheck)) {
+            return false;
+        }
+        System.out.println("King " + getColor(kingToCheck) + " is in check");
+        TurnColor kingColor = getColor(kingToCheck);
+        for(int i = 0; i < pieces.length; i++){
+            for(int j = 0; j < pieces[0].length; j++){
+                int pieceToCheck = pieces[i][j];
+                if(pieceToCheck != 0){
+                    if(!isOfColor(pieceToCheck, kingColor.opposite())){
+                        if(!checkmateHelper(i, j, kingToCheck))
+                            return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean checkmateHelper(int myPieceX, int myPieceY, int[] kingToCheck) {
+        int oldPieceX = myPieceX;
+        int oldPieceY = myPieceY;
+        TurnColor kingColor = getColor(kingToCheck);
+        for(int i = 0; i < pieces.length; i++){
+            for(int j = 0; j < pieces[0].length; j++){
+                int pieceToCheck = pieces[i][j];
+                if(isOfColor(pieces[i][j], kingColor)){
+                    if(canMove(myPieceX, myPieceY, i, j)){
+                        if(pieceToCheck != 0){
+                            // try move any piece anywhere to avoid checkmate... and that's just for the check!
+                            movePiece(myPieceX, myPieceY, i, j);
+                            if(!isKingInCheck(kingToCheck)){
+                                // restore phase
+                                movePiece(i, j, oldPieceX, oldPieceY);
+                                pieces[i][j] = pieceToCheck;
+                                return false;
+                            }
+                            movePiece(myPieceX, myPieceY, oldPieceX, oldPieceY);
+                            pieces[i][j] = pieceToCheck;
+                        }
+                        else{
+                            movePiece(myPieceX, myPieceY, i, j);
+                            if(!isKingInCheck(kingToCheck)){
+                                movePiece(i, j, oldPieceX, oldPieceY);
+                                return false;
+                            }
+                            movePiece(i, j, oldPieceX, oldPieceY);
+                        }
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    public boolean isKing(int[] p) {
+        switch (pieces[p[0]][p[1]]) {
+            case WHITE_KING:
+            case BLACK_KING:
+                return true;
+        }
+        return false;
     }
 }

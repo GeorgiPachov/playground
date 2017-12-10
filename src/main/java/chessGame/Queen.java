@@ -1,32 +1,43 @@
 package chessGame;
-
-import chessControllers.TurnColor;
-
-import java.util.ArrayList;
 import java.util.List;
-
-/**
- * Subclass of a Piece specific to a Queen. This handles all movements the queen is capable
- * of making.
- * @author Pratik Naik
- */
-public class Queen extends Piece {
-
-	/**
-	 * Queen constructor initializes name of piece to Queen. Every other parameter is
-	 * initialized by superclass.
-	 * @param initX
-	 * @param initY
-	 * @param turnColor
-	 * @param board
-	 */
-	public Queen(int initX, int initY, TurnColor turnColor, StandardBoard board) {
-		super(initX, initY, turnColor, board);
-		this.nameOfPiece = "queen";
+public class Queen {
+	private static boolean isQueenMove(int xDisplacement, int yDisplacement) {
+		// Diagonal movement.
+		if((Math.abs(xDisplacement) == Math.abs(yDisplacement)) && xDisplacement != 0)
+			return true;
+		else{
+			// Horizontal movement
+			if(xDisplacement != 0 && yDisplacement == 0)
+				return true;
+			// Vertical movement
+			else if(xDisplacement == 0 && yDisplacement != 0)
+				return true;
+			else
+				return false;
+		}
 	}
 
-	@Override
-	public void addAllowedMoves(List<Integer> moves) {
+	public static boolean isValidQueenMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+		int xDisplacement = newX - oldX;
+		int yDisplacement = newY - oldY;
+		if(isQueenMove(xDisplacement, yDisplacement)){
+			int steps = Math.max(Math.abs(xDisplacement), Math.abs(yDisplacement));
+			int xDirection = xDisplacement/steps;
+			int yDirection = yDisplacement/steps;
+			// Check for obstacles in path of Queen.
+			for(int i = 1; i < steps; i++){
+				int pieceToCheck = board.pieces[oldX + i*xDirection][oldY + i*yDirection];
+				if(pieceToCheck!=0)
+					return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public static void addAllowedMoves(StandardBoard board, int[] coordinates, List<Integer> moves) {
+		int xLocation = coordinates[0];
+		int yLocation = coordinates[1];
 		int[][] possibleDirections = new int[][] {
 				// bishop
 				{-1, -1},
@@ -47,7 +58,7 @@ public class Queen extends Piece {
 
 			int nx = xLocation + xStep;
 			int ny = yLocation + yStep;
-			while (canMove(nx, ny)) {
+			while (board.canMove(xLocation, yLocation, nx, ny)) {
 				moves.add(xLocation);
 				moves.add(yLocation);
 				moves.add(nx);
@@ -57,53 +68,4 @@ public class Queen extends Piece {
 			}
 		}
 	}
-
-	/**
-	 * Queen specific implementation of abstract method.
-	 * @see Piece#isValidSpecialMove(int, int)
-	 * @param newX
-	 * @param newY
-	 * @return boolean true if valid special move
-	 */
-	@Override
-	boolean isValidSpecialMove(int newX, int newY) {
-		int xDisplacement = newX - xLocation;
-		int yDisplacement = newY - yLocation;
-		if(isValidQueenMove(xDisplacement, yDisplacement)){
-			int steps = Math.max(Math.abs(xDisplacement), Math.abs(yDisplacement));
-			int xDirection = xDisplacement/steps;
-			int yDirection = yDisplacement/steps;
-			// Check for obstacles in path of Queen.
-			for(int i = 1; i < steps; i++){
-				Piece pieceToCheck = currentBoard.pieces[xLocation + i*xDirection][yLocation + i*yDirection];
-				if(pieceToCheck!=null)
-					return false;
-			}
-			return true;
-		}
-		return false;
-	}
-
-	/**
-	 * Helper method for Queen specific moves (Diagonal + Vertical + Horizontal)
-	 * @param xDisplacement
-	 * @param yDisplacement
-	 * @return boolean true if valid queen move
-	 */
-	private boolean isValidQueenMove(int xDisplacement, int yDisplacement) {
-		// Diagonal movement.
-		if((Math.abs(xDisplacement) == Math.abs(yDisplacement)) && xDisplacement != 0)
-			return true;
-		else{
-			// Horizontal movement
-			if(xDisplacement != 0 && yDisplacement == 0)
-				return true;
-			// Vertical movement
-			else if(xDisplacement == 0 && yDisplacement != 0)
-				return true;
-			else
-				return false;
-		}
-	}
-
 }
