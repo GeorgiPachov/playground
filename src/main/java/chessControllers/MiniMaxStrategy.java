@@ -238,7 +238,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int checkKingCheckStatus(Game game, TurnColor gameTurn) {
-        int[] king = game.gameBoard.getPieces(gameTurn).stream().filter(p -> game.gameBoard.isKing(p)).collect(Collectors.toList()).get(0);
+        int[] king = game.gameBoard.getKing(gameTurn);
         if (game.gameBoard.isKingInCheck(king)) {
             return 2000;
         }
@@ -298,7 +298,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
     private int getPositionalBias(Game game, TurnColor ofColor) {
         int positionalBias = 0;
         int colorPointer = -1;
-        List<int[]> pieces = game.gameBoard.getPieces(ofColor);;
+        Collection<int[]> pieces = game.gameBoard.getPieces(ofColor);;
         if (ofColor.equals(TurnColor.white)) {
             colorPointer = WHITE;
         } else if (ofColor.equals(TurnColor.black)) {

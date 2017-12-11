@@ -3,9 +3,7 @@ package chessGame;
 import chessControllers.MoveCommand;
 import chessControllers.TurnColor;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static chessControllers.Game.DEBUG;
@@ -43,6 +41,9 @@ public class StandardBoard {
             BLACK_KING
     };
 
+    public Map<Integer, int[]> blackPieces = new HashMap<>();
+    public Map<Integer, int[]> whitePieces = new HashMap<>();
+
 	public StandardBoard() {
 		this.pieces = new int[8][8];
         gameTurn = TurnColor.white;
@@ -63,6 +64,14 @@ public class StandardBoard {
 		setupRooks();
 		setupQueens();
 		setupKings();
+
+		findWhitePieces().forEach(whitePiece -> {
+		    whitePieces.put(Arrays.hashCode(whitePiece), whitePiece);
+        });
+
+		findBlackPieces().forEach(blackPiece -> {
+		    blackPieces.put(Arrays.hashCode(blackPiece), blackPiece);
+        });
 	}
 	
 
@@ -116,7 +125,7 @@ public class StandardBoard {
 	public int[] blackKing = new int[]{4,7};
 
 	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
-	    List<int[]> pieces = getPieces(color);
+	    Collection<int[]> pieces = new ArrayList(getPieces(color));
         pieces.forEach(p -> addAllowedMoves(p, moves));
 	}
 
@@ -152,12 +161,12 @@ public class StandardBoard {
         }
     }
 
-    public List<int[]> getPieces(TurnColor gameTurn) {
+    public Collection<int[]> getPieces(TurnColor gameTurn) {
 	    switch (gameTurn) {
             case white:
-                return findWhitePieces();
+                return whitePieces.values();
             case black:
-                return findBlackPieces();
+                return blackPieces.values();
         }
         return null;
 	}
@@ -331,7 +340,7 @@ public class StandardBoard {
         int kingX = kingToCheck[0];
         int kingY = kingToCheck[1];
         TurnColor kingColor = getColor(kingToCheck);
-        List<int[]> oppositePieces = getPieces(kingColor.opposite());
+        Collection<int[]> oppositePieces = getPieces(kingColor.opposite());
         for (int[] coords: oppositePieces) {
             if (isValidMove(coords[0], coords[1], kingX, kingY)) {
                 return true;
