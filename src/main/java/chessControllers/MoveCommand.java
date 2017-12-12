@@ -22,10 +22,10 @@ public class MoveCommand {
 	
 	public void undo() {
         // update caches
-        TurnColor color = board.getColor(xDestination, yDestination);
-        int[] king = board.getKing(color);
+        TurnColor undoingPieceColor = board.getColor(xDestination, yDestination);
+        int[] king = board.getKing(undoingPieceColor);
 		int[] coords = {xDestination, yDestination};
-		switch (color) {
+		switch (undoingPieceColor) {
 			case black:
 				board.blackPieces.remove(Arrays.hashCode(coords));
 				break;
@@ -41,6 +41,20 @@ public class MoveCommand {
 		board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
 
 		// update caches
+
+		// restore check cache
+		int[] oppositeKing = board.getKing(undoingPieceColor.opposite());
+		boolean isInCheck = board.isValidMove(xOrigin,yOrigin,oppositeKing[0], oppositeKing[1]);
+		switch (undoingPieceColor.opposite()) {
+			case black:
+				board.blackKingInCheck = isInCheck;
+				break;
+			case white:
+				board.whiteKingInCheck = isInCheck;
+				break;
+		}
+
+		// restore king cache
         if (xDestination == king[0] && yDestination == king[1]) {
             king[0] = xOrigin;
             king[1] = yOrigin;
@@ -49,7 +63,7 @@ public class MoveCommand {
         // restore enemy to opponent pieces's cache
 		if (enemyRemoved!=0) {
 			int[] enemyPieceCoordiantes = {xDestination, yDestination};
-			switch (color) {
+			switch (undoingPieceColor) {
 				case white:
 					board.blackPieces.put(Arrays.hashCode(enemyPieceCoordiantes), enemyPieceCoordiantes);
 					break;
@@ -59,8 +73,9 @@ public class MoveCommand {
 			}
 		}
 
+		// restore coordinates cache
 		int[] newCoordinates = {xOrigin, yOrigin};
-		switch (color) {
+		switch (undoingPieceColor) {
 			case black:
 				board.blackPieces.put(Arrays.hashCode(newCoordinates), newCoordinates);
 				break;
@@ -73,9 +88,9 @@ public class MoveCommand {
 	
 	public void execute() {
         // prepare caches
-        TurnColor color = board.getColor(xOrigin, yOrigin);
-        int[] king = board.getKing(color);
-		switch (color) {
+        TurnColor movingPieceColor = board.getColor(xOrigin, yOrigin);
+        int[] king = board.getKing(movingPieceColor);
+		switch (movingPieceColor) {
 			case black:
 				board.blackPieces.remove(Arrays.hashCode(new int[] {xOrigin, yOrigin}));
 				break;
@@ -91,6 +106,20 @@ public class MoveCommand {
 		board.pieces[xDestination][yDestination] = pieceToMove;
 
 		// update caches
+
+		// update is in check cache
+		int[] oppositeKing = board.getKing(movingPieceColor.opposite());
+		boolean isInCheck = board.isValidMove(xDestination,yDestination,oppositeKing[0], oppositeKing[1]);
+		switch (movingPieceColor.opposite()) {
+			case black:
+				board.blackKingInCheck = isInCheck;
+				break;
+			case white:
+				board.whiteKingInCheck = isInCheck;
+				break;
+		}
+
+		// update king cache
         if (xOrigin == king[0] && yOrigin == king[1]) {
             king[0] = xDestination;
             king[1] = yDestination;
@@ -98,7 +127,7 @@ public class MoveCommand {
 
         // remove enemy from opposite pieces cache
 		if (enemyRemoved!=0) {
-			switch (color) {
+			switch (movingPieceColor) {
 				case white:
 					board.blackPieces.remove(Arrays.hashCode(new int[] {xDestination, yDestination}));
 					break;
@@ -108,8 +137,9 @@ public class MoveCommand {
 			}
 		}
 
+		// update figures cache
 		int[] coordinates = {xDestination, yDestination};
-		switch (color) {
+		switch (movingPieceColor) {
 			case black:
 				board.blackPieces.put(Arrays.hashCode(coordinates), coordinates);
 				break;

@@ -25,7 +25,6 @@ public class StandardBoard {
             WHITE_QUEEN,
             WHITE_KING
     };
-
     public static final int BLACK_PAWN = 17;
     public static final int BLACK_ROOK = 18;
     public static final int BLACK_KNIGHT = 19;
@@ -41,8 +40,15 @@ public class StandardBoard {
             BLACK_KING
     };
 
+    // caches to speed-up the mini-max
     public Map<Integer, int[]> blackPieces = new HashMap<>();
     public Map<Integer, int[]> whitePieces = new HashMap<>();
+
+    public int[] whiteKing = new int[]{4,0};
+    public int[] blackKing = new int[]{4,7};
+
+    public boolean whiteKingInCheck;
+    public boolean blackKingInCheck;
 
 	public StandardBoard() {
 		this.pieces = new int[8][8];
@@ -121,8 +127,6 @@ public class StandardBoard {
 			return false;
 	}
 
-	public int[] whiteKing = new int[]{4,0};
-	public int[] blackKing = new int[]{4,7};
 
 	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
 	    Collection<int[]> pieces = new ArrayList(getPieces(color));
@@ -215,11 +219,9 @@ public class StandardBoard {
     }
 
     public boolean canMove(int oldX, int oldY, int newX, int newY){
-        TurnColor myColor = getColor(oldX, oldY);
-	    if(!inBoardBounds(newX, newY))
+	    if(!inBoardBounds(newX, newY)) {
             return false;
-        if(pieces[newX][newY]!=0 && getColor(newX, newY) == myColor) {
-            return false;
+//            throw new RuntimeException("Trying to break out of board bounds!");
         }
 	    if (!isValidMove(oldX, oldY, newX, newY)) {
             return false;
@@ -229,7 +231,11 @@ public class StandardBoard {
         return true;
     }
 
-    private boolean isValidMove(int oldX, int oldY, int newX, int newY) {
+    //XXX FIXME do a fast reject here!!!!
+    public boolean isValidMove(int oldX, int oldY, int newX, int newY) {
+        if(pieces[newX][newY]!=0 && getColor(newX, newY) == getColor(oldX, oldY)) {
+            return false;
+        }
         switch (pieces[oldX][oldY]){
             case WHITE_PAWN:
             case BLACK_PAWN:
@@ -337,16 +343,14 @@ public class StandardBoard {
     }
 
     public boolean isKingInCheck(int[] kingToCheck) {
-        int kingX = kingToCheck[0];
-        int kingY = kingToCheck[1];
         TurnColor kingColor = getColor(kingToCheck);
-        Collection<int[]> oppositePieces = getPieces(kingColor.opposite());
-        for (int[] coords: oppositePieces) {
-            if (isValidMove(coords[0], coords[1], kingX, kingY)) {
-                return true;
-            }
+        switch (kingColor) {
+            case black:
+                return blackKingInCheck;
+            case white:
+                return whiteKingInCheck;
         }
-        return false;
+        throw new RuntimeException("Bad coordinates for king! State bug.");
     }
 
     public TurnColor getColor(int x, int y) {

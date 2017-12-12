@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.fluxchess:jcpi:1.4.1">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fluxchess/jcpi/1.4.1/4bbd267de490c4811112e6bf05bdd8f4e9c1ff99/jcpi-1.4.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.fluxchess/jcpi/1.4.1/9e27b31f1d687098681410e0c2b2d3f4a998ab36/jcpi-1.4.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

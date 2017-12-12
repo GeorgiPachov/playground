@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: net.bramp.ffmpeg:ffmpeg:0.6.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bramp.ffmpeg/ffmpeg/0.6.2/29be55866c1258cd228b583d7c411de4e66e0eae/ffmpeg-0.6.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/net.bramp.ffmpeg/ffmpeg/0.6.2/42b608feaa27a6705ac6d453bde23f6cdbf461fe/ffmpeg-0.6.2-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
