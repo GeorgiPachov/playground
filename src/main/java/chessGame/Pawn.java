@@ -122,7 +122,7 @@ public class Pawn {
 		}
 		// Black pawns can only move downwards.
 		else{
-			if((yDisplacement == -1 || yDisplacement == -2) && (xDisplacement == 0) && !isBlocked(board, oldX, oldY, newX, yDisplacement))
+			if((yDisplacement == -1 || yDisplacement == -2) && (xDisplacement == 0) && !isBlocked(board, oldX, oldY, newX, newY))
 				return true;
 			else if(yDisplacement == -1 && Math.abs(xDisplacement) == 1)
 				return true;

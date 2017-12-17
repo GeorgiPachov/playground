@@ -6,8 +6,8 @@ import chessGame.*;
 public class Game {
 
 	public static final boolean DEBUG = false;
-	StandardBoard gameBoard;
-	boolean gameOver;
+	public StandardBoard gameBoard;
+	public boolean gameOver;
 	Stack<MoveCommand> commandStack;
 	
 	public Game() {
@@ -64,7 +64,7 @@ public class Game {
     private void printBoard() {
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                System.out.print(gameBoard.pieces[j][i] + " ");
+                System.out.print(gameBoard.pieces[7-i][j] + " ");
             }
             System.out.println();
         }

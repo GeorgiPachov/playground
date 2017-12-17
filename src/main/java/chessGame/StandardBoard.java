@@ -171,7 +171,7 @@ public class StandardBoard {
         return null;
 	}
 
-    private List<int[]> findBlackPieces() {
+    public List<int[]> findBlackPieces() {
         List<int[]> blacks = new ArrayList<>();
 	    for (int i = 0; i < 8; i++) {
 	        for (int j = 0; j < 8; j++) {
@@ -187,7 +187,7 @@ public class StandardBoard {
         return i > 16 && i < 32;
     }
 
-    private List<int[]> findWhitePieces() {
+    public List<int[]> findWhitePieces() {
         List<int[]> whites = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
@@ -400,5 +400,15 @@ public class StandardBoard {
                 return true;
         }
         return false;
+    }
+
+    public int getMultiplier(TurnColor turnColor) {
+        switch (turnColor){
+            case white:
+                return 1;
+            case black:
+                return -1;
+        }
+        return 0;
     }
 }
