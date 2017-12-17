@@ -1,14 +1,9 @@
-package chessTests;
-
-import chessControllers.TurnColor;
-import chessGame.Queen;
-import chessGame.Rook;
-import chessGame.StandardBoard;
+import chessGame.Board;
 import junit.framework.TestCase;
 
-import static chessGame.StandardBoard.BLACK_KING;
-import static chessGame.StandardBoard.BLACK_QUEEN;
-import static chessGame.StandardBoard.BLACK_ROOK;
+import static chessGame.Board.BLACK_KING;
+import static chessGame.Board.BLACK_QUEEN;
+import static chessGame.Board.BLACK_ROOK;
 
 /**
  * Test cases for the Queen
@@ -22,7 +17,7 @@ public class QueenTest extends TestCase {
 	 */
 	public void testValidVerticalQueenMove(){
 
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[0][0] = BLACK_KING;
         board.pieces[3][0] = BLACK_QUEEN;
@@ -33,7 +28,7 @@ public class QueenTest extends TestCase {
 	 * Test valid queen horizontal move
 	 */
 	public void testValidHorizontalQueenMove(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[0][0] = BLACK_KING;
         board.pieces[3][0] = BLACK_QUEEN;
@@ -45,7 +40,7 @@ public class QueenTest extends TestCase {
 	 * Test valid queen diagonal move.
 	 */
 	public void testValidDiagonalQueenMove(){
-        StandardBoard board = new StandardBoard();
+        Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[0][0] = BLACK_KING;
         board.pieces[3][0] = BLACK_QUEEN;
@@ -56,7 +51,7 @@ public class QueenTest extends TestCase {
 	 * Test blocking piece queen move.
 	 */
 	public void testBlockingPieceQueenMove(){
-        StandardBoard board = new StandardBoard();
+        Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[3][0] = BLACK_QUEEN;
         board.pieces[0][0] = BLACK_KING;
@@ -68,7 +63,7 @@ public class QueenTest extends TestCase {
 	 * TYest invalid queen move.
 	 */
 	public void testInvalidQueenMove(){
-        StandardBoard board = new StandardBoard();
+        Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[0][0] = BLACK_KING;
         board.pieces[1][2] = BLACK_QUEEN;

@@ -1,7 +1,5 @@
 package chessGame;
 
-import chessControllers.TurnColor;
-
 import java.util.List;
 
 /**
@@ -11,7 +9,7 @@ import java.util.List;
  */
 public class Pawn {
 
-	public static void addAllowedMoves(StandardBoard board, int[] coordinates, List<Integer> moves) {
+	public static void addAllowedMoves(Board board, int[] coordinates, List<Integer> moves) {
 		int[][] possibleMovesXY = null;
 		int oldX = coordinates[0];
 		int oldY = coordinates[1];
@@ -42,7 +40,7 @@ public class Pawn {
 			}
 		}
 	}
-	public static boolean isValidSpecialMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+	public static boolean isValidSpecialMove(Board board, int oldX, int oldY, int newX, int newY) {
 		int xDisplacement = newX - oldX;
 		if(isValidPawnMove(board, oldX, oldY, newX, newY)){
 			int pieceToCheck = board.pieces[newX][newY];
@@ -66,7 +64,7 @@ public class Pawn {
 	 * Helper method for Pawn specific move check. (First Move + Regular Move)
 	 * @return boolean true if valid pawn move
 	 */
-	private static boolean isValidPawnMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+	private static boolean isValidPawnMove(Board board, int oldX, int oldY, int newX, int newY) {
 		int xDisplacement = newX - oldX;
 		int yDisplacement = newY -oldY;
 		boolean isBlack = board.isBlack(board.pieces[oldX][oldY]);
@@ -105,7 +103,7 @@ public class Pawn {
 		}
 	}
 
-	private static boolean handlePawnFirstMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+	private static boolean handlePawnFirstMove(Board board, int oldX, int oldY, int newX, int newY) {
         int xDisplacement = newX - oldX;
         int yDisplacement = newY - oldY;
         boolean isWhite = board.isWhite(board.pieces[oldX][oldY]);
@@ -131,7 +129,7 @@ public class Pawn {
 		}
 	}
 
-	private static boolean isBlocked(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+	private static boolean isBlocked(Board board, int oldX, int oldY, int newX, int newY) {
         int xDisplacement = newX - oldX;
         int yDisplacement = newY - oldY;
 		if (yDisplacement == 1 || yDisplacement == -1) {

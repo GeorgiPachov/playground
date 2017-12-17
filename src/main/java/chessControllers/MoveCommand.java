@@ -1,18 +1,18 @@
 package chessControllers;
-import chessGame.StandardBoard;
+import chessGame.Board;
 
 import java.util.Arrays;
 
 public class MoveCommand {
 
-	private final StandardBoard board;
+	private final Board board;
 	int xDestination;
 	int yDestination;
 	int xOrigin;
 	int yOrigin;
 	private int enemyRemoved;
 
-	public MoveCommand(StandardBoard board, int[] move){
+	public MoveCommand(Board board, int[] move){
 		this.board = board;
 		this.xOrigin = move[0];
 		this.yOrigin = move[1];

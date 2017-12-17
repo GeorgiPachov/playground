@@ -15,7 +15,7 @@
 //	 * Testing the capture function and checking final location of pieces.
 //	 */
 //	public void testEnemyCapture() {
-//		StandardBoard board = new StandardBoard();
+//		Board board = new Board();
 //		Pawn whitePawn = new Pawn(1, 1, TurnColor.white, board);
 //		Pawn blackPawn = new Pawn(2, 2, TurnColor.black, board);
 //		assertTrue(whitePawn.canMove(2, 2));
@@ -27,7 +27,7 @@
 //	 * Testing out of bounds invalid move.
 //	 */
 //	public void testInvalidPositiveBoundsMove() {
-//		StandardBoard board = new StandardBoard();
+//		Board board = new Board();
 //		Pawn whitePawn = new Pawn(7, 7, TurnColor.white, board);
 //		assertFalse(whitePawn.canMove(8, 8));
 //	}
@@ -36,7 +36,7 @@
 //	 * Invalid negative out of bounds move.
 //	 */
 //	public void testInvalidNegativeBoundsMove() {
-//		StandardBoard board = new StandardBoard();
+//		Board board = new Board();
 //		Pawn whitePawn = new Pawn(0, 1, TurnColor.white, board);
 //		assertFalse(whitePawn.canMove(0, -1));
 //	}
@@ -45,7 +45,7 @@
 //	 * Testing the king in danger state on the baord for given king.
 //	 */
 //	public void testKingInDanger(){
-//		StandardBoard board = new StandardBoard();
+//		Board board = new Board();
 //		King newKing = new King(3, 7, TurnColor.black, board);
 //		board.blackKingTracker = newKing;
 //		Pawn allyPawn = new Pawn(5, 5, TurnColor.black, board);
@@ -57,7 +57,7 @@
 //	 * Test to check he fastest checkmate state in the game.
 //	 */
 //	public void testCheckmate(){
-//		StandardBoard board = new StandardBoard();
+//		Board board = new Board();
 //		board.populateBoardWithPieces();
 //		Piece wpawn1 = board.pieces[5][1];
 //		wpawn1.executeCaptureOrMove(5, 2);

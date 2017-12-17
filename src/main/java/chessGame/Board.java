@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 import static chessControllers.Game.DEBUG;
 
-public class StandardBoard {
+public class Board {
     public TurnColor gameTurn;
     public int pieces[][];
 	public static final int WHITE_PAWN = 1;
@@ -43,15 +43,38 @@ public class StandardBoard {
 
     public Map<Integer, int[]> blackPieces = new HashMap<>();
     public Map<Integer, int[]> whitePieces = new HashMap<>();
+    public int[] whiteKing = new int[]{4,0};
+    public int[] blackKing = new int[]{4,7};
 
-	public StandardBoard() {
-		this.pieces = new int[8][8];
+	public Board() {
+        this.pieces = new int[8][8];
         gameTurn = TurnColor.white;
         populateBoardWithSquares();
-		populateBoardWithPieces();
-	}
+        populateBoardWithPieces();
 
-	public void populateBoardWithSquares() {
+        initCaches();
+    }
+
+    public Board(int[][] board) {
+        this.pieces = board;
+        gameTurn = TurnColor.white;
+
+        initCaches();
+    }
+
+    private void initCaches() {
+        findWhitePieces().forEach(whitePiece -> {
+            whitePieces.put(Arrays.hashCode(whitePiece), whitePiece);
+        });
+
+        findBlackPieces().forEach(blackPiece -> {
+            blackPieces.put(Arrays.hashCode(blackPiece), blackPiece);
+        });
+        this.whiteKing = whitePieces.values().stream().filter(c -> isKing(c)).findFirst().get();
+        this.blackKing = blackPieces.values().stream().filter(c -> isKing(c)).findFirst().get();
+    }
+
+    public void populateBoardWithSquares() {
 	    for (int i = 0; i < 8; i++) {
 	        pieces[i] = new int[8];
         }
@@ -64,14 +87,6 @@ public class StandardBoard {
 		setupRooks();
 		setupQueens();
 		setupKings();
-
-		findWhitePieces().forEach(whitePiece -> {
-		    whitePieces.put(Arrays.hashCode(whitePiece), whitePiece);
-        });
-
-		findBlackPieces().forEach(blackPiece -> {
-		    blackPieces.put(Arrays.hashCode(blackPiece), blackPiece);
-        });
 	}
 	
 
@@ -121,8 +136,7 @@ public class StandardBoard {
 			return false;
 	}
 
-	public int[] whiteKing = new int[]{4,0};
-	public int[] blackKing = new int[]{4,7};
+
 
 	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
 	    Collection<int[]> pieces = new ArrayList(getPieces(color));
@@ -384,7 +398,7 @@ public class StandardBoard {
                     boolean kingIsInCheck = isKingInCheck(kingToCheck);
                     command.undo();
                     if (!kingIsInCheck) {
-                        return true;
+                        return false;
                     }
                 }
             }

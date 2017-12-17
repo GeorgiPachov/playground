@@ -1,14 +1,9 @@
-package chessTests;
-
-import chessControllers.TurnColor;
-import chessGame.King;
-import chessGame.Pawn;
-import chessGame.StandardBoard;
+import chessGame.Board;
 import junit.framework.TestCase;
 
-import static chessGame.StandardBoard.BLACK_KING;
-import static chessGame.StandardBoard.BLACK_PAWN;
-import static chessGame.StandardBoard.WHITE_KING;
+import static chessGame.Board.BLACK_KING;
+import static chessGame.Board.BLACK_PAWN;
+import static chessGame.Board.WHITE_KING;
 
 /**
  * Test cases for the Chancellor
@@ -23,7 +18,7 @@ public class KingTest extends TestCase {
 	 * Test valid horizontal move.
 	 */
 	public void testValidHorizontalKingMove(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
 		board.pieces[4][0] = WHITE_KING;
         board.pieces[5][0] = 0; // remove from board
         assertTrue(board.canMove(4, 0, 5, 0));
@@ -33,7 +28,7 @@ public class KingTest extends TestCase {
 	 * Test valid vertical move.
 	 */
 	public void testValidVerticalKingMove(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
 		board.pieces[4][1] = 0;
         board.pieces[4][0] = WHITE_KING;
         assertTrue(board.canMove(4, 0, 4, 1));
@@ -43,7 +38,7 @@ public class KingTest extends TestCase {
 	 * Test valid Diagonal move
 	 */
 	public void testValidDiagonalKingMove(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
         board.pieces[4][1] = WHITE_KING;
 		assertTrue(board.canMove(4, 1, 3, 2));
 	}
@@ -52,7 +47,7 @@ public class KingTest extends TestCase {
 	 * Test invalid King move.
 	 */
 	public void testInvalidKingMove(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
         board.pieces[3][7] = WHITE_KING;
         assertFalse(board.canMove(3, 7, 3, 5));
 	}
@@ -61,9 +56,9 @@ public class KingTest extends TestCase {
 	 * Test ally pice putting king in check
 	 */
 	public void testInvalidAllyPieceMove(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
 		board.pieces[3][7] = WHITE_KING;
-		board.pieces[2][6] = StandardBoard.WHITE_PAWN;
+		board.pieces[2][6] = Board.WHITE_PAWN;
 		assertFalse(board.canMove(3, 7, 2, 6));
 	}
 
@@ -71,9 +66,9 @@ public class KingTest extends TestCase {
 	 * Test king capturing enemy piece.
 	 */
 	public void testValidEnemyPieceMove(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
 		board.pieces[3][7] = WHITE_KING;
-		board.pieces[2][6] = StandardBoard.BLACK_PAWN;
+		board.pieces[2][6] = Board.BLACK_PAWN;
 		assertTrue(board.canMove(3, 7, 2, 6));
 	}
 
@@ -81,10 +76,10 @@ public class KingTest extends TestCase {
 	 * Test King putting itself in check
 	 */
 	public void testInvalidMoveToCheckLocation(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
 		board.pieces = new int[8][8];
 		board.pieces[3][7] = BLACK_KING;
-		board.pieces[5][5] = StandardBoard.WHITE_PAWN;
+		board.pieces[5][5] = Board.WHITE_PAWN;
 		assertFalse(board.canMove(3, 7, 4, 6));
 	}
 
@@ -92,7 +87,7 @@ public class KingTest extends TestCase {
 	 * Test if King displays checked status
 	 */
 	public void testKingInCheck(){
-		StandardBoard board = new StandardBoard();
+		Board board = new Board();
         board.pieces[3][0] = WHITE_KING;
         board.pieces[4][1] = BLACK_PAWN;
 		assertTrue(board.isKingInCheck(new int[] {3,0}));

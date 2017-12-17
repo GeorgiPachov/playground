@@ -1,6 +1,6 @@
 package chessControllers;
 
-import chessGame.StandardBoard;
+import chessGame.Board;
 
 public enum TurnColor {
     white, black;
@@ -15,9 +15,9 @@ public enum TurnColor {
     public int[] getPieces() {
         switch (this) {
             case white:
-                return StandardBoard.WHITES;
+                return Board.WHITES;
             case black:
-                return StandardBoard.BLACKS;
+                return Board.BLACKS;
         }
         return null;
     }
@@ -25,9 +25,9 @@ public enum TurnColor {
     public int getKingPtr() {
         switch (this) {
             case white:
-                return StandardBoard.WHITE_KING;
+                return Board.WHITE_KING;
             case black:
-                return StandardBoard.BLACK_KING;
+                return Board.BLACK_KING;
         }
         return -1;
     }

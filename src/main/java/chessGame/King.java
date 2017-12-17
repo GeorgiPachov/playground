@@ -18,7 +18,7 @@ public class King {
 			return false;
 	}
 
-	public static boolean isValidKingMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+	public static boolean isValidKingMove(Board board, int oldX, int oldY, int newX, int newY) {
 		int xDisplacement = newX - oldX;
 		int yDisplacement = newY - oldY;
 		// No need to check for obstacles since it's a single step move.
@@ -28,7 +28,7 @@ public class King {
 			return false;
 	}
 
-	public static void addAllowedMoves(StandardBoard board, int[] coordinates, List<Integer> moves) {
+	public static void addAllowedMoves(Board board, int[] coordinates, List<Integer> moves) {
 		int xLocation = coordinates[0];
 		int yLocation = coordinates[1];
 		for (int i = -1; i <= 1; i++) {

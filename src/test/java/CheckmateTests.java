@@ -1,83 +1,124 @@
 import chessControllers.Game;
 import chessControllers.MiniMaxStrategy;
-import chessGame.StandardBoard;
+import chessControllers.TurnColor;
+import chessGame.Board;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
 
 public class CheckmateTests {
 
-    private StandardBoard board;
-    private Game game;
-
-    @Before
-    public void before() {
-        this.game = new Game();
-        this.board = new StandardBoard();
-        this.board.pieces = new int[8][8];
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.board.pieces[i][j] = 0;
-            }
-        }
-
-        game.gameBoard = this.board;
-    }
-
     @Test
     public void test1MoveCheckmate() {
         for (int i = 1; i < 5; i++) {
-            before();
-            board.pieces[0][0] = StandardBoard.BLACK_KING;
-            board.pieces[6][6] = StandardBoard.WHITE_KING;
+            Game game = new Game();
 
-            board.pieces[5][2] = StandardBoard.WHITE_ROOK;
-            board.pieces[1][7] = StandardBoard.WHITE_ROOK;
+            int[][] pieces = new int[8][8];
+            pieces[0][0] = Board.BLACK_KING;
+            pieces[6][6] = Board.WHITE_KING;
 
-            game.gameBoard.whitePieces.clear();
-            game.gameBoard.blackPieces.clear();
-
-            game.gameBoard.findWhitePieces().forEach(whitePiece -> {
-                game.gameBoard.whitePieces.put(Arrays.hashCode(whitePiece), whitePiece);
-            });
-
-            game.gameBoard.findBlackPieces().forEach(blackPiece -> {
-                game.gameBoard.blackPieces.put(Arrays.hashCode(blackPiece), blackPiece);
-            });
-            board.blackKing = new int[]{0, 0};
-            board.whiteKing = new int[]{6, 6};
+            pieces[5][2] = Board.WHITE_ROOK;
+            pieces[1][7] = Board.WHITE_ROOK;
+            game.board = new Board(pieces);
 
             MiniMaxStrategy strategy = new MiniMaxStrategy();
             strategy.maxDepth = i;
             strategy.playWhite(game);
 
-            boolean checkMate = game.gameOver;
+            boolean checkMate = game.board.isKingCheckmate(new int[] {0, 0});
             Assert.assertTrue(checkMate);
         }
     }
 
     @Test
+    @Ignore
     public void test2MoveCheckmate() {
+        for (int i = 2; i < 3; i++) {
+            Game game = new Game();
 
-        board.pieces[0][1] = StandardBoard.BLACK_KING;
-        board.pieces[6][6] = StandardBoard.WHITE_KING;
+            int[][] pieces = new int[8][8];
+            pieces[0][1] = Board.BLACK_KING;
+            pieces[6][6] = Board.WHITE_KING;
 
-        board.pieces[5][2] = StandardBoard.WHITE_ROOK;
-        board.pieces[6][7] = StandardBoard.WHITE_ROOK;
+            pieces[5][2] = Board.WHITE_ROOK;
+            pieces[6][7] = Board.WHITE_ROOK;
+            game.board = new Board(pieces);
 
-        game.gameBoard.whitePieces.clear();
-        game.gameBoard.blackPieces.clear();
+            MiniMaxStrategy strategy = new MiniMaxStrategy();
+            strategy.maxDepth = i;
+            int[] m1 = strategy.playWhite(game);
+            System.out.println("Move 1 : " + Arrays.toString(m1));
+            int[] m2 = strategy.playBlack(game);
+            System.out.println("Move 2(black) : " + Arrays.toString(m2));
+            int[] m3 = strategy.playWhite(game);
+            System.out.println("Move 3 : " + Arrays.toString(m3));
 
-        game.gameBoard.findWhitePieces().forEach(whitePiece -> {
-            game.gameBoard.whitePieces.put(Arrays.hashCode(whitePiece), whitePiece);
-        });
-
-        game.gameBoard.findBlackPieces().forEach(blackPiece -> {
-            game.gameBoard.blackPieces.put(Arrays.hashCode(blackPiece), blackPiece);
-        });
-        board.blackKing = new int[] {0, 1};
-        board.whiteKing = new int[] {6, 6};
+            boolean checkMate = game.board.isKingCheckmate(game.board.getKing(TurnColor.black));
+            Assert.assertTrue(checkMate);
+        }
     }
+
+    @Test
+    public void testKingIsInCheck() {
+
+        Game game = new Game();
+
+        int[][] pieces = new int[8][8];
+        pieces[0][0] = Board.BLACK_KING;
+        pieces[6][6] = Board.WHITE_KING;
+
+        pieces[3][0] = Board.WHITE_ROOK;
+        game.board = new Board(pieces);
+
+        boolean isKingIncheck = game.board.isKingInCheck(new int[]{0,0});
+        Assert.assertTrue(isKingIncheck);
+    }
+
+    @Test
+    public void testKingIsNotInCheck() {
+        Game game = new Game();
+
+        int[][] pieces = new int[8][8];
+        pieces[0][4] = Board.BLACK_KING;
+        pieces[6][6] = Board.WHITE_KING;
+
+        pieces[3][0] = Board.WHITE_ROOK;
+        game.board = new Board(pieces);
+
+        boolean isKingIncheck = game.board.isKingInCheck(new int[]{0,4});
+        Assert.assertFalse(isKingIncheck);
+    }
+
+    @Test
+    public void testIsCheckmate() {
+        Game game = new Game();
+
+        int[][] pieces = new int[8][8];
+        pieces[0][0] = Board.BLACK_KING;
+        pieces[0][2] = Board.WHITE_KING;
+
+        pieces[3][0] = Board.WHITE_ROOK;
+        game.board = new Board(pieces);
+
+        boolean isKingInCheckmate = game.board.isKingCheckmate(new int[]{0,0});
+        Assert.assertTrue(isKingInCheckmate);
+    }
+
+    @Test
+    public void testIsNotCheckmate() {
+        Game game = new Game();
+
+        int[][] pieces = new int[8][8];
+        pieces[0][0] = Board.BLACK_KING;
+        pieces[0][3] = Board.WHITE_KING;
+
+        pieces[3][0] = Board.WHITE_ROOK;
+        game.board = new Board(pieces);
+
+        boolean isKingInCheckmate = game.board.isKingCheckmate(new int[]{0,0});
+        Assert.assertFalse(isKingInCheckmate);
+    }
+
 }

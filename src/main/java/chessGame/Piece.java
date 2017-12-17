@@ -2,13 +2,7 @@ package chessGame;
 
 import chessControllers.TurnColor;
 
-import java.awt.Graphics;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 /**
  * Superclass Piece since all chess pieces have common variables and methods to execute.
@@ -18,13 +12,13 @@ import javax.imageio.ImageIO;
 public abstract class Piece {
 	String nameOfPiece;
 	public TurnColor turnColor;
-	StandardBoard currentBoard;
+	Board currentBoard;
 	public int xLocation;
 	public int yLocation;
 	
 	abstract boolean isValidSpecialMove(int newX, int newY);
 
-	public Piece(int initX, int initY, TurnColor turnColor, StandardBoard board) {
+	public Piece(int initX, int initY, TurnColor turnColor, Board board) {
 		this.turnColor = turnColor;
 		this.currentBoard = board;
 		this.xLocation = initX;

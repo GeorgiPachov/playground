@@ -2,7 +2,7 @@ package chessGame;
 import java.util.List;
 
 public class Bishop {
-	public static boolean isValidBishopMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+	public static boolean isValidBishopMove(Board board, int oldX, int oldY, int newX, int newY) {
 		int xDisplacement = newX - oldX;
 		int yDisplacement = newY - oldY;
 		if(diagonalMove(xDisplacement, yDisplacement)){
@@ -27,7 +27,7 @@ public class Bishop {
 		return false;
 	}
 
-	public static void addAllowedMoves(StandardBoard board, int[] coordinates, List<Integer> moves) {
+	public static void addAllowedMoves(Board board, int[] coordinates, List<Integer> moves) {
 		int xLocation = coordinates[0];
 		int yLocation = coordinates[1];
 		int[] steps = new int[] {-1, 1};

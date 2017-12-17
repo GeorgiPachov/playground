@@ -3,7 +3,7 @@ package chessGame;
 import java.util.Arrays;
 import java.util.List;
 public class Knight {
-	public static boolean isValidKnightMove(StandardBoard board, int oldX, int oldY, int newX, int newY) {
+	public static boolean isValidKnightMove(Board board, int oldX, int oldY, int newX, int newY) {
 		int xDisplacement = newX - oldX;
 		int yDisplacement = newY - oldY;
 		// No need to check for obstacles since knight can hop over pieces
@@ -22,7 +22,7 @@ public class Knight {
 			return false;
 	}
 
-    public static void addAllowedMoves(StandardBoard board, int[] coordinates, List<Integer> moves) {
+    public static void addAllowedMoves(Board board, int[] coordinates, List<Integer> moves) {
 	    int xLocation = coordinates[0];
 	    int yLocation = coordinates[1];
         int[][] possibleMoves = new int[][] {
