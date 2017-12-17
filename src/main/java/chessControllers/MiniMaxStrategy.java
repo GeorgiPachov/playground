@@ -7,24 +7,24 @@ import java.util.*;
 import static chessControllers.Game.DEBUG;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    public static int maxDepth = 4;
+    public static int maxDepth = 5;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[] PIECES_SCORE = new short[32];
 
     static {
-        PIECES_SCORE[Board.WHITE_PAWN] = 10;
-        PIECES_SCORE[Board.BLACK_PAWN] = 10;
-        PIECES_SCORE[Board.WHITE_KNIGHT] = 30;
-        PIECES_SCORE[Board.BLACK_KNIGHT] = 30;
-        PIECES_SCORE[Board.WHITE_BISHOP] = 30;
-        PIECES_SCORE[Board.BLACK_BISHOP] = 30;
-        PIECES_SCORE[Board.WHITE_ROOK] = 50;
-        PIECES_SCORE[Board.BLACK_ROOK] = 50;
-        PIECES_SCORE[Board.WHITE_QUEEN] = 90;
-        PIECES_SCORE[Board.BLACK_QUEEN] = 90;
-        PIECES_SCORE[Board.WHITE_KING] = 900;
-        PIECES_SCORE[Board.BLACK_KING] = 900;
+        PIECES_SCORE[Board.WHITE_PAWN] = 100;
+        PIECES_SCORE[Board.BLACK_PAWN] = 100;
+        PIECES_SCORE[Board.WHITE_KNIGHT] = 300;
+        PIECES_SCORE[Board.BLACK_KNIGHT] = 300;
+        PIECES_SCORE[Board.WHITE_BISHOP] = 300;
+        PIECES_SCORE[Board.BLACK_BISHOP] = 300;
+        PIECES_SCORE[Board.WHITE_ROOK] = 500;
+        PIECES_SCORE[Board.BLACK_ROOK] = 500;
+        PIECES_SCORE[Board.WHITE_QUEEN] = 900;
+        PIECES_SCORE[Board.BLACK_QUEEN] = 900;
+        PIECES_SCORE[Board.WHITE_KING] = 1100;
+        PIECES_SCORE[Board.BLACK_KING] = 1100;
     }
 
     private static short[][][] pawnPositionMap = new short[][][] {
@@ -171,6 +171,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
             }
     };
     private int[] lastChosenMove;
+    private TurnColor realPlayerTurn;
     private int negaMax(Game game, int depth, float alpha, float beta, TurnColor turnColor) {
         long start = System.currentTimeMillis();
         if (depth == 0) {
@@ -183,7 +184,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
                     colorMultiplier = -1;
                     break;
             }
-            return colorMultiplier*estimateBoard(game, turnColor);
+            return 1*estimateBoard(game, turnColor);
         }
         int max = (Integer.MIN_VALUE/2);
         List<Integer> moves = new ArrayList<>();
@@ -260,40 +261,45 @@ public class MiniMaxStrategy implements PlayingStrategy {
         return -1 * (estimate1 - estimate2);
     }
 
-    private int estimateBoard(Game game, TurnColor turnColor) {
-        int isOpponentKingCheckMated = checkKingCheckMateScore(game, turnColor);
-        int isOpponentKingInCheck = checkKingCheckStatus(game, turnColor);
+    private int estimateBoard(Game game, TurnColor me) {
+        int o_mate = checkKingCheckMateScore(game, me.opposite());
+        int o_check = kingIsInCheck(game, me.opposite());
 
-        int myPiecesScore = countPiecesScore(game, turnColor);
-        int opponentPieceScore = countPiecesScore(game, turnColor.opposite());
+        int m_mate = checkKingCheckMateScore(game, me);
+        int m_check = kingIsInCheck(game, me);
 
-        int myPositionalScore = getPositionalBias(game, turnColor);
+        int m_pieces = countPiecesScore(game, me);
+        int o_pieces = countPiecesScore(game, me.opposite());
+
+        int m_pos = getPositionalBias(game, me);
+        int o_pos = getPositionalBias(game, me.opposite());
         if (DEBUG) {
-//            System.out.println("Pieces score for : " + game.board.gameTurn + (myPiecesScore - opponentPieceScore));
-//            System.out.println("Positional score for : " + game.board.gameTurn + (myPositionalScore));
+//            System.out.println("Pieces score for : " + game.board.gameTurn + (m_pieces - o_pieces));
+//            System.out.println("Positional score for : " + game.board.gameTurn + (m_pos));
 
-//            System.out.println("IsOponnentCheckMated Score : " + isOpponentKingCheckMated);
-//            System.out.println("IsOpponentKingInCheck Score : " + isOpponentKingInCheck);
-//            System.out.println("MyPieces score : " + myPiecesScore);
-//            System.out.println("Opponenet Piece Score : " + opponentPieceScore);
-//            System.out.println("MyPositional Score : " + myPositionalScore);
+//            System.out.println("IsOponnentCheckMated Score : " + o_mate);
+//            System.out.println("IsOpponentKingInCheck Score : " + o_check);
+//            System.out.println("MyPieces score : " + m_pieces);
+//            System.out.println("Opponenet Piece Score : " + o_pieces);
+//            System.out.println("MyPositional Score : " + m_pos);
 
 
         }
 
-        int finalScore = isOpponentKingCheckMated + isOpponentKingInCheck
-                + 100 * (myPiecesScore - opponentPieceScore)
-                + (myPositionalScore);
-        return finalScore; //opening book simulation
+        return (int) ((int) (o_mate - m_mate) + (o_check- m_check) +
+                                + (m_pieces - o_pieces) + 0.0* (m_pos + o_pos));
+
+//        final int BASE = 300_000;
+//        int finalScore = BASE + o_mate + o_check
+//                + 10 * (m_pieces - o_pieces)
+//                + (m_pos);
+//
+//        return finalScore; //opening book simulation
     }
 
-    private int checkKingCheckStatus(Game game, TurnColor gameTurn) {
+    private int kingIsInCheck(Game game, TurnColor gameTurn) {
         int[] king = game.board.getKing(gameTurn);
-        if (game.board.isKingInCheck(king)) {
-            return 2000;
-        }
-        return 0;
-
+        return (game.board.isKingInCheck(king)) ? 800 : 0;
     }
 
     private int checkKingCheckMateScore(Game game, TurnColor gameTurn) {
@@ -311,16 +317,13 @@ public class MiniMaxStrategy implements PlayingStrategy {
                 }
             }
         }
-
         switch (possibleMoves) {
             case 0:
                 return Integer.MAX_VALUE/2;
             case 1:
-                return 500;
-            case 2:
-                return 250;
-            case 3:
-                return 150;
+                return 1000;
+            case 2:return 80;
+            case 3: return 20;
         }
         return 0;
     }
@@ -328,22 +331,27 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     @Override
     public int[] playBlack(Game game) {
+        realPlayerTurn = TurnColor.black;
         long start = System.currentTimeMillis();
         negaMax(game, maxDepth, Integer.MIN_VALUE/2, Integer.MAX_VALUE/2, TurnColor.black);
         int[] chosenMove = lastChosenMove;
         game.executeMove(chosenMove);
         lastChosenMove = null;
+        realPlayerTurn = null;
         long end = System.currentTimeMillis();
         System.out.println("Thinking took " + (end-start) + "milliseconds");
+
         return chosenMove;
     }
 
     @Override
     public int[] playWhite(Game game) {
+        realPlayerTurn = TurnColor.white;
         negaMax(game, maxDepth, Integer.MIN_VALUE/2, Integer.MAX_VALUE/2, TurnColor.white);
         int[] chosenMove = lastChosenMove;
         game.executeMove(chosenMove);
         lastChosenMove = null;
+        realPlayerTurn = null;
         return chosenMove;
     }
 

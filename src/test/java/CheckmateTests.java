@@ -25,8 +25,9 @@ public class CheckmateTests {
 
             MiniMaxStrategy strategy = new MiniMaxStrategy();
             strategy.maxDepth = i;
-            strategy.playWhite(game);
+            int[] move = strategy.playWhite(game);
 
+            Assert.assertArrayEquals(move, new int[] {5,2,0,2});
             boolean checkMate = game.board.isKingCheckmate(new int[] {0, 0});
             Assert.assertTrue(checkMate);
         }
