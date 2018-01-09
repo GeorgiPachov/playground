@@ -34,9 +34,8 @@ public class CheckmateTests {
     }
 
     @Test
-    @Ignore
     public void test2MoveCheckmate() {
-        for (int i = 2; i < 3; i++) {
+        for (int i = 3; i < 4; i++) {
             Game game = new Game();
 
             int[][] pieces = new int[8][8];

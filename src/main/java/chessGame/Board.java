@@ -62,7 +62,14 @@ public class Board {
         initCaches();
     }
 
-    private void initCaches() {
+    public static Board testBoard() {
+	    int pieces[][] = new int[8][8];
+	    pieces[0][0] = WHITE_KING;
+	    pieces[7][7] = BLACK_KING;
+	    return new Board(pieces);
+    }
+
+    public void initCaches() {
         findWhitePieces().forEach(whitePiece -> {
             whitePieces.put(Arrays.hashCode(whitePiece), whitePiece);
         });

@@ -1,3 +1,4 @@
+import chessControllers.TurnColor;
 import chessGame.Board;
 import junit.framework.TestCase;
 
@@ -76,10 +77,11 @@ public class KingTest extends TestCase {
 	 * Test King putting itself in check
 	 */
 	public void testInvalidMoveToCheckLocation(){
-		Board board = new Board();
-		board.pieces = new int[8][8];
+		Board board = Board.testBoard();
+		board.pieces[7][7] = 0; // no black king
 		board.pieces[3][7] = BLACK_KING;
 		board.pieces[5][5] = Board.WHITE_PAWN;
+		board.initCaches();
 		assertFalse(board.canMove(3, 7, 4, 6));
 	}
 
@@ -87,9 +89,12 @@ public class KingTest extends TestCase {
 	 * Test if King displays checked status
 	 */
 	public void testKingInCheck(){
-		Board board = new Board();
+		Board board = Board.testBoard();
+		board.pieces[0][0] = 0;
         board.pieces[3][0] = WHITE_KING;
         board.pieces[4][1] = BLACK_PAWN;
+		board.initCaches();
+
 		assertTrue(board.isKingInCheck(new int[] {3,0}));
 	}
 

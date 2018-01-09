@@ -5,7 +5,8 @@ import java.util.Stack;
 import chessGame.*;
 public class Game {
 
-	public static final boolean DEBUG = false;
+    public static final boolean DEBUG_MOVE_SORTING = false;
+    public static boolean DEBUG = false;
 	public Board board;
 	public boolean gameOver;
 	Stack<MoveCommand> commandStack;
@@ -65,7 +66,7 @@ public class Game {
         System.out.println("Board: ");
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                System.out.print(board.pieces[7-i][j] + " ");
+                System.out.print(board.pieces[j][7-i] + " ");
             }
             System.out.println();
         }

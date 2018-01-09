@@ -7,7 +7,7 @@ import java.util.*;
 import static chessControllers.Game.DEBUG;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    public static int maxDepth = 5;
+    public static int maxDepth = 4;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[] PIECES_SCORE = new short[32];
@@ -175,16 +175,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
     private int negaMax(Game game, int depth, float alpha, float beta, TurnColor turnColor) {
         long start = System.currentTimeMillis();
         if (depth == 0) {
-            int colorMultiplier = 0;
-            switch (turnColor) {
-                case white:
-                    colorMultiplier = 1;
-                    break;
-                case black:
-                    colorMultiplier = -1;
-                    break;
-            }
-            return 1*estimateBoard(game, turnColor);
+            return evaluateBoard(game, turnColor);
         }
         int max = (Integer.MIN_VALUE/2);
         List<Integer> moves = new ArrayList<>();
@@ -217,9 +208,10 @@ public class MiniMaxStrategy implements PlayingStrategy {
             int[] playerKing = game.board.getKing(turnColor);
             if (game.board.isKingInCheck(playerKing)) {
                 // checkmate
-                return game.board.getMultiplier(turnColor) * (Integer.MAX_VALUE - 10);
+                return game.board.getMultiplier(turnColor) * (Integer.MAX_VALUE/2 - 10);
             } else {
-                return game.board.getMultiplier(turnColor) * Integer.MAX_VALUE/2;
+                // stalemate
+                return game.board.getMultiplier(turnColor) * Integer.MAX_VALUE/3;
             }
 
         }
@@ -251,22 +243,29 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     private int cmp(Game game, int[] c1, int[] c2, TurnColor turnColor) {
         game.preexecuteMove(c1);
-        int estimate1 = estimateBoard(game, turnColor);
+        int estimate1 = evaluateBoard(game, turnColor);
         game.undoMove();
 
         game.preexecuteMove(c2);
-        int estimate2 = estimateBoard(game, turnColor);
+        int estimate2 = evaluateBoard(game, turnColor);
         game.undoMove();
+
+        logV("Estimated move " + Arrays.toString(c1) + " as " + estimate1);
+        logV("Estimated move " + Arrays.toString(c2) + " as " + estimate2);
 
         return -1 * (estimate1 - estimate2);
     }
 
-    private int estimateBoard(Game game, TurnColor me) {
+    private void logV(String s) {
+        if (Game.DEBUG_MOVE_SORTING) {
+            System.out.println(s);
+        }
+    }
+
+    private int evaluateBoard(Game game, TurnColor me) {
         int o_mate = checkKingCheckMateScore(game, me.opposite());
-        int o_check = kingIsInCheck(game, me.opposite());
 
         int m_mate = checkKingCheckMateScore(game, me);
-        int m_check = kingIsInCheck(game, me);
 
         int m_pieces = countPiecesScore(game, me);
         int o_pieces = countPiecesScore(game, me.opposite());
@@ -286,8 +285,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
         }
 
-        return (int) ((int) (o_mate - m_mate) + (o_check- m_check) +
-                                + (m_pieces - o_pieces) + 0.0* (m_pos + o_pos));
+        int finalScore = (int) ((int) 1.0f * (o_mate - m_mate) +
+                +(m_pieces - o_pieces) + 0.0 * (m_pos + o_pos));
+        return finalScore;
 
 //        final int BASE = 300_000;
 //        int finalScore = BASE + o_mate + o_check
@@ -299,31 +299,38 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     private int kingIsInCheck(Game game, TurnColor gameTurn) {
         int[] king = game.board.getKing(gameTurn);
-        return (game.board.isKingInCheck(king)) ? 800 : 0;
+        return (game.board.isKingInCheck(king)) ? 20 : 0;
     }
 
     private int checkKingCheckMateScore(Game game, TurnColor gameTurn) {
-        int[] king = game.board.getKing(gameTurn);
-        int kx = king[0];
-        int ky = king[1];
-        short possibleMoves = 0;
-        for (int i = -1; i < 2; i++) {
-            for (int j = -1; j < 2; j++) {
-                if (i== 0 && j == 0) {
-                    continue;
-                }
-                if (game.board.canMove(kx, ky,kx +i, ky+j)){
-                    possibleMoves++;
+        int m_check = kingIsInCheck(game, gameTurn);
+        if (m_check > 0) {
+            int[] king = game.board.getKing(gameTurn);
+            int kx = king[0];
+            int ky = king[1];
+            short possibleMoves = 0;
+            for (int i = -1; i < 2; i++) {
+                for (int j = -1; j < 2; j++) {
+                    if (i == 0 && j == 0) {
+                        continue;
+                    }
+                    if (game.board.canMove(kx, ky, kx + i, ky + j)) {
+                        possibleMoves++;
+                    }
                 }
             }
-        }
-        switch (possibleMoves) {
-            case 0:
-                return Integer.MAX_VALUE/2;
-            case 1:
-                return 1000;
-            case 2:return 80;
-            case 3: return 20;
+
+            switch (possibleMoves) {
+                case 0:
+                    return 2400;
+                case 1:
+                    return 1200;
+                case 2:
+                    return 600;
+                case 3:
+                    return 200;
+            }
+            return m_check;
         }
         return 0;
     }
