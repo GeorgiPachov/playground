@@ -1,0 +1,86 @@
+uci
+2018-01-14 04:01:39.166-->1:isready
+2018-01-14 04:01:41.414-->1:ucinewgame
+2018-01-14 04:01:41.414-->1:isready
+2018-01-14 04:01:41.513-->1:position startpos moves e2e4
+2018-01-14 04:01:41.513-->1:go wtime 300000 btime 300000 winc 0 binc 0
+2018-01-14 04:01:43.205-->1:position startpos moves e2e4 f7f5 e4f5
+2018-01-14 04:01:43.205-->1:go wtime 299089 btime 299482 winc 0 binc 0
+2018-01-14 04:01:44.288-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6
+2018-01-14 04:01:44.288-->1:go wtime 298407 btime 299339 winc 0 binc 0
+2018-01-14 04:01:47.635-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 f1d3
+2018-01-14 04:01:47.635-->1:go wtime 295376 btime 299274 winc 0 binc 0
+2018-01-14 04:01:52.460-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 f1d3 h8h6 d1g4
+2018-01-14 04:01:52.461-->1:go wtime 290870 btime 299206 winc 0 binc 0
+2018-01-14 04:01:54.560-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 f1d3 h8h6 d1g4 a7a5 d3g6
+2018-01-14 04:01:54.561-->1:go wtime 289396 btime 298840 winc 0 binc 0
+2018-01-14 04:02:07.094-->1:ucinewgame
+2018-01-14 04:02:07.094-->1:isready
+2018-01-14 04:02:07.101-->1:position startpos moves e2e4
+2018-01-14 04:02:07.101-->1:go wtime 300000 btime 300000 winc 0 binc 0
+2018-01-14 04:02:08.316-->1:position startpos moves e2e4 f7f5 e4f5
+2018-01-14 04:02:08.317-->1:go wtime 299260 btime 299780 winc 0 binc 0
+2018-01-14 04:02:10.259-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6
+2018-01-14 04:02:10.259-->1:go wtime 297690 btime 299663 winc 0 binc 0
+2018-01-14 04:02:12.011-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3
+2018-01-14 04:02:12.011-->1:go wtime 296227 btime 299624 winc 0 binc 0
+2018-01-14 04:02:13.131-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5
+2018-01-14 04:02:13.131-->1:go wtime 295616 btime 299369 winc 0 binc 0
+2018-01-14 04:02:16.641-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4
+2018-01-14 04:02:16.641-->1:go wtime 292517 btime 299205 winc 0 binc 0
+2018-01-14 04:02:19.198-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5
+2018-01-14 04:02:19.199-->1:go wtime 290544 btime 298884 winc 0 binc 0
+2018-01-14 04:02:24.896-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4
+2018-01-14 04:02:24.901-->1:go wtime 285181 btime 298804 winc 0 binc 0
+2018-01-14 04:02:28.631-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2
+2018-01-14 04:02:28.633-->1:go wtime 281950 btime 298725 winc 0 binc 0
+2018-01-14 04:02:30.318-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3
+2018-01-14 04:02:30.318-->1:go wtime 280873 btime 298522 winc 0 binc 0
+2018-01-14 04:02:35.520-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3
+2018-01-14 04:02:35.521-->1:go wtime 276347 btime 298105 winc 0 binc 0
+2018-01-14 04:02:51.384-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2
+2018-01-14 04:02:51.387-->1:go wtime 260963 btime 298051 winc 0 binc 0
+2018-01-14 04:02:54.527-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3
+2018-01-14 04:02:54.527-->1:go wtime 258303 btime 297985 winc 0 binc 0
+2018-01-14 04:02:56.229-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3
+2018-01-14 04:02:56.229-->1:go wtime 256933 btime 297902 winc 0 binc 02018-01-14 04:02:58.685-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3
+2018-01-14 04:02:58.685-->1:go wtime 255011 btime 297781 winc 0 binc 0
+2018-01-14 04:03:01.493-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3
+2018-01-14 04:03:01.493-->1:go wtime 252588 btime 297642 winc 0 binc 0
+2018-01-14 04:03:04.505-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3
+2018-01-14 04:03:04.509-->1:go wtime 249979 btime 297498 winc 0 binc 0
+2018-01-14 04:03:09.410-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6
+2018-01-14 04:03:09.414-->1:go wtime 245391 btime 297428 winc 0 binc 02018-01-14 04:03:12.717-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3
+2018-01-14 04:03:12.717-->1:go wtime 242378 btime 297385 winc 0 binc 0
+2018-01-14 04:03:18.260-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3
+2018-01-14 04:03:18.260-->1:go wtime 237130 btime 297332 winc 0 binc 02018-01-14 04:03:19.276-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3
+2018-01-14 04:03:19.277-->1:go wtime 236423 btime 297271 winc 0 binc 0
+2018-01-14 04:03:20.814-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3
+2018-01-14 04:03:20.814-->1:go wtime 235166 btime 297243 winc 0 binc 0
+2018-01-14 04:03:22.847-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4
+2018-01-14 04:03:22.847-->1:go wtime 233424 btime 297193 winc 0 binc 0
+2018-01-14 04:03:25.147-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2
+2018-01-14 04:03:25.149-->1:go wtime 231389 btime 297181 winc 0 binc 0
+2018-01-14 04:03:27.769-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8
+2018-01-14 04:03:27.769-->1:go wtime 229064 btime 297136 winc 0 binc 0
+2018-01-14 04:03:29.194-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1
+2018-01-14 04:03:29.194-->1:go wtime 227914 btime 297118 winc 0 binc 0
+2018-01-14 04:03:30.268-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3
+2018-01-14 04:03:30.268-->1:go wtime 227131 btime 297087 winc 0 binc 0
+2018-01-14 04:03:31.538-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3 b4c3 a1b1
+2018-01-14 04:03:31.538-->1:go wtime 226299 btime 297061 winc 0 binc 0
+2018-01-14 04:03:33.825-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3 b4c3 a1b1 a5h5 b1b5
+2018-01-14 04:03:33.830-->1:go wtime 224325 btime 296995 winc 0 binc 0
+2018-01-14 04:03:40.372-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3 b4c3 a1b1 a5h5 b1b5 d6d5 b5c5
+2018-01-14 04:03:40.372-->1:go wtime 218107 btime 296920 winc 0 binc 0
+2018-01-14 04:03:44.039-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3 b4c3 a1b1 a5h5 b1b5 d6d5 b5c5 b6c5 g8g5
+2018-01-14 04:03:44.039-->1:go wtime 214701 btime 296907 winc 0 binc 0
+2018-01-14 04:03:47.492-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3 b4c3 a1b1 a5h5 b1b5 d6d5 b5c5 b6c5 g8g5 h5g5 g2g4
+2018-01-14 04:03:47.492-->1:go wtime 211512 btime 296893 winc 0 binc 0
+2018-01-14 04:03:49.464-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3 b4c3 a1b1 a5h5 b1b5 d6d5 b5c5 b6c5 g8g5 h5g5 g2g4 g5g4 f1g2 g4g2
+2018-01-14 04:03:49.465-->1:go wtime 210023 btime 296867 winc 0 binc 0
+2018-01-14 04:03:51.075-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3 b4c3 a1b1 a5h5 b1b5 d6d5 b5c5 b6c5 g8g5 h5g5 g2g4 g5g4 f1g2 g4g2 c1d1
+2018-01-14 04:03:51.080-->1:go wtime 208467 btime 296867 winc 0 binc 0
+2018-01-14 04:03:51.983-->1:position startpos moves e2e4 f7f5 e4f5 g7g6 f5g6 h7g6 g1f3 a7a5 f3g5 e7e5 f2f4 b7b6 f4e5 d8g5 h2h4 g5g3 e1e2 c8a6 d2d3 c7c5 h1h3 a6d3 e2d2 f8h6 d2c3 g3e5 c3b3 a5a4 b3a3 h6c1 d1d3 e8d8 h3e3 c1e3 d3g6 e5c3 b2c3 d8c7 g6g3 d7d6 g3e3 h8h4 e3g3 h4b4 c3b4 c5b4 a3b2 a8a6 g3g8 a4a3 b2c1 a6a5 b1c3 b4c3 a1b1 a5h5 b1b5 d6d5 b5c5 b6c5 g8g5 h5g5 g2g4 g5g4 f1g2 g4g2 c1d1 c5c4 d1e1
+2018-01-14 04:03:51.983-->1:go wtime 207866 btime 296811 winc 0 binc 0
+ 
