@@ -42,6 +42,7 @@ public class Knight {
                     moves.add(yLocation);
                     moves.add(m[0]);
                     moves.add(m[1]);
+                    moves.add(0);
                 });
     }
 }

@@ -2,6 +2,8 @@ package chessControllers;
 
 import chessGame.Board;
 
+import java.util.Arrays;
+
 public enum TurnColor {
     white, black;
 
@@ -30,5 +32,9 @@ public enum TurnColor {
                 return Board.BLACK_KING;
         }
         return -1;
+    }
+
+    public boolean isPiece(int number) {
+        return Arrays.binarySearch(getPieces(), number) > -1;
     }
 }

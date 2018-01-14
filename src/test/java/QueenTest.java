@@ -1,9 +1,7 @@
 import chessGame.Board;
 import junit.framework.TestCase;
 
-import static chessGame.Board.BLACK_KING;
-import static chessGame.Board.BLACK_QUEEN;
-import static chessGame.Board.BLACK_ROOK;
+import static chessGame.Board.*;
 
 /**
  * Test cases for the Queen
@@ -20,7 +18,9 @@ public class QueenTest extends TestCase {
 		Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[0][0] = BLACK_KING;
+		board.pieces[6][6] = WHITE_KING;
         board.pieces[3][0] = BLACK_QUEEN;
+		board.initCaches();
 		assertTrue(board.canMove(3, 0,7, 0));
 	}
 
@@ -31,8 +31,9 @@ public class QueenTest extends TestCase {
 		Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[0][0] = BLACK_KING;
-        board.pieces[3][0] = BLACK_QUEEN;
-
+		board.pieces[7][7] = WHITE_KING;
+		board.pieces[3][0] = BLACK_QUEEN;
+		board.initCaches();
         assertTrue(board.canMove(3, 0, 5, 0));
 	}
 
@@ -43,7 +44,9 @@ public class QueenTest extends TestCase {
         Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[0][0] = BLACK_KING;
-        board.pieces[3][0] = BLACK_QUEEN;
+		board.pieces[7][7] = WHITE_KING;
+		board.pieces[3][0] = BLACK_QUEEN;
+		board.initCaches();
 		assertTrue(board.canMove(3, 0, 6, 3));
 	}
 
@@ -55,7 +58,9 @@ public class QueenTest extends TestCase {
         board.pieces = new int[8][8];
         board.pieces[3][0] = BLACK_QUEEN;
         board.pieces[0][0] = BLACK_KING;
-        board.pieces[3][1] = BLACK_ROOK;
+		board.pieces[7][7] = WHITE_KING;
+		board.pieces[3][1] = BLACK_ROOK;
+		board.initCaches();
 		assertFalse(board.canMove(3, 0, 3, 3));
 	}
 
@@ -66,7 +71,9 @@ public class QueenTest extends TestCase {
         Board board = new Board();
         board.pieces = new int[8][8];
         board.pieces[0][0] = BLACK_KING;
-        board.pieces[1][2] = BLACK_QUEEN;
+		board.pieces[7][7] = WHITE_KING;
+		board.pieces[1][2] = BLACK_QUEEN;
+		board.initCaches();
 		assertFalse(board.canMove(1, 2, 2, 4));
 	}
 

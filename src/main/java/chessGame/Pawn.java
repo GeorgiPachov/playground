@@ -2,13 +2,7 @@ package chessGame;
 
 import java.util.List;
 
-/**
- * Subclass of a Piece specific to a Pawn. This handles all movements the pawn is capable
- * of making.
- * @author Pratik Naik
- */
 public class Pawn {
-
 	public static void addAllowedMoves(Board board, int[] coordinates, List<Integer> moves) {
 		int[][] possibleMovesXY = null;
 		int oldX = coordinates[0];
@@ -33,13 +27,56 @@ public class Pawn {
 		}
 		for (int[] possibleMove : possibleMovesXY) {
 			if (board.canMove(oldX, oldY, possibleMove[0],possibleMove[1])) {
-                moves.add(oldX);
-				moves.add(oldY);
-				moves.add(possibleMove[0]);
-				moves.add(possibleMove[1]);
+				boolean isPromotion = (isWhite && possibleMove[1] == 7) || (isBlack && possibleMove[1] == 0);
+				if (isPromotion) {
+					if (isWhite && possibleMove[1] == 7) {
+						// add promotion to queen
+						moves.add(oldX);
+						moves.add(oldY);
+						moves.add(possibleMove[0]);
+						moves.add(possibleMove[1]);
+						moves.add(Board.WHITE_QUEEN);
+
+						// add knight
+						moves.add(oldX);
+						moves.add(oldY);
+						moves.add(possibleMove[0]);
+						moves.add(possibleMove[1]);
+						moves.add(Board.BLACK_KNIGHT);
+
+						// add rook
+
+						// add bishop
+					} else if (isBlack && possibleMove[1] == 0) {
+						// add promotion to queen
+						moves.add(oldX);
+						moves.add(oldY);
+						moves.add(possibleMove[0]);
+						moves.add(possibleMove[1]);
+						moves.add(Board.BLACK_QUEEN);
+
+						// add knight
+						moves.add(oldX);
+						moves.add(oldY);
+						moves.add(possibleMove[0]);
+						moves.add(possibleMove[1]);
+						moves.add(Board.BLACK_KNIGHT);
+
+						// add rook
+
+						// add bishop
+					}
+				} else {
+					moves.add(oldX);
+					moves.add(oldY);
+					moves.add(possibleMove[0]);
+					moves.add(possibleMove[1]);
+					moves.add(0);
+				}
 			}
 		}
 	}
+
 	public static boolean isValidSpecialMove(Board board, int oldX, int oldY, int newX, int newY) {
 		int xDisplacement = newX - oldX;
 		if(isValidPawnMove(board, oldX, oldY, newX, newY)){

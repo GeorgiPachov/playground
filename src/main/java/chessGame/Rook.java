@@ -52,6 +52,7 @@ public class Rook  {
 				moves.add(yLocation);
 				moves.add(nx);
 				moves.add(ny);
+				moves.add(0);
 				nx+=xStep;
 				ny+=yStep;
 			}

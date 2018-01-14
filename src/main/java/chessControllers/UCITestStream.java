@@ -9,16 +9,12 @@ public class UCITestStream  extends BufferedInputStream {
         super(in);
     }
 
-    public UCITestStream(InputStream in, int size) {
-        super(in, size);
-    }
-
     @Override
     public int read(byte[] b) throws IOException {
         int read = super.read(b);
         if (read == -1) {
             try {
-                Thread.sleep(70*1000);
+                Thread.sleep(0*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -31,7 +27,7 @@ public class UCITestStream  extends BufferedInputStream {
         int read = super.read();
         if (read == -1) {
             try {
-                Thread.sleep(70*1000);
+                Thread.sleep(0*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -44,7 +40,7 @@ public class UCITestStream  extends BufferedInputStream {
         int read =  super.read(b, off, len);
         if (read == -1) {
             try {
-                Thread.sleep(70*1000);
+                Thread.sleep(0*1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

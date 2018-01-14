@@ -8,6 +8,9 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 public class CheckmateTests {
 
     @Test
@@ -27,7 +30,7 @@ public class CheckmateTests {
             strategy.maxDepth = i;
             int[] move = strategy.playWhite(game);
 
-            Assert.assertArrayEquals(move, new int[] {5,2,0,2});
+            assertArrayEquals(move, new int[] {5,2,0,2, 0});
             boolean checkMate = game.board.isKingCheckmate(new int[] {0, 0});
             Assert.assertTrue(checkMate);
         }
@@ -49,8 +52,10 @@ public class CheckmateTests {
             MiniMaxStrategy strategy = new MiniMaxStrategy();
             strategy.maxDepth = i;
             int[] m1 = strategy.playWhite(game);
+            assertArrayEquals(m1, new int[] {6, 7, 1, 7, 0});
             System.out.println("Move 1 : " + Arrays.toString(m1));
             int[] m2 = strategy.playBlack(game);
+            assertArrayEquals(m2, new int[] {0, 1, 0, 0, 0});
             System.out.println("Move 2(black) : " + Arrays.toString(m2));
             int[] m3 = strategy.playWhite(game);
             System.out.println("Move 3 : " + Arrays.toString(m3));

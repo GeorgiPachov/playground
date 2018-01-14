@@ -3,9 +3,13 @@ import chessGame.Board;
 
 import java.util.Arrays;
 
+import static chessGame.Board.BLACK_PAWN;
+import static chessGame.Board.WHITE_PAWN;
+
 public class MoveCommand {
 
 	private final Board board;
+	private int promoted = 0;
 	int xDestination;
 	int yDestination;
 	int xOrigin;
@@ -18,6 +22,7 @@ public class MoveCommand {
 		this.yOrigin = move[1];
 		this.xDestination = move[2];
 		this.yDestination = move[3];
+		this.promoted = move[4];
 	}
 	
 	public void undo() {
@@ -34,12 +39,23 @@ public class MoveCommand {
 				break;
 		}
 
+		if (isPromotion(color)) {
+		    switch (color) {
+                case white:
+                    board.pieces[xOrigin][yOrigin] = WHITE_PAWN;
+                    break;
+                case black:
+                    board.pieces[xOrigin][yOrigin] = BLACK_PAWN;
+                    break;
+            }
+            board.pieces[xDestination][yDestination] = enemyRemoved;
+        } else {
 
-        // execute move
-		int pieceToUndo = board.pieces[xDestination][yDestination];
-		board.pieces[xOrigin][yOrigin] = pieceToUndo;
-		board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
-
+            // execute move
+            int pieceToUndo = board.pieces[xDestination][yDestination];
+            board.pieces[xOrigin][yOrigin] = pieceToUndo;
+            board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
+        }
 		// update caches
         if (xDestination == king[0] && yDestination == king[1]) {
             king[0] = xOrigin;
@@ -73,9 +89,9 @@ public class MoveCommand {
 	
 	public void execute() {
         // prepare caches
-        TurnColor color = board.getColor(xOrigin, yOrigin);
-        int[] king = board.getKing(color);
-		switch (color) {
+        TurnColor turnColor = board.getColor(xOrigin, yOrigin);
+        int[] king = board.getKing(turnColor);
+		switch (turnColor) {
 			case black:
 				board.blackPieces.remove(Arrays.hashCode(new int[] {xOrigin, yOrigin}));
 				break;
@@ -84,11 +100,17 @@ public class MoveCommand {
 				break;
 		}
 
-        // execute move
-        int pieceToMove = board.pieces[xOrigin][yOrigin];
-		board.pieces[xOrigin][yOrigin] = 0;
-		this.enemyRemoved = board.pieces[xDestination][yDestination];
-		board.pieces[xDestination][yDestination] = pieceToMove;
+		if (isPromotion(turnColor)) {
+			board.pieces[xOrigin][yOrigin] = 0;
+			this.enemyRemoved = board.pieces[xDestination][yDestination];
+			board.pieces[xDestination][yDestination] = promoted;
+		} else {
+			// execute move
+			int pieceToMove = board.pieces[xOrigin][yOrigin];
+			board.pieces[xOrigin][yOrigin] = 0;
+			this.enemyRemoved = board.pieces[xDestination][yDestination];
+			board.pieces[xDestination][yDestination] = pieceToMove;
+		}
 
 		// update caches
         if (xOrigin == king[0] && yOrigin == king[1]) {
@@ -98,7 +120,7 @@ public class MoveCommand {
 
         // remove enemy from opposite pieces cache
 		if (enemyRemoved!=0) {
-			switch (color) {
+			switch (turnColor) {
 				case white:
 					board.blackPieces.remove(Arrays.hashCode(new int[] {xDestination, yDestination}));
 					break;
@@ -108,8 +130,9 @@ public class MoveCommand {
 			}
 		}
 
+
 		int[] coordinates = {xDestination, yDestination};
-		switch (color) {
+		switch (turnColor) {
 			case black:
 				board.blackPieces.put(Arrays.hashCode(coordinates), coordinates);
 				break;
@@ -117,7 +140,9 @@ public class MoveCommand {
 				board.whitePieces.put(Arrays.hashCode(coordinates), coordinates);
 				break;
 		}
-
-
 	}
+
+	private boolean isPromotion(TurnColor turnColor) {
+        return promoted != 0;
+    }
 }

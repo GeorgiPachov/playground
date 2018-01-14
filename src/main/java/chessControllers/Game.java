@@ -3,10 +3,11 @@ package chessControllers;
 import java.util.Stack;
 
 import chessGame.*;
-public class Game {
 
-    public static final boolean DEBUG_MOVE_SORTING = false;
-    public static boolean DEBUG = false;
+import static chessControllers.Constants.DEBUG;
+import static chessControllers.Util.logV;
+
+public class Game {
 	public Board board;
 	public boolean gameOver;
 	Stack<MoveCommand> commandStack;
@@ -36,7 +37,7 @@ public class Game {
     }
 
     public void executeMove(int[]  move) {
-	    printBoard();
+	    logV(board.toString());
         int xDestination = move[2];
         int yDestination = move[3];
 		int movingPiece = this.board.pieces[move[0]][move[1]];
@@ -46,11 +47,11 @@ public class Game {
 		    log("Found piece " + movingPiece);
             log("Executing move for " + toString(movingPiece) + " [" + move[0] + ", " + move[1] + "] to [" + xDestination + ", " + yDestination + "]");
         }
+        // if is promotion
         MoveCommand newCommand = new MoveCommand(board, move);
         commandStack.add(newCommand);
         newCommand.execute();
-        printBoard();
-
+        logV(board.toString());
 
         int[] kingToCheck = board.getKing(movingPieceColor.opposite());
         boolean gameOver = board.isKingCheckmate(kingToCheck);
@@ -61,17 +62,6 @@ public class Game {
          }
 
     }
-
-    private void printBoard() {
-        System.out.println("Board: ");
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                System.out.print(board.pieces[j][7-i] + " ");
-            }
-            System.out.println();
-        }
-    }
-
 
     private void stopGame() {
 		System.out.println("GAME ENDED!!!!" + board.gameTurn + " WON");

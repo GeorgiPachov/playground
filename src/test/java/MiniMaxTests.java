@@ -25,7 +25,7 @@ public class MiniMaxTests {
             strategy.maxDepth = i;
             int[] nextWhiteMove = strategy.playWhite(game);
 
-            Assert.assertArrayEquals(new int[] {5,2,5,0}, nextWhiteMove);
+            Assert.assertArrayEquals(new int[] {5,2,5,0,0}, nextWhiteMove);
         }
     }
 

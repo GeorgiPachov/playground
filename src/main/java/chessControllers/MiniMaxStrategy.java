@@ -4,10 +4,11 @@ import chessGame.*;
 
 import java.util.*;
 
-import static chessControllers.Game.DEBUG;
+import static chessControllers.Constants.DEBUG;
+import static chessControllers.Util.logV;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    public static int maxDepth = 4;
+    public static int maxDepth = 3;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[] PIECES_SCORE = new short[32];
@@ -186,15 +187,25 @@ public class MiniMaxStrategy implements PlayingStrategy {
         }
 
         List<int[]> packedMoves = new ArrayList<>();
-        int[] c = new int[4];
+        int[] c = new int[5];
         int counter = 0;
         for (int number: moves) {
-            c[counter++] = number;
-            if (counter == 4) {
+            counter++;
+            if (counter == 5) {
+                boolean isChessPiece = TurnColor.black.isPiece(number) || TurnColor.white.isPiece(number);
+                if (isChessPiece) {
+                    c[counter-1] = number;
+                } else {
+                    c[counter-1] = 0;
+                }
                 packedMoves.add(c);
-                c = new int[4];
+                c = new int[5];
                 counter = 0;
+            } else {
+                c[counter-1] = number;
             }
+
+
         }
         packedMoves.sort((c1, c2) -> cmp(game, c1, c2, turnColor));
         e = System.currentTimeMillis();
@@ -242,6 +253,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int cmp(Game game, int[] c1, int[] c2, TurnColor turnColor) {
+        logV("Comparing: " + Arrays.toString(c1) + " against " + Arrays.toString(c2));
         game.preexecuteMove(c1);
         int estimate1 = evaluateBoard(game, turnColor);
         game.undoMove();
@@ -254,12 +266,6 @@ public class MiniMaxStrategy implements PlayingStrategy {
         logV("Estimated move " + Arrays.toString(c2) + " as " + estimate2);
 
         return -1 * (estimate1 - estimate2);
-    }
-
-    private void logV(String s) {
-        if (Game.DEBUG_MOVE_SORTING) {
-            System.out.println(s);
-        }
     }
 
     private int evaluateBoard(Game game, TurnColor me) {
@@ -286,7 +292,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
         }
 
         int finalScore = (int) ((int) 1.0f * (o_mate - m_mate) +
-                +(m_pieces - o_pieces) + 0.0 * (m_pos + o_pos));
+                +(m_pieces - o_pieces) + 2.0 * (m_pos + o_pos));
         return finalScore;
 
 //        final int BASE = 300_000;
@@ -416,10 +422,5 @@ public class MiniMaxStrategy implements PlayingStrategy {
         return game.board.getPieces(ofColor).stream()
                 .mapToInt(coords -> PIECES_SCORE[game.board.pieces[coords[0]][coords[1]]])
                 .sum();
-    }
-
-    public static void main(String[] args) {
-        int test = Integer.MAX_VALUE - 10;
-        System.out.println(-1 * test);
     }
 }

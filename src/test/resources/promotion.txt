@@ -1,0 +1,24 @@
+uci
+isready
+ucinewgame
+isready
+position startpos moves e2e4
+go wtime 300000 btime 300000 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5
+go wtime 299456 btime 298838 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5 h7h5 f2f4
+go wtime 298005 btime 298032 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5 h7h5 f2f4 h8h7 d2d4
+go wtime 296383 btime 297071 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5 h7h5 f2f4 h8h7 d2d4 e7e6 d4d5
+go wtime 294890 btime 296116 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5 h7h5 f2f4 h8h7 d2d4 e7e6 d4d5 f8b4 c2c3
+go wtime 294158 btime 295801 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5 h7h5 f2f4 h8h7 d2d4 e7e6 d4d5 f8b4 c2c3 b4a5 b2b4
+go wtime 293295 btime 295521 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5 h7h5 f2f4 h8h7 d2d4 e7e6 d4d5 f8b4 c2c3 b4a5 b2b4 a5b6 d5e6
+go wtime 285787 btime 295330 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5 h7h5 f2f4 h8h7 d2d4 e7e6 d4d5 f8b4 c2c3 b4a5 b2b4 a5b6 d5e6 e8f8 e6f7
+go wtime 284044 btime 294244 winc 0 binc 0
+position startpos moves e2e4 g7g6 e4e5 h7h5 f2f4 h8h7 d2d4 e7e6 d4d5 f8b4 c2c3 b4a5 b2b4 a5b6 d5e6 e8f8 e6f7 b6g1 f7g8q
+go wtime 281581 btime 292630 winc 0 binc 0

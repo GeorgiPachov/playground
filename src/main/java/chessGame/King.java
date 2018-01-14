@@ -41,6 +41,7 @@ public class King {
 					moves.add(yLocation);
 					moves.add(xLocation+i);
 					moves.add(yLocation+j);
+					moves.add(0);
 				}
 			}
 		}

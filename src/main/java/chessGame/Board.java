@@ -6,17 +6,17 @@ import chessControllers.TurnColor;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static chessControllers.Game.DEBUG;
+import static chessControllers.Constants.DEBUG;
 
 public class Board {
     public TurnColor gameTurn;
     public int pieces[][];
-	public static final int WHITE_PAWN = 1;
-    public static final int WHITE_ROOK = 2;
-    public static final int WHITE_KNIGHT = 3;
-    public static final int WHITE_BISHOP = 4;
-    public static final int WHITE_QUEEN = 5;
-    public static final int WHITE_KING = 6;
+	public static final int WHITE_PAWN = 11;
+    public static final int WHITE_ROOK = 12;
+    public static final int WHITE_KNIGHT = 13;
+    public static final int WHITE_BISHOP = 14;
+    public static final int WHITE_QUEEN = 15;
+    public static final int WHITE_KING = 16;
     public static final int[] WHITES = new int[] {
             WHITE_PAWN,
             WHITE_ROOK,
@@ -77,8 +77,8 @@ public class Board {
         findBlackPieces().forEach(blackPiece -> {
             blackPieces.put(Arrays.hashCode(blackPiece), blackPiece);
         });
-        this.whiteKing = whitePieces.values().stream().filter(c -> isKing(c)).findFirst().get();
-        this.blackKing = blackPieces.values().stream().filter(c -> isKing(c)).findFirst().get();
+        this.whiteKing = whitePieces.values().stream().filter(this::isKing).findFirst().get();
+        this.blackKing = blackPieces.values().stream().filter(this::isKing).findFirst().get();
     }
 
     public void populateBoardWithSquares() {
@@ -143,8 +143,6 @@ public class Board {
 			return false;
 	}
 
-
-
 	public void populatePossibleMoves(TurnColor color, List<Integer> moves) {
 	    Collection<int[]> pieces = new ArrayList(getPieces(color));
         pieces.forEach(p -> addAllowedMoves(p, moves));
@@ -185,9 +183,13 @@ public class Board {
     public Collection<int[]> getPieces(TurnColor gameTurn) {
 	    switch (gameTurn) {
             case white:
-                return whitePieces.values();
+                //XXX disable caches
+                return findWhitePieces();
+//                return whitePieces.values();
             case black:
-                return blackPieces.values();
+                //XXX disable caches
+                return findBlackPieces();
+//                return blackPieces.values();
         }
         return null;
 	}
@@ -205,7 +207,7 @@ public class Board {
     }
 
     public boolean isBlack(int i) {
-        return i > 16 && i < 32;
+        return i > 16 && i <= 22;
     }
 
     public List<int[]> findWhitePieces() {
@@ -222,17 +224,18 @@ public class Board {
     }
 
     public boolean isWhite(int i) {
-        return i > 0 && i < 16;
+        return i > 10 && i <= 16;
     }
 
     public int[] getKing(TurnColor gameTurn) {
-        switch (gameTurn) {
-            case white:
-                return whiteKing;
-            case black:
-                return blackKing;
-        }
-        return null;
+//        switch (gameTurn) {
+//            case white:
+//                return whiteKing;
+//            case black:
+//                return blackKing;
+//        }
+        Optional<int[]> optional = getPieces(gameTurn).stream().filter(this::isKing).findAny();
+        return optional.get();
     }
 
     public boolean canMove(int oldX, int oldY, int newX, int newY){
@@ -332,7 +335,7 @@ public class Board {
         TurnColor turnColor = getColor(oldX, oldY);
 
         int piece = pieces[newPieceX][newPieceY];
-        MoveCommand command = new MoveCommand(this, new int[] { oldX, oldY, newPieceX, newPieceY});
+        MoveCommand command = new MoveCommand(this, new int[] { oldX, oldY, newPieceX, newPieceY, 0});
 
         if(piece != 0){
             if(isOfColor(piece, turnColor.opposite())){
@@ -397,7 +400,7 @@ public class Board {
                 int oy = moves.get(i+1);
                 int nx = moves.get(i+2);
                 int ny = moves.get(i+3);
-                MoveCommand command = new MoveCommand(this, new int[] {ox, oy, nx, ny});
+                MoveCommand command = new MoveCommand(this, new int[] {ox, oy, nx, ny, 0});
                 if(canMove(ox, oy, nx, ny)){ // maybe only check if valid move, without endangering the king?
                     command.execute();
                     // we could have moved the king...
@@ -431,5 +434,54 @@ public class Board {
                 return -1;
         }
         return 0;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            builder.append(7-i + " ");
+            for (int j = 0; j < 8; j++) {
+                builder.append(mapToLetters(pieces[j][7-i]) + " ");
+            }
+            builder.append("\n");
+        }
+
+        builder.append("  ");
+        for (int j = 0; j < 8; j++) {
+            builder.append(j + " " + " ");
+        }
+        return builder.toString();
+    }
+
+    private String mapToLetters(int i) {
+        switch (i) {
+            case WHITE_KING:
+                return "wk";
+            case WHITE_ROOK:
+                return "wr";
+            case WHITE_PAWN:
+                return "wp";
+            case WHITE_BISHOP:
+                return "wb";
+            case WHITE_KNIGHT:
+                return "wn";
+            case WHITE_QUEEN:
+                return "wq";
+
+            case BLACK_KING:
+                return "bk";
+            case BLACK_QUEEN:
+                return "bq";
+            case BLACK_ROOK:
+                return "br";
+            case BLACK_BISHOP:
+                return "bb";
+            case BLACK_KNIGHT:
+                return "bn";
+            case BLACK_PAWN:
+                return "bp";
+        }
+        return "__";
     }
 }

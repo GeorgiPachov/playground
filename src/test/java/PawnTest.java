@@ -1,9 +1,7 @@
 import chessGame.Board;
 import junit.framework.TestCase;
 
-import static chessGame.Board.BLACK_KING;
-import static chessGame.Board.BLACK_PAWN;
-import static chessGame.Board.WHITE_PAWN;
+import static chessGame.Board.*;
 
 /**
  * Test cases for the Pawn
@@ -28,6 +26,8 @@ public class PawnTest extends TestCase {
 		board.pieces = new int[8][8];
         board.pieces[0][1] = BLACK_PAWN;
         board.pieces[0][5] = BLACK_KING;
+		board.pieces[3][3] = WHITE_KING;
+        board.initCaches();
         assertTrue(board.canMove(0, 1 , 0, 0));
 	}
 
