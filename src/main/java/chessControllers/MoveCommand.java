@@ -40,23 +40,26 @@ public class MoveCommand {
 				break;
 		}
 
-		boolean wasCastling = revertCastlingIfApplicable(color);
-		if (!wasCastling) {
-			if (isPromotion(color)) {
-				switch (color) {
-					case white:
+		boolean wasEnPassant = revertEnPassantIfApplicable(color);
+		if (!wasEnPassant) {
+			boolean wasCastling = revertCastlingIfApplicable(color);
+			if (!wasCastling) {
+				if (isPromotion(color)) {
+					switch (color) {
+						case white:
 						board.pieces[xOrigin][yOrigin] = WHITE_PAWN;
 						break;
 					case black:
 						board.pieces[xOrigin][yOrigin] = BLACK_PAWN;
 						break;
 				}
-				board.pieces[xDestination][yDestination] = enemyRemoved;
-			} else {
-				// execute move
-				int pieceToUndo = board.pieces[xDestination][yDestination];
-				board.pieces[xOrigin][yOrigin] = pieceToUndo;
-				board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
+					board.pieces[xDestination][yDestination] = enemyRemoved;
+				} else {
+					// execute move
+					int pieceToUndo = board.pieces[xDestination][yDestination];
+					board.pieces[xOrigin][yOrigin] = pieceToUndo;
+					board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
+				}
 			}
 		}
 		// update caches
@@ -88,6 +91,120 @@ public class MoveCommand {
 				break;
 		}
 
+	}
+
+	private boolean revertEnPassantIfApplicable(TurnColor color) {
+		switch (color) {
+			case white:
+				if (isWhiteEnPassant()) {
+					// execute move
+					int pieceToUndo = board.pieces[xDestination][yDestination];
+					board.pieces[xOrigin][yOrigin] = pieceToUndo;
+					board.pieces[xDestination][yDestination] = 0; // most of the time = 0
+					board.pieces[xDestination][yDestination- 1] = enemyRemoved; // most of the time = 0
+					return true;
+				}
+				break;
+			case black:
+				if (isBlackEnPassant()) {
+					int pieceToUndo = board.pieces[xDestination][yDestination];
+					board.pieces[xOrigin][yOrigin] = pieceToUndo;
+					board.pieces[xDestination][yDestination] = 0; // most of the time = 0
+					board.pieces[xDestination][yDestination + 1] = enemyRemoved; // most of the time = 0
+					return true;
+				}
+				break;
+		}
+		return false;
+	}
+
+
+	public void execute() {
+        // prepare caches
+        TurnColor turnColor = board.getColor(xOrigin, yOrigin);
+        int[] king = board.getKing(turnColor);
+		switch (turnColor) {
+			case black:
+				board.blackPieces.remove(Arrays.hashCode(new int[] {xOrigin, yOrigin}));
+				break;
+			case white:
+				board.whitePieces.remove(Arrays.hashCode(new int[] {xOrigin, yOrigin}));
+				break;
+		}
+
+		boolean isEnPassant = handleEnPassantIfApplicable(turnColor);
+		if (!isEnPassant) {
+			boolean isCastling = handleCastlingIfApplicable(turnColor);
+			if (!isCastling) {
+				if (isPromotion(turnColor)) {
+					board.pieces[xOrigin][yOrigin] = 0;
+					this.enemyRemoved = board.pieces[xDestination][yDestination];
+					board.pieces[xDestination][yDestination] = promoted;
+				} else {
+					// execute move
+					int pieceToMove = board.pieces[xOrigin][yOrigin];
+					board.pieces[xOrigin][yOrigin] = 0;
+					this.enemyRemoved = board.pieces[xDestination][yDestination];
+					board.pieces[xDestination][yDestination] = pieceToMove;
+				}
+			}
+		}
+
+		// update caches
+        if (xOrigin == king[0] && yOrigin == king[1]) {
+            king[0] = xDestination;
+            king[1] = yDestination;
+        }
+
+        // remove enemy from opposite pieces cache
+		if (enemyRemoved!=0) {
+			switch (turnColor) {
+				case white:
+					board.blackPieces.remove(Arrays.hashCode(new int[] {xDestination, yDestination}));
+					break;
+				case black:
+					board.whitePieces.remove(Arrays.hashCode(new int[] {xDestination, yDestination}));
+					break;
+			}
+		}
+
+
+		int[] coordinates = {xDestination, yDestination};
+		switch (turnColor) {
+			case black:
+				board.blackPieces.put(Arrays.hashCode(coordinates), coordinates);
+				break;
+			case white:
+				board.whitePieces.put(Arrays.hashCode(coordinates), coordinates);
+				break;
+		}
+	}
+
+	private boolean handleEnPassantIfApplicable(TurnColor turnColor) {
+		switch (turnColor) {
+			case white:
+				if (isWhiteEnPassant()) {
+					int pieceToMove = board.pieces[xOrigin][yOrigin]; //pawn
+					board.pieces[xOrigin][yOrigin] = 0;
+					this.enemyRemoved = board.pieces[xDestination][yDestination - 1]; // black pawn BEHIND the white one
+					board.pieces[xDestination][yDestination - 1] = 0; //remove opposition pawn!
+					board.pieces[xDestination][yDestination] = pieceToMove;
+					return true;
+				}
+				break;
+				// can check if new move is behind the other pawn, but not needed - this should be enough to identify en passant;
+			case black:
+				if (isBlackEnPassant()) {
+					int pieceToMove = board.pieces[xOrigin][yOrigin]; //pawn
+					board.pieces[xOrigin][yOrigin] = 0;
+					this.enemyRemoved = board.pieces[xDestination][yDestination + 1]; // black pawn BEHIND the white one
+					board.pieces[xDestination][yDestination + 1] = 0; //remove opposition pawn!
+					board.pieces[xDestination][yDestination] = pieceToMove;
+					return true;
+				}
+				break;
+		}
+		return false;
 	}
 
 	private boolean revertCastlingIfApplicable(TurnColor color) {
@@ -129,65 +246,6 @@ public class MoveCommand {
 				break;
 		}
 		return false;
-	}
-
-	public void execute() {
-        // prepare caches
-        TurnColor turnColor = board.getColor(xOrigin, yOrigin);
-        int[] king = board.getKing(turnColor);
-		switch (turnColor) {
-			case black:
-				board.blackPieces.remove(Arrays.hashCode(new int[] {xOrigin, yOrigin}));
-				break;
-			case white:
-				board.whitePieces.remove(Arrays.hashCode(new int[] {xOrigin, yOrigin}));
-				break;
-		}
-
-		boolean isCastling = handleCastlingIfApplicable(turnColor);
-
-		if (!isCastling) {
-			if (isPromotion(turnColor)) {
-				board.pieces[xOrigin][yOrigin] = 0;
-				this.enemyRemoved = board.pieces[xDestination][yDestination];
-				board.pieces[xDestination][yDestination] = promoted;
-			} else {
-				// execute move
-				int pieceToMove = board.pieces[xOrigin][yOrigin];
-				board.pieces[xOrigin][yOrigin] = 0;
-				this.enemyRemoved = board.pieces[xDestination][yDestination];
-				board.pieces[xDestination][yDestination] = pieceToMove;
-			}
-		}
-
-		// update caches
-        if (xOrigin == king[0] && yOrigin == king[1]) {
-            king[0] = xDestination;
-            king[1] = yDestination;
-        }
-
-        // remove enemy from opposite pieces cache
-		if (enemyRemoved!=0) {
-			switch (turnColor) {
-				case white:
-					board.blackPieces.remove(Arrays.hashCode(new int[] {xDestination, yDestination}));
-					break;
-				case black:
-					board.whitePieces.remove(Arrays.hashCode(new int[] {xDestination, yDestination}));
-					break;
-			}
-		}
-
-
-		int[] coordinates = {xDestination, yDestination};
-		switch (turnColor) {
-			case black:
-				board.blackPieces.put(Arrays.hashCode(coordinates), coordinates);
-				break;
-			case white:
-				board.whitePieces.put(Arrays.hashCode(coordinates), coordinates);
-				break;
-		}
 	}
 
 	private boolean handleCastlingIfApplicable(TurnColor turnColor) {
@@ -259,4 +317,21 @@ public class MoveCommand {
 	private boolean isPromotion(TurnColor turnColor) {
         return promoted != 0;
     }
+
+    private boolean isWhiteEnPassant() {
+		boolean isPawnMove = board.pieces[xOrigin][yOrigin] == Board.WHITE_PAWN;
+		boolean isY4 = yOrigin == 4;
+		boolean movingSideways = Math.abs(xOrigin - xDestination) == 1;
+		boolean noEnemyTaken = board.pieces[xDestination][yDestination] == 0;
+		return isPawnMove && isY4 && movingSideways && noEnemyTaken;
+	}
+
+
+	private boolean isBlackEnPassant() {
+		boolean isPawnMove = board.pieces[xOrigin][yOrigin] == Board.BLACK_PAWN;
+		boolean isY3 = yOrigin == 3;
+		boolean movingSideways = Math.abs(xOrigin - xDestination) == 1;
+		boolean noEnemyTaken = board.pieces[xDestination][yDestination] == 0;
+		return isPawnMove && isY3 && movingSideways && noEnemyTaken;
+	}
 }
