@@ -1,0 +1,12 @@
+uci
+isready
+ucinewgame
+isready
+position startpos moves e2e3
+go wtime 300000 btime 300000 winc 0 binc 0
+position startpos moves e2e3 e7e5 g1f3
+go wtime 297348 btime 293109 winc 0 binc 0
+position startpos moves e2e3 e7e5 g1f3 d8h4 f1e2
+go wtime 293619 btime 280825 winc 0 binc 0
+position startpos moves e2e3 e7e5 g1f3 d8h4 f1e2 e5e4 e1g1
+go wtime 286587 btime 248551 winc 0 binc 0

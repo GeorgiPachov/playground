@@ -4,6 +4,7 @@ import chessGame.Board;
 import java.util.Arrays;
 
 import static chessGame.Board.BLACK_PAWN;
+import static chessGame.Board.WHITE_KING;
 import static chessGame.Board.WHITE_PAWN;
 
 public class MoveCommand {
@@ -39,23 +40,25 @@ public class MoveCommand {
 				break;
 		}
 
-		if (isPromotion(color)) {
-		    switch (color) {
-                case white:
-                    board.pieces[xOrigin][yOrigin] = WHITE_PAWN;
-                    break;
-                case black:
-                    board.pieces[xOrigin][yOrigin] = BLACK_PAWN;
-                    break;
-            }
-            board.pieces[xDestination][yDestination] = enemyRemoved;
-        } else {
-
-            // execute move
-            int pieceToUndo = board.pieces[xDestination][yDestination];
-            board.pieces[xOrigin][yOrigin] = pieceToUndo;
-            board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
-        }
+		boolean wasCastling = revertCastlingIfApplicable(color);
+		if (!wasCastling) {
+			if (isPromotion(color)) {
+				switch (color) {
+					case white:
+						board.pieces[xOrigin][yOrigin] = WHITE_PAWN;
+						break;
+					case black:
+						board.pieces[xOrigin][yOrigin] = BLACK_PAWN;
+						break;
+				}
+				board.pieces[xDestination][yDestination] = enemyRemoved;
+			} else {
+				// execute move
+				int pieceToUndo = board.pieces[xDestination][yDestination];
+				board.pieces[xOrigin][yOrigin] = pieceToUndo;
+				board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
+			}
+		}
 		// update caches
         if (xDestination == king[0] && yDestination == king[1]) {
             king[0] = xOrigin;
@@ -86,7 +89,48 @@ public class MoveCommand {
 		}
 
 	}
-	
+
+	private boolean revertCastlingIfApplicable(TurnColor color) {
+		switch (color) {
+			case white:
+				int k = Board.WHITE_KING;
+				int r = Board.WHITE_ROOK;
+				if (isShortWhiteCastling()) {
+					board.pieces[4][0] = k;
+					board.pieces[6][0] = 0;
+					board.pieces[7][0] = r;
+					board.pieces[5][0] = 0;
+					return true;
+				} else if (isLongWhiteCastling()) {
+					board.pieces[4][0] = k;
+					board.pieces[2][0] = 0;
+					board.pieces[0][0] = r;
+					board.pieces[3][0] = 0;
+					return true;
+				}
+				break;
+			case black:
+				k = Board.BLACK_KING;
+				r = Board.BLACK_ROOK;
+
+				if (isShortBlackCastling()) {
+					board.pieces[4][7] = k;
+					board.pieces[6][7] = 0;
+					board.pieces[7][7] = r;
+					board.pieces[5][7] = 0;
+					return true;
+				} else if (isLongBlackCastling()) {
+					board.pieces[4][7] = k;
+					board.pieces[2][7] = 0;
+					board.pieces[0][7] = r;
+					board.pieces[3][7] = 0;
+					return true;
+				}
+				break;
+		}
+		return false;
+	}
+
 	public void execute() {
         // prepare caches
         TurnColor turnColor = board.getColor(xOrigin, yOrigin);
@@ -100,16 +144,20 @@ public class MoveCommand {
 				break;
 		}
 
-		if (isPromotion(turnColor)) {
-			board.pieces[xOrigin][yOrigin] = 0;
-			this.enemyRemoved = board.pieces[xDestination][yDestination];
-			board.pieces[xDestination][yDestination] = promoted;
-		} else {
-			// execute move
-			int pieceToMove = board.pieces[xOrigin][yOrigin];
-			board.pieces[xOrigin][yOrigin] = 0;
-			this.enemyRemoved = board.pieces[xDestination][yDestination];
-			board.pieces[xDestination][yDestination] = pieceToMove;
+		boolean isCastling = handleCastlingIfApplicable(turnColor);
+
+		if (!isCastling) {
+			if (isPromotion(turnColor)) {
+				board.pieces[xOrigin][yOrigin] = 0;
+				this.enemyRemoved = board.pieces[xDestination][yDestination];
+				board.pieces[xDestination][yDestination] = promoted;
+			} else {
+				// execute move
+				int pieceToMove = board.pieces[xOrigin][yOrigin];
+				board.pieces[xOrigin][yOrigin] = 0;
+				this.enemyRemoved = board.pieces[xDestination][yDestination];
+				board.pieces[xDestination][yDestination] = pieceToMove;
+			}
 		}
 
 		// update caches
@@ -140,6 +188,72 @@ public class MoveCommand {
 				board.whitePieces.put(Arrays.hashCode(coordinates), coordinates);
 				break;
 		}
+	}
+
+	private boolean handleCastlingIfApplicable(TurnColor turnColor) {
+		switch (turnColor) {
+			case white:
+				int k = Board.WHITE_KING;
+				int r = Board.WHITE_ROOK;
+				if (isShortWhiteCastling()) {
+					board.pieces[4][0] = 0;
+					board.pieces[6][0] = k;
+
+					board.pieces[7][0] = 0;
+					board.pieces[5][0] = r;
+					return true;
+				} else if (isLongWhiteCastling()) {
+					board.pieces[4][0] = 0;
+					board.pieces[2][0] = k;
+
+					board.pieces[0][0] = 0;
+					board.pieces[3][0] = r;
+					return true;
+				}
+				break;
+			case black:
+				k = Board.BLACK_KING;
+				r = Board.BLACK_ROOK;
+				if (isShortBlackCastling()) {
+					board.pieces[4][7] = 0;
+					board.pieces[6][7] = k;
+
+					board.pieces[7][7] = 0;
+					board.pieces[5][7] = r;
+					return true;
+
+				} else if (isLongBlackCastling()) {
+					board.pieces[4][7] = 0;
+					board.pieces[2][7] = k;
+
+					board.pieces[0][7] = 0;
+					board.pieces[3][7] = r;
+					return true;
+
+				}
+				break;
+		}
+		return false;
+	}
+
+	private boolean isLongBlackCastling() {
+		//e8c8
+		return xOrigin == 4 && yOrigin == 7 && xDestination == 2 && yDestination == 7;
+	}
+
+	private boolean isShortBlackCastling() {
+		//e8g8
+		return xOrigin == 4 && yOrigin == 7 && xDestination == 6 && yDestination == 7;
+	}
+
+	private boolean isLongWhiteCastling() {
+		//e1c1
+		return xOrigin == 4 && yOrigin == 0 && xDestination == 2 && yDestination == 0;
+	}
+
+	private boolean isShortWhiteCastling() {
+		//e1g1
+		return xOrigin == 4 && yOrigin == 0 && xDestination == 6 && yDestination == 0;
 	}
 
 	private boolean isPromotion(TurnColor turnColor) {

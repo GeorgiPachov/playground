@@ -83,7 +83,7 @@ public class ChessEngine extends AbstractEngine {
         char fromRank = genericMove.from.rank.toChar();
 
         //'a' = 97, 'b' = 98
-        // conversion should make a = 0, b = 1, c =2, etc...
+        // conversion should make a = 0, b = 1, c = 2, etc...
 
         char toLetter = genericMove.to.file.toChar();
         char toRank = genericMove.to.rank.toChar();
@@ -93,6 +93,7 @@ public class ChessEngine extends AbstractEngine {
 
         int toXIndex = toLetter - 97;
         int toYIndex = toRank - 49;
+
 
         if (genericMove.promotion!= null && genericMove.promotion.isLegalPromotion()) {
             this.lastMove = new int[] {fromXIndex, fromYIndex, toXIndex, toYIndex, toMyNotation(genericMove.promotion.toCharAlgebraic(), game.board.gameTurn)};
