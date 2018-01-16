@@ -23,6 +23,7 @@ public class ChessEngine extends AbstractEngine {
     private FileOutputStream uciCommandLog = new FileOutputStream("/tmp/uci.log");
     private int[] lastMove;
     private PlayingStrategy playingStrategy = new MiniMaxStrategy();
+    private TurnColor uciTurn;
 
     public ChessEngine() throws FileNotFoundException {
     }
@@ -78,30 +79,42 @@ public class ChessEngine extends AbstractEngine {
     @Override
     public void receive(EngineAnalyzeCommand command) {
         log(command);
-        GenericMove genericMove = command.moves.get(command.moves.size() - 1);
-        char fromLetter = genericMove.from.file.toChar();
-        char fromRank = genericMove.from.rank.toChar();
+        this.uciTurn = calculateTurn(command);
+        if (command.moves.size() > 0) {
+            GenericMove genericMove = command.moves.get(command.moves.size() - 1);
+            char fromLetter = genericMove.from.file.toChar();
+            char fromRank = genericMove.from.rank.toChar();
 
-        //'a' = 97, 'b' = 98
-        // conversion should make a = 0, b = 1, c = 2, etc...
+            //'a' = 97, 'b' = 98
+            // conversion should make a = 0, b = 1, c = 2, etc...
 
-        char toLetter = genericMove.to.file.toChar();
-        char toRank = genericMove.to.rank.toChar();
+            char toLetter = genericMove.to.file.toChar();
+            char toRank = genericMove.to.rank.toChar();
 
-        int fromXIndex = fromLetter - 97;
-        int fromYIndex = fromRank - 49; //f:[1-8] => [0-7]; f(x) = x-1;
+            int fromXIndex = fromLetter - 97;
+            int fromYIndex = fromRank - 49; //f:[1-8] => [0-7]; f(x) = x-1;
 
-        int toXIndex = toLetter - 97;
-        int toYIndex = toRank - 49;
+            int toXIndex = toLetter - 97;
+            int toYIndex = toRank - 49;
 
 
-        if (genericMove.promotion!= null && genericMove.promotion.isLegalPromotion()) {
-            this.lastMove = new int[] {fromXIndex, fromYIndex, toXIndex, toYIndex, toMyNotation(genericMove.promotion.toCharAlgebraic(), game.board.gameTurn)};
-        } else {
-            this.lastMove = new int[]{fromXIndex, fromYIndex, toXIndex, toYIndex, 0};
+            if (genericMove.promotion != null && genericMove.promotion.isLegalPromotion()) {
+                this.lastMove = new int[]{fromXIndex, fromYIndex, toXIndex, toYIndex, toMyNotation(genericMove.promotion.toCharAlgebraic(), game.board.gameTurn)};
+            } else {
+                this.lastMove = new int[]{fromXIndex, fromYIndex, toXIndex, toYIndex, 0};
+            }
+            logV("<<<" + Arrays.toString(lastMove));
+            game.executeMove(lastMove);
         }
-        logV("<<<" + Arrays.toString(lastMove));
-        game.executeMove(lastMove);
+    }
+
+    private TurnColor calculateTurn(EngineAnalyzeCommand command) {
+        if (command.moves.size() % 2 == 1) {
+            return TurnColor.black;
+        } else if (command.moves.size() % 2 == 0) {
+            return TurnColor.white;
+        }
+        return null;
     }
 
     private int toMyNotation(char c, TurnColor gameTurn) {
@@ -137,9 +150,21 @@ public class ChessEngine extends AbstractEngine {
     @Override
     public void receive(EngineStartCalculatingCommand command) {
         log(command);
-        int[] blackMove = playingStrategy.playBlack(game);
-        GenericMove bestMove = toGenericMove(blackMove);
-        ProtocolBestMoveCommand bestMoveCommand = new ProtocolBestMoveCommand(bestMove, bestMove);
+        move();
+    }
+
+    private void move() {
+        int[] move = null;
+        switch (uciTurn) {
+            case black:
+                move = playingStrategy.playBlack(game);
+                break;
+            case white:
+                move = playingStrategy.playWhite(game);
+                break;
+        }
+        GenericMove bestMove = toGenericMove(move);
+        ProtocolBestMoveCommand bestMoveCommand = new ProtocolBestMoveCommand(bestMove, null);
         super.getProtocol().send(bestMoveCommand);
     }
 
