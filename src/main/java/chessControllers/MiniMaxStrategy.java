@@ -288,10 +288,10 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int evaluateBoard(Game game, TurnColor me) {
-//        int hash = 31* me.hashCode() + Arrays.deepHashCode(game.board.pieces);
-//        if (gameHashes.containsKey(hash)) {
-//            return gameHashes.get(hash);
-//        } else {
+        int hash = 31* me.hashCode() + Arrays.deepHashCode(game.board.pieces);
+        if (gameHashes.containsKey(hash)) {
+            return gameHashes.get(hash);
+        } else {
             int o_mate = checkKingCheckMateScore(game, me.opposite());
 
             int m_mate = checkKingCheckMateScore(game, me);
@@ -316,9 +316,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
             int finalScore = (int) ((o_mate - m_mate) +
                     +(m_pieces - o_pieces) + 1.0 * (m_pos + o_pos));
-//            gameHashes.put(hash, finalScore);
+            gameHashes.put(hash, finalScore);
             return finalScore;
-//        }
+        }
 
     }
 
@@ -349,11 +349,11 @@ public class MiniMaxStrategy implements PlayingStrategy {
                 case 0:
                     return 2400;
                 case 1:
-                    return 1200;
+                    return 400;
                 case 2:
-                    return 600;
+                    return 300;
                 case 3:
-                    return 200;
+                    return 100;
             }
             return m_check;
         }
