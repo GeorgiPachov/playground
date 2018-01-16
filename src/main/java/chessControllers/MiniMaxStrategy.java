@@ -8,7 +8,7 @@ import static chessControllers.Constants.DEBUG;
 import static chessControllers.Util.logV;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    public static int maxDepth = 3;
+    public static int maxDepth = 5;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[] PIECES_SCORE = new short[32];
