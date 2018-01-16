@@ -1,3 +1,5 @@
+package com.gpachov.chess;
+
 import chessControllers.UCITestStream;
 import com.fluxchess.jcpi.commands.EngineQuitCommand;
 import com.gpachov.videocreator.ChessEngine;

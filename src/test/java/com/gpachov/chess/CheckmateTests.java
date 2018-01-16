@@ -1,3 +1,5 @@
+package com.gpachov.chess;
+
 import chessControllers.Game;
 import chessControllers.MiniMaxStrategy;
 import chessControllers.TurnColor;

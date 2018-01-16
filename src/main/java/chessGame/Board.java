@@ -228,14 +228,13 @@ public class Board {
     }
 
     public int[] getKing(TurnColor gameTurn) {
-//        switch (gameTurn) {
-//            case white:
-//                return whiteKing;
-//            case black:
-//                return blackKing;
-//        }
-        Optional<int[]> optional = getPieces(gameTurn).stream().filter(this::isKing).findAny();
-        return optional.get();
+        switch (gameTurn) {
+            case white:
+                return whiteKing;
+            case black:
+                return blackKing;
+        }
+        return null;
     }
 
     public boolean canMove(int oldX, int oldY, int newX, int newY){

@@ -1,3 +1,5 @@
+package com.gpachov.chess;
+
 import chessGame.Board;
 import junit.framework.TestCase;
 

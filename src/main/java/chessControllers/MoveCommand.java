@@ -25,73 +25,7 @@ public class MoveCommand {
 		this.yDestination = move[3];
 		this.promoted = move[4];
 	}
-	
-	public void undo() {
-        // update caches
-        TurnColor color = board.getColor(xDestination, yDestination);
-        int[] king = board.getKing(color);
-		int[] coords = {xDestination, yDestination};
-		switch (color) {
-			case black:
-				board.blackPieces.remove(Arrays.hashCode(coords));
-				break;
-			case white:
-				board.whitePieces.remove(Arrays.hashCode(coords));
-				break;
-		}
 
-		boolean wasEnPassant = revertEnPassantIfApplicable(color);
-		if (!wasEnPassant) {
-			boolean wasCastling = revertCastlingIfApplicable(color);
-			if (!wasCastling) {
-				if (isPromotion(color)) {
-					switch (color) {
-						case white:
-						board.pieces[xOrigin][yOrigin] = WHITE_PAWN;
-						break;
-					case black:
-						board.pieces[xOrigin][yOrigin] = BLACK_PAWN;
-						break;
-				}
-					board.pieces[xDestination][yDestination] = enemyRemoved;
-				} else {
-					// execute move
-					int pieceToUndo = board.pieces[xDestination][yDestination];
-					board.pieces[xOrigin][yOrigin] = pieceToUndo;
-					board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
-				}
-			}
-		}
-		// update caches
-        if (xDestination == king[0] && yDestination == king[1]) {
-            king[0] = xOrigin;
-            king[1] = yOrigin;
-        }
-
-        // restore enemy to opponent pieces's cache
-		if (enemyRemoved!=0) {
-			int[] enemyPieceCoordiantes = {xDestination, yDestination};
-			switch (color) {
-				case white:
-					board.blackPieces.put(Arrays.hashCode(enemyPieceCoordiantes), enemyPieceCoordiantes);
-					break;
-				case black:
-					board.whitePieces.put(Arrays.hashCode(enemyPieceCoordiantes), enemyPieceCoordiantes);
-					break;
-			}
-		}
-
-		int[] newCoordinates = {xOrigin, yOrigin};
-		switch (color) {
-			case black:
-				board.blackPieces.put(Arrays.hashCode(newCoordinates), newCoordinates);
-				break;
-			case white:
-				board.whitePieces.put(Arrays.hashCode(newCoordinates), newCoordinates);
-				break;
-		}
-
-	}
 
 	private boolean revertEnPassantIfApplicable(TurnColor color) {
 		switch (color) {
@@ -246,6 +180,74 @@ public class MoveCommand {
 				break;
 		}
 		return false;
+	}
+
+
+	public void undo() {
+		// update caches
+		TurnColor color = board.getColor(xDestination, yDestination);
+		int[] king = board.getKing(color);
+		int[] coords = {xDestination, yDestination};
+		switch (color) {
+			case black:
+				board.blackPieces.remove(Arrays.hashCode(coords));
+				break;
+			case white:
+				board.whitePieces.remove(Arrays.hashCode(coords));
+				break;
+		}
+
+		boolean wasEnPassant = revertEnPassantIfApplicable(color);
+		if (!wasEnPassant) {
+			boolean wasCastling = revertCastlingIfApplicable(color);
+			if (!wasCastling) {
+				if (isPromotion(color)) {
+					switch (color) {
+						case white:
+							board.pieces[xOrigin][yOrigin] = WHITE_PAWN;
+							break;
+						case black:
+							board.pieces[xOrigin][yOrigin] = BLACK_PAWN;
+							break;
+					}
+					board.pieces[xDestination][yDestination] = enemyRemoved;
+				} else {
+					// execute move
+					int pieceToUndo = board.pieces[xDestination][yDestination];
+					board.pieces[xOrigin][yOrigin] = pieceToUndo;
+					board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
+				}
+			}
+		}
+		// update caches
+		if (xDestination == king[0] && yDestination == king[1]) {
+			king[0] = xOrigin;
+			king[1] = yOrigin;
+		}
+
+		// restore enemy to opponent pieces's cache
+		if (enemyRemoved!=0) {
+			int[] enemyPieceCoordiantes = {xDestination, yDestination};
+			switch (color) {
+				case white:
+					board.blackPieces.put(Arrays.hashCode(enemyPieceCoordiantes), enemyPieceCoordiantes);
+					break;
+				case black:
+					board.whitePieces.put(Arrays.hashCode(enemyPieceCoordiantes), enemyPieceCoordiantes);
+					break;
+			}
+		}
+
+		int[] newCoordinates = {xOrigin, yOrigin};
+		switch (color) {
+			case black:
+				board.blackPieces.put(Arrays.hashCode(newCoordinates), newCoordinates);
+				break;
+			case white:
+				board.whitePieces.put(Arrays.hashCode(newCoordinates), newCoordinates);
+				break;
+		}
+
 	}
 
 	private boolean handleCastlingIfApplicable(TurnColor turnColor) {
