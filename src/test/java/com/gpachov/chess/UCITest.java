@@ -4,12 +4,14 @@ import chessControllers.UCITestStream;
 import com.fluxchess.jcpi.commands.EngineQuitCommand;
 import com.gpachov.videocreator.ChessEngine;
 import org.apache.tools.ant.filters.StringInputStream;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
+@Ignore
 public class UCITest {
     @Test
     public void gameOne() throws FileNotFoundException {

@@ -57,14 +57,6 @@ public class MoveCommand {
         // prepare caches
         TurnColor turnColor = board.getColor(xOrigin, yOrigin);
         int[] king = board.getKing(turnColor);
-		switch (turnColor) {
-			case black:
-				board.blackPieces.remove(Arrays.hashCode(new int[] {xOrigin, yOrigin}));
-				break;
-			case white:
-				board.whitePieces.remove(Arrays.hashCode(new int[] {xOrigin, yOrigin}));
-				break;
-		}
 
 		boolean isEnPassant = handleEnPassantIfApplicable(turnColor);
 		if (!isEnPassant) {
@@ -90,28 +82,9 @@ public class MoveCommand {
             king[1] = yDestination;
         }
 
-        // remove enemy from opposite pieces cache
-		if (enemyRemoved!=0) {
-			switch (turnColor) {
-				case white:
-					board.blackPieces.remove(Arrays.hashCode(new int[] {xDestination, yDestination}));
-					break;
-				case black:
-					board.whitePieces.remove(Arrays.hashCode(new int[] {xDestination, yDestination}));
-					break;
-			}
-		}
-
-
-		int[] coordinates = {xDestination, yDestination};
-		switch (turnColor) {
-			case black:
-				board.blackPieces.put(Arrays.hashCode(coordinates), coordinates);
-				break;
-			case white:
-				board.whitePieces.put(Arrays.hashCode(coordinates), coordinates);
-				break;
-		}
+        // update pieces pieces cache
+        this.board.whitePieces = board.findWhitePieces();
+		this.board.blackPieces = board.findBlackPieces();
 	}
 
 	private boolean handleEnPassantIfApplicable(TurnColor turnColor) {
@@ -187,15 +160,6 @@ public class MoveCommand {
 		// update caches
 		TurnColor color = board.getColor(xDestination, yDestination);
 		int[] king = board.getKing(color);
-		int[] coords = {xDestination, yDestination};
-		switch (color) {
-			case black:
-				board.blackPieces.remove(Arrays.hashCode(coords));
-				break;
-			case white:
-				board.whitePieces.remove(Arrays.hashCode(coords));
-				break;
-		}
 
 		boolean wasEnPassant = revertEnPassantIfApplicable(color);
 		if (!wasEnPassant) {
@@ -225,29 +189,9 @@ public class MoveCommand {
 			king[1] = yOrigin;
 		}
 
-		// restore enemy to opponent pieces's cache
-		if (enemyRemoved!=0) {
-			int[] enemyPieceCoordiantes = {xDestination, yDestination};
-			switch (color) {
-				case white:
-					board.blackPieces.put(Arrays.hashCode(enemyPieceCoordiantes), enemyPieceCoordiantes);
-					break;
-				case black:
-					board.whitePieces.put(Arrays.hashCode(enemyPieceCoordiantes), enemyPieceCoordiantes);
-					break;
-			}
-		}
-
-		int[] newCoordinates = {xOrigin, yOrigin};
-		switch (color) {
-			case black:
-				board.blackPieces.put(Arrays.hashCode(newCoordinates), newCoordinates);
-				break;
-			case white:
-				board.whitePieces.put(Arrays.hashCode(newCoordinates), newCoordinates);
-				break;
-		}
-
+        // update pieces pieces cache
+        this.board.whitePieces = board.findWhitePieces();
+        this.board.blackPieces = board.findBlackPieces();
 	}
 
 	private boolean handleCastlingIfApplicable(TurnColor turnColor) {

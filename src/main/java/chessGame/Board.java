@@ -41,8 +41,8 @@ public class Board {
             BLACK_KING
     };
 
-    public Map<Integer, int[]> blackPieces = new HashMap<>();
-    public Map<Integer, int[]> whitePieces = new HashMap<>();
+    public List<int[]> blackPieces = new ArrayList<>();
+    public List<int[]> whitePieces = new ArrayList<>();
     public int[] whiteKing = new int[]{4,0};
     public int[] blackKing = new int[]{4,7};
 
@@ -70,15 +70,10 @@ public class Board {
     }
 
     public void initCaches() {
-        findWhitePieces().forEach(whitePiece -> {
-            whitePieces.put(Arrays.hashCode(whitePiece), whitePiece);
-        });
-
-        findBlackPieces().forEach(blackPiece -> {
-            blackPieces.put(Arrays.hashCode(blackPiece), blackPiece);
-        });
-        this.whiteKing = whitePieces.values().stream().filter(this::isKing).findFirst().get();
-        this.blackKing = blackPieces.values().stream().filter(this::isKing).findFirst().get();
+        whitePieces = findWhitePieces();
+        blackPieces = findBlackPieces();
+        this.whiteKing = whitePieces.stream().filter(this::isKing).findFirst().get();
+        this.blackKing = blackPieces.stream().filter(this::isKing).findFirst().get();
     }
 
     public void populateBoardWithSquares() {
@@ -184,12 +179,12 @@ public class Board {
 	    switch (gameTurn) {
             case white:
                 //XXX disable caches
-                return findWhitePieces();
-//                return whitePieces.values();
+//                return findWhitePieces();
+                return whitePieces;
             case black:
                 //XXX disable caches
-                return findBlackPieces();
-//                return blackPieces.values();
+//                return findBlackPieces();
+                return blackPieces;
         }
         return null;
 	}
