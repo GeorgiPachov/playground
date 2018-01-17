@@ -29,7 +29,7 @@ public class CheckmateTests {
             game.board = new Board(pieces);
 
             MiniMaxStrategy strategy = new MiniMaxStrategy();
-            strategy.maxDepth = i;
+            strategy.MAX_DEPTH = i;
             int[] move = strategy.playWhite(game);
 
             assertArrayEquals(move, new int[] {5,2,0,2, 0});
@@ -52,7 +52,7 @@ public class CheckmateTests {
             game.board = new Board(pieces);
 
             MiniMaxStrategy strategy = new MiniMaxStrategy();
-            strategy.maxDepth = i;
+//            strategy.MAX_DEPTH = i;
             int[] m1 = strategy.playWhite(game);
             assertArrayEquals(m1, new int[] {6, 7, 1, 7, 0});
             System.out.println("Move 1 : " + Arrays.toString(m1));
@@ -125,6 +125,26 @@ public class CheckmateTests {
         game.board = new Board(pieces);
 
         boolean isKingInCheckmate = game.board.isKingCheckmate(new int[]{0,0});
+        Assert.assertFalse(isKingInCheckmate);
+    }
+
+    @Test
+    public void testCanProtectSelf() {
+        Game game = new Game();
+
+        int[][] pieces = new int[8][8];
+        pieces[0][0] = Board.BLACK_KING;
+        pieces[0][1] = Board.BLACK_BISHOP;
+        pieces[1][0] = Board.BLACK_ROOK;
+
+
+        pieces[7][7] = Board.WHITE_KING;
+        pieces[2][2] = Board.WHITE_BISHOP;
+        game.board = new Board(pieces);
+
+        boolean isKingInCheckmate = game.board.isKingCheckmate(new int[]{0,0});
+        int[] move = new MiniMaxStrategy().playBlack(game);
+        Assert.assertNotNull(move);
         Assert.assertFalse(isKingInCheckmate);
     }
 

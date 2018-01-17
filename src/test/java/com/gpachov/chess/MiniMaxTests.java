@@ -24,7 +24,7 @@ public class MiniMaxTests {
             game.board = new Board(pieces);
 
             MiniMaxStrategy strategy = new MiniMaxStrategy();
-            strategy.maxDepth = i;
+//            strategy.MAX_DEPTH = i;
             int[] nextWhiteMove = strategy.playWhite(game);
 
             Assert.assertArrayEquals(new int[] {5,2,5,0,0}, nextWhiteMove);
@@ -50,7 +50,7 @@ public class MiniMaxTests {
             game.board = new Board(pieces);
 
             MiniMaxStrategy strategy = new MiniMaxStrategy();
-            strategy.maxDepth = i;
+//            strategy.MAX_DEPTH = i;
             int[] nextWhiteMove = strategy.playWhite(game);
 
             System.out.println(Arrays.toString(nextWhiteMove));
@@ -75,7 +75,7 @@ public class MiniMaxTests {
             game.board = new Board(pieces);
 
             MiniMaxStrategy strategy = new MiniMaxStrategy();
-            strategy.maxDepth = i;
+            strategy.MAX_DEPTH = i;
             int[] nextWhiteMove = strategy.playWhite(game);
 
             System.out.println(Arrays.toString(nextWhiteMove));
@@ -97,7 +97,7 @@ public class MiniMaxTests {
             game.board = new Board(pieces);
 
             MiniMaxStrategy strategy = new MiniMaxStrategy();
-            strategy.maxDepth = i;
+            strategy.MAX_DEPTH = i;
             for (int j = 0; j < 100; j++) {
                 int[] nextMove = null;
                 if (j%2 == 0) {

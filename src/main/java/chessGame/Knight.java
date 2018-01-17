@@ -36,12 +36,12 @@ public class Knight {
                 {2, -1}
         };
         Arrays.stream(possibleMoves)
-                .filter(move -> board.canMove(xLocation, yLocation, move[0], move[1]))
+                .filter(move -> board.canMove(xLocation, yLocation, xLocation+ move[0], yLocation + move[1]))
                 .forEach(m -> {
                     moves.add(xLocation);
                     moves.add(yLocation);
-                    moves.add(m[0]);
-                    moves.add(m[1]);
+                    moves.add(xLocation  + m[0]);
+                    moves.add(yLocation + m[1]);
                     moves.add(0);
                 });
     }
