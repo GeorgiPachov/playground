@@ -335,6 +335,10 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
             int m_pos = getPositionalBias(game, me);
             int o_pos = getPositionalBias(game, me.opposite());
+
+            int m_coveredScore = getCoveredPieces(game, me);
+            int o_coveredScore = getCoveredPieces(game, me.opposite());
+
             if (DEBUG) {
 //            System.out.println("Pieces score for : " + game.board.gameTurn + (m_pieces - o_pieces));
 //            System.out.println("Positional score for : " + game.board.gameTurn + (m_pos));
@@ -349,11 +353,26 @@ public class MiniMaxStrategy implements PlayingStrategy {
             }
 
             int finalScore = (int) ((o_mate - m_mate) +
-                    +(m_pieces - o_pieces) + 1.2 * (m_pos + o_pos));
+                    +(m_pieces - o_pieces) + 1.2 * (m_pos + o_pos)) + (m_coveredScore - o_coveredScore);
             gameHashes.put(hash, finalScore);
             return finalScore;
         }
 
+    }
+
+    private int getCoveredPieces(Game game, TurnColor me) {
+        List<int[]> pieces = game.board.getPieces(me);
+        int coverScore = 0;
+        for (int i = 0; i < pieces.size(); i++) {
+            for (int j = 0; j < pieces.size(); j++) {
+                if (j!=i) {
+                    if (game.board.canMove(pieces.get(j)[0], pieces.get(j)[1], pieces.get(i)[0], pieces.get(i)[1])) {
+                        coverScore+=PIECES_SCORE[game.board.pieces[pieces.get(i)[0]][pieces.get(i)[1]]];
+                    }
+                }
+            }
+        }
+        return coverScore;
     }
 
     private int kingIsInCheck(Game game, TurnColor gameTurn) {

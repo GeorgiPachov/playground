@@ -175,7 +175,7 @@ public class Board {
         }
     }
 
-    public Collection<int[]> getPieces(TurnColor gameTurn) {
+    public List<int[]> getPieces(TurnColor gameTurn) {
 	    switch (gameTurn) {
             case white:
                 //XXX disable caches
@@ -327,31 +327,13 @@ public class Board {
 
     private boolean kingBecomesEndangered(int oldX, int oldY, int newPieceX, int newPieceY) {
         TurnColor turnColor = getColor(oldX, oldY);
-
-        int piece = pieces[newPieceX][newPieceY];
         MoveCommand command = new MoveCommand(this, new int[] { oldX, oldY, newPieceX, newPieceY, 0});
 
-        if(piece != 0){
-            if(isOfColor(piece, turnColor.opposite())){
-                command.execute();
-                // check
-                int[] myKing = getKing(turnColor);
-                boolean kingIsInCheck = isKingInCheck(myKing);
-
-                // revert move
-                command.undo();
-                return kingIsInCheck;
-            } else {
-                return false; //my piece is there :/
-            }
-        }
-        else{
-            command.execute();
-            int[] myKing = getKing(turnColor);
-            boolean kingIsInCheck = isKingInCheck(myKing);
-            command.undo();
-            return kingIsInCheck;
-        }
+        command.execute();
+        int[] myKing = getKing(turnColor);
+        boolean kingIsInCheck = isKingInCheck(myKing);
+        command.undo();
+        return kingIsInCheck;
     }
 
     public boolean isKingInCheck(int[] kingToCheck) {
