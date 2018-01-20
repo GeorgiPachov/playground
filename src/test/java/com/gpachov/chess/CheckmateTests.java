@@ -68,6 +68,31 @@ public class CheckmateTests {
     }
 
     @Test
+    public void test9MoveCheckmate() {
+        Game game = new Game();
+
+        int[][] pieces = new int[8][8];
+        pieces[3][4] = Board.BLACK_KING;
+        pieces[7][7] = Board.WHITE_KING;
+
+        pieces[1][5] = Board.WHITE_ROOK;
+        pieces[6][7] = Board.WHITE_ROOK;
+        game.board = new Board(pieces);
+
+        MiniMaxStrategy strategy = new MiniMaxStrategy();
+        for (int j = 0; j < 50; j++) {
+            if (j % 2 == 0) {
+                strategy.playWhite(game);
+            } else {
+                strategy.playBlack(game);
+            }
+        }
+        boolean checkMate = game.board.isKingCheckmate(game.board.getKing(TurnColor.black));
+        Assert.assertTrue(checkMate);
+    }
+
+
+    @Test
     public void testKingIsInCheck() {
 
         Game game = new Game();
@@ -126,6 +151,16 @@ public class CheckmateTests {
 
         boolean isKingInCheckmate = game.board.isKingCheckmate(new int[]{0,0});
         Assert.assertFalse(isKingInCheckmate);
+    }
+
+    public void testIsInCheckByRook() {
+        Game game = new Game();
+
+        int[][] pieces = new int[8][8];
+        pieces[0][0] = Board.BLACK_KING;
+        pieces[0][1] = Board.BLACK_BISHOP;
+        pieces[1][0] = Board.BLACK_ROOK;
+
     }
 
     @Test

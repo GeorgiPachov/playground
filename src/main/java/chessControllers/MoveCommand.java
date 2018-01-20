@@ -3,19 +3,20 @@ import chessGame.Board;
 
 import java.util.Arrays;
 
-import static chessGame.Board.BLACK_PAWN;
-import static chessGame.Board.WHITE_KING;
-import static chessGame.Board.WHITE_PAWN;
+import static chessControllers.TurnColor.white;
+import static chessGame.Board.*;
 
 public class MoveCommand {
 
 	private final Board board;
+	private final TurnColor movingColor;
 	private int promoted = 0;
 	int xDestination;
 	int yDestination;
 	int xOrigin;
 	int yOrigin;
 	private int enemyRemoved;
+	private int movingPiece;
 
 	public MoveCommand(Board board, int[] move){
 		this.board = board;
@@ -24,6 +25,8 @@ public class MoveCommand {
 		this.xDestination = move[2];
 		this.yDestination = move[3];
 		this.promoted = move[4];
+		this.movingPiece = board.pieces[xOrigin][yOrigin];
+		this.movingColor = board.getColor(xOrigin, yOrigin);
 	}
 
 
@@ -55,14 +58,13 @@ public class MoveCommand {
 
 	public void execute() {
         // prepare caches
-        TurnColor turnColor = board.getColor(xOrigin, yOrigin);
-        int[] king = board.getKing(turnColor);
+        int[] king = board.getKing(movingColor);
 
-		boolean isEnPassant = handleEnPassantIfApplicable(turnColor);
+		boolean isEnPassant = handleEnPassantIfApplicable(movingColor);
 		if (!isEnPassant) {
-			boolean isCastling = handleCastlingIfApplicable(turnColor);
+			boolean isCastling = handleCastlingIfApplicable(movingColor);
 			if (!isCastling) {
-				if (isPromotion(turnColor)) {
+				if (isPromotion(movingColor)) {
 					board.pieces[xOrigin][yOrigin] = 0;
 					this.enemyRemoved = board.pieces[xDestination][yDestination];
 					board.pieces[xDestination][yDestination] = promoted;
@@ -74,6 +76,10 @@ public class MoveCommand {
 					board.pieces[xDestination][yDestination] = pieceToMove;
 				}
 			}
+		}
+
+		if (enemyRemoved == BLACK_KING || enemyRemoved == WHITE_KING) {
+			throw new RuntimeException("Captured king! Should not be possible!");
 		}
 
 		// update caches
@@ -158,15 +164,14 @@ public class MoveCommand {
 
 	public void undo() {
 		// update caches
-		TurnColor color = board.getColor(xDestination, yDestination);
-		int[] king = board.getKing(color);
+		int[] king = board.getKing(movingColor);
 
-		boolean wasEnPassant = revertEnPassantIfApplicable(color);
+		boolean wasEnPassant = revertEnPassantIfApplicable(movingColor);
 		if (!wasEnPassant) {
-			boolean wasCastling = revertCastlingIfApplicable(color);
+			boolean wasCastling = revertCastlingIfApplicable(movingColor);
 			if (!wasCastling) {
-				if (isPromotion(color)) {
-					switch (color) {
+				if (isPromotion(movingColor)) {
+					switch (movingColor) {
 						case white:
 							board.pieces[xOrigin][yOrigin] = WHITE_PAWN;
 							break;
@@ -242,22 +247,22 @@ public class MoveCommand {
 
 	private boolean isLongBlackCastling() {
 		//e8c8
-		return xOrigin == 4 && yOrigin == 7 && xDestination == 2 && yDestination == 7;
+		return movingPiece == BLACK_KING && xOrigin == 4 && yOrigin == 7 && xDestination == 2 && yDestination == 7;
 	}
 
 	private boolean isShortBlackCastling() {
 		//e8g8
-		return xOrigin == 4 && yOrigin == 7 && xDestination == 6 && yDestination == 7;
+		return movingPiece == BLACK_KING && xOrigin == 4 && yOrigin == 7 && xDestination == 6 && yDestination == 7;
 	}
 
 	private boolean isLongWhiteCastling() {
-		//e1c1
-		return xOrigin == 4 && yOrigin == 0 && xDestination == 2 && yDestination == 0;
+		//e1c1eval
+		return movingPiece == WHITE_KING && xOrigin == 4 && yOrigin == 0 && xDestination == 2 && yDestination == 0;
 	}
 
 	private boolean isShortWhiteCastling() {
 		//e1g1
-		return xOrigin == 4 && yOrigin == 0 && xDestination == 6 && yDestination == 0;
+		return movingPiece == WHITE_KING && xOrigin == 4 && yOrigin == 0 && xDestination == 6 && yDestination == 0;
 	}
 
 	private boolean isPromotion(TurnColor turnColor) {
@@ -265,7 +270,7 @@ public class MoveCommand {
     }
 
     private boolean isWhiteEnPassant() {
-		boolean isPawnMove = board.pieces[xOrigin][yOrigin] == Board.WHITE_PAWN;
+		boolean isPawnMove = movingPiece == Board.WHITE_PAWN;
 		boolean isY4 = yOrigin == 4;
 		boolean movingSideways = Math.abs(xOrigin - xDestination) == 1;
 		boolean noEnemyTaken = board.pieces[xDestination][yDestination] == 0;
@@ -274,7 +279,7 @@ public class MoveCommand {
 
 
 	private boolean isBlackEnPassant() {
-		boolean isPawnMove = board.pieces[xOrigin][yOrigin] == Board.BLACK_PAWN;
+		boolean isPawnMove = movingPiece == Board.BLACK_PAWN;
 		boolean isY3 = yOrigin == 3;
 		boolean movingSideways = Math.abs(xOrigin - xDestination) == 1;
 		boolean noEnemyTaken = board.pieces[xDestination][yDestination] == 0;

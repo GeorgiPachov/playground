@@ -99,12 +99,18 @@ public class MiniMaxTests {
             MiniMaxStrategy strategy = new MiniMaxStrategy();
             strategy.MAX_DEPTH = i;
             for (int j = 0; j < 100; j++) {
+                if (game.gameOver) {
+                    break;
+                }
                 int[] nextMove = null;
                 if (j%2 == 0) {
                     nextMove = strategy.playWhite(game);
                     if (nextMove == null) {
                         Assert.fail("Next move was null!!!!");
                     }
+                }
+                if (game.gameOver) {
+                    break;
                 }
                 if (j%2 == 1) {
                     nextMove = strategy.playBlack(game);

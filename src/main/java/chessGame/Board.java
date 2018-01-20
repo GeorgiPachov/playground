@@ -179,12 +179,12 @@ public class Board {
 	    switch (gameTurn) {
             case white:
                 //XXX disable caches
-//                return findWhitePieces();
-                return whitePieces;
+                return findWhitePieces();
+//                return whitePieces;
             case black:
                 //XXX disable caches
-//                return findBlackPieces();
-                return blackPieces;
+                return findBlackPieces();
+//                return blackPieces;
         }
         return null;
 	}
@@ -223,13 +223,18 @@ public class Board {
     }
 
     public int[] getKing(TurnColor gameTurn) {
-        switch (gameTurn) {
-            case white:
-                return whiteKing;
-            case black:
-                return blackKing;
+//        switch (gameTurn) {
+//            case white:
+//                return whiteKing;
+//            case black:
+//                return blackKing;
+//        }
+        Optional<int[]> king = getPieces(gameTurn).stream().filter(this::isKing).findAny();
+        if (!king.isPresent()){
+            ; //stop breakpoint
         }
-        return null;
+        return king.get();
+//        return null;
     }
 
     public boolean canMove(int oldX, int oldY, int newX, int newY){

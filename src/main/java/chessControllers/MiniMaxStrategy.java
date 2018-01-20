@@ -9,7 +9,6 @@ import static chessControllers.TurnColor.black;
 import static chessControllers.Util.logV;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    private static final int ABS_MAX_DEPTH = 5;
     public static int MAX_DEPTH = 3;
     private static short WHITE = 0;
     private static short BLACK = 1;
@@ -209,8 +208,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
         int max = (Integer.MIN_VALUE/2);
         List<Integer> moves = new ArrayList<>();
-        game.board.populatePossibleMoves(game.board.gameTurn, moves);
+//        game.board.populatePossibleMoves(game.board.gameTurn, moves);
 
+        game.board.populatePossibleMoves(turnColor, moves);
 
         // dynamic depth reassignment - tomorrow
 //        if (depth == maxDepth) {
@@ -247,7 +247,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
         }
         packedMoves.sort((c1, c2) -> cmp(game, c1, c2, turnColor));
-        int maxBeamWidth = 20;
+        int maxBeamWidth = 100;
         if (packedMoves.size() > maxBeamWidth) {
             packedMoves = packedMoves.subList(0, maxBeamWidth);
         }
@@ -336,8 +336,8 @@ public class MiniMaxStrategy implements PlayingStrategy {
             int m_pos = getPositionalBias(game, me);
             int o_pos = getPositionalBias(game, me.opposite());
 
-            int m_coveredScore = getCoveredPieces(game, me);
-            int o_coveredScore = getCoveredPieces(game, me.opposite());
+//            int m_coveredScore = getCoveredPieces(game, me);
+//            int o_coveredScore = getCoveredPieces(game, me.opposite());
 
             if (DEBUG) {
 //            System.out.println("Pieces score for : " + game.board.gameTurn + (m_pieces - o_pieces));
@@ -352,8 +352,8 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
             }
 
-            int finalScore = (int) ((o_mate - m_mate) +
-                    +(m_pieces - o_pieces) + 1.2 * (m_pos + o_pos)) + (m_coveredScore - o_coveredScore);
+            int finalScore = (int) (1*(o_mate - m_mate) +
+                    +(m_pieces - o_pieces) + 1f * (m_pos + o_pos)) /*0*(m_coveredScore - o_coveredScore)*/;
             gameHashes.put(hash, finalScore);
             return finalScore;
         }
@@ -377,7 +377,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
     private int kingIsInCheck(Game game, TurnColor gameTurn) {
         int[] king = game.board.getKing(gameTurn);
-        return (game.board.isKingInCheck(king)) ? 20 : 0;
+        return (game.board.isKingInCheck(king)) ? 6 : 0;
     }
 
     private int checkKingCheckMateScore(Game game, TurnColor gameTurn) {
@@ -387,8 +387,8 @@ public class MiniMaxStrategy implements PlayingStrategy {
             int kx = king[0];
             int ky = king[1];
             short possibleMoves = 0;
-            for (int i = -1; i < 2; i++) {
-                for (int j = -1; j < 2; j++) {
+            for (int i = -1; i <= 1; i++) {
+                for (int j = -1; j <= 1; j++) {
                     if (i == 0 && j == 0) {
                         continue;
                     }
@@ -402,11 +402,11 @@ public class MiniMaxStrategy implements PlayingStrategy {
                 case 0:
                     return 100_000;
                 case 1:
-                    return 80;
+                    return 15;
                 case 2:
-                    return 50;
+                    return 5;
                 case 3:
-                    return 30;
+                    return 1;
             }
             return m_check;
         }
@@ -429,19 +429,8 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int[] findMoveBlack(Game game) {
-        MAX_DEPTH = 3;
-        int previousEval = Integer.MIN_VALUE;
-        int moveEval = previousEval;
-        int[] maxMove = null;
-        while (MAX_DEPTH < ABS_MAX_DEPTH) {
-            MAX_DEPTH++;
-            moveEval = negaMax(game, MAX_DEPTH, Integer.MIN_VALUE/2, Integer.MAX_VALUE/2, black);
-            if (moveEval >= previousEval) {
-                maxMove = lastChosenMove;
-                previousEval = moveEval;
-            }
-        }
-        return maxMove;
+        negaMax(game, MAX_DEPTH, Integer.MIN_VALUE/2, Integer.MAX_VALUE/2, black);
+        return lastChosenMove;
     }
 
     @Override
@@ -455,20 +444,8 @@ public class MiniMaxStrategy implements PlayingStrategy {
     }
 
     private int[] findMoveWhite(Game game) {
-        MAX_DEPTH = 3;
-        int previousEval = Integer.MIN_VALUE;
-        int moveEval;
-        int[] maxMove = null;
-        while (MAX_DEPTH < ABS_MAX_DEPTH) {
-            MAX_DEPTH++;
-            moveEval = negaMax(game, MAX_DEPTH, Integer.MIN_VALUE/2, Integer.MAX_VALUE/2, TurnColor.white);
-            if (moveEval >= previousEval) {
-                maxMove = lastChosenMove;
-                previousEval = moveEval;
-            }
-        }
-        return maxMove;
-
+        negaMax(game, MAX_DEPTH, Integer.MIN_VALUE/2, Integer.MAX_VALUE/2, TurnColor.white);
+        return lastChosenMove;
     }
 
     private int getPositionalBias(Game game, TurnColor ofColor) {

@@ -165,6 +165,8 @@ public class ChessEngine extends AbstractEngine {
         }
         GenericMove bestMove = toGenericMove(move);
         ProtocolBestMoveCommand bestMoveCommand = new ProtocolBestMoveCommand(bestMove, null);
+        System.out.println(game.board.toString());
+
         super.getProtocol().send(bestMoveCommand);
     }
 
