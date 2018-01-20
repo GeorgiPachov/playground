@@ -9,7 +9,7 @@ import static chessControllers.TurnColor.black;
 import static chessControllers.Util.logV;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    public static int MAX_DEPTH = 3;
+    public static int MAX_DEPTH = 4;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[] PIECES_SCORE = new short[32];
@@ -258,11 +258,11 @@ public class MiniMaxStrategy implements PlayingStrategy {
             int[] playerKing = game.board.getKing(turnColor);
             if (game.board.isKingInCheck(playerKing)) {
                 // checkmate
-                int mateValue = game.board.getMultiplier(turnColor) * (Integer.MAX_VALUE / 2 - 10);
+                int mateValue = game.board.getMultiplier(turnColor) * (Integer.MIN_VALUE / 2 - 10);
                 return mateValue;
             } else {
                 // stalemate
-                int staleMateValue = game.board.getMultiplier(turnColor) * Integer.MAX_VALUE / 3;
+                int staleMateValue = 0;
                 return staleMateValue;
             }
 
@@ -326,9 +326,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
         if (gameHashes.containsKey(hash)) {
             return gameHashes.get(hash);
         } else {
-            int o_mate = checkKingCheckMateScore(game, me.opposite());
+            int m_mate = checkKingCheckMateScore(game, me.opposite());
 
-            int m_mate = checkKingCheckMateScore(game, me);
+            int o_mate = checkKingCheckMateScore(game, me);
 
             int m_pieces = countPiecesScore(game, me);
             int o_pieces = countPiecesScore(game, me.opposite());
@@ -352,8 +352,8 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
             }
 
-            int finalScore = (int) (1*(o_mate - m_mate) +
-                    +(m_pieces - o_pieces) + 1f * (m_pos + o_pos)) /*0*(m_coveredScore - o_coveredScore)*/;
+            int finalScore = (int) (1*(m_mate - o_mate) +
+                    +(m_pieces - o_pieces) + 0.25f * (m_pos + o_pos)) /*0*(m_coveredScore - o_coveredScore)*/;
             gameHashes.put(hash, finalScore);
             return finalScore;
         }
@@ -401,14 +401,9 @@ public class MiniMaxStrategy implements PlayingStrategy {
             switch (possibleMoves) {
                 case 0:
                     return 100_000;
-                case 1:
-                    return 15;
-                case 2:
-                    return 5;
-                case 3:
-                    return 1;
+                default:
+                    return 0;
             }
-            return m_check;
         }
         return 0;
     }
