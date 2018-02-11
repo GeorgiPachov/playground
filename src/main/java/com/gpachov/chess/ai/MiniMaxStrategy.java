@@ -209,44 +209,10 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
         int max = (Integer.MIN_VALUE/2);
         List<Integer> moves = new ArrayList<>();
-//        game.board.populatePossibleMoves(game.board.gameTurn, moves);
 
         board.populatePossibleMoves(turnColor, moves);
 
-        // dynamic depth reassignment - tomorrow
-//        if (depth == maxDepth) {
-//            if (moves.size() <= 10) {
-//                depth = maxDepth = 7;
-//            } else if (moves.size() < 20) {
-//                depth = maxDepth = 6;
-//            } else if (moves.size() < 30) {
-//                depth = maxDepth = 5;
-//            } else {
-//                depth = maxDepth = 5;
-//            }
-//        }
-
-        List<int[]> packedMoves = new ArrayList<>();
-        int[] c = new int[5];
-        int counter = 0;
-        for (int number: moves) {
-            counter++;
-            if (counter == 5) {
-                boolean isChessPiece = black.isPiece(number) || TurnColor.white.isPiece(number);
-                if (isChessPiece) {
-                    c[counter-1] = number;
-                } else {
-                    c[counter-1] = 0;
-                }
-                packedMoves.add(c);
-                c = new int[5];
-                counter = 0;
-            } else {
-                c[counter-1] = number;
-            }
-
-
-        }
+        List<int[]> packedMoves = pack(moves);
         packedMoves.sort((c1, c2) -> cmp(board, c1, c2, turnColor));
         int maxBeamWidth = 100;
         if (packedMoves.size() > maxBeamWidth) {
@@ -303,6 +269,29 @@ public class MiniMaxStrategy implements PlayingStrategy {
 //        movesCache.get(deepHash).put(depth, lastChosenMove);
 
         return max;
+    }
+
+    private List<int[]> pack(List<Integer> moves) {
+        List<int[]> packedMoves = new ArrayList<>();
+        int[] c = new int[5];
+        int counter = 0;
+        for (int number: moves) {
+            counter++;
+            if (counter == 5) {
+                boolean isChessPiece = black.isPiece(number) || TurnColor.white.isPiece(number);
+                if (isChessPiece) {
+                    c[counter-1] = number;
+                } else {
+                    c[counter-1] = 0;
+                }
+                packedMoves.add(c);
+                c = new int[5];
+                counter = 0;
+            } else {
+                c[counter-1] = number;
+            }
+        }
+        return packedMoves;
     }
 
     private int cmp(Board board, int[] c1, int[] c2, TurnColor turnColor) {
