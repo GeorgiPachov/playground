@@ -1,32 +1,37 @@
 package com.gpachov.chess;
 
-import chessControllers.UCITestStream;
-import com.fluxchess.jcpi.commands.EngineQuitCommand;
-import com.gpachov.videocreator.ChessEngine;
-import org.apache.tools.ant.filters.StringInputStream;
-import org.junit.Ignore;
-import org.junit.Test;
+import com.gpachov.chess.board.Constants;
+import org.junit.*;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
 
-@Ignore
 public class UCITest {
+
+    private static InputStream in;
+
+    @BeforeClass
+    public static void setup() {
+        in = System.in;
+    }
     @Test
     public void gameOne() throws FileNotFoundException {
-        System.setIn(new UCITestStream(new FileInputStream(new File("/home/aneline/IdeaProjects/video-creator/src/test/resources/promotion.txt"))));
-        ChessEngine engine = new ChessEngine();
-        engine.run();
-
+//      testCase(() -> {});
     }
 
     @Test
     public void handleShortCastling() throws FileNotFoundException {
-        System.setIn(new UCITestStream(new FileInputStream(new File("/home/aneline/IdeaProjects/video-creator/src/test/resources/short_castling.txt"))));
-        ChessEngine engine = new ChessEngine();
+        Runnable doNothing = () -> {};
+        testCase("/home/aneline/IdeaProjects/video-creator/src/test/resources/short_castling.txt", doNothing);
+    }
+
+    private void testCase(String path, Runnable callback) throws FileNotFoundException {
+        UCITestStream testStream = new UCITestStream(new FileInputStream(new File(path)), callback);
+        System.setIn(testStream);
+        ChessEngine engine = new NonQuittingChessEngine();
         engine.run();
-        engine.receive(new EngineQuitCommand());
     }
 
     @Test
@@ -43,4 +48,17 @@ public class UCITest {
     public void promotionBlack() {
 
     }
+
+    @Test
+    public void testException() throws FileNotFoundException {
+        Constants.RECREATE_BOARD_ON_MOVE = true;
+        testCase("/home/aneline/IdeaProjects/video-creator/src/test/resources/exception.txt", () -> {});
+    }
+
+    @AfterClass
+    public static void restore() {
+        System.setIn(in);
+    }
+
+
 }
