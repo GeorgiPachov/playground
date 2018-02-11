@@ -117,7 +117,7 @@ public class ChessEngine extends AbstractEngine {
 
 
         if (genericMove.promotion != null && genericMove.promotion.isLegalPromotion()) {
-            this.lastMove = new int[]{fromXIndex, fromYIndex, toXIndex, toYIndex, toMyNotation(genericMove.promotion.toCharAlgebraic(), board.gameTurn)};
+            this.lastMove = new int[]{fromXIndex, fromYIndex, toXIndex, toYIndex, toMyNotation(genericMove.promotion.toCharAlgebraic(), board.metadata.gameTurn)};
         } else {
             this.lastMove = new int[]{fromXIndex, fromYIndex, toXIndex, toYIndex, 0};
         }

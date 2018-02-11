@@ -1,4 +1,4 @@
-./gradlew clean build fatjar bundle
+./gradlew clean build -x test fatjar bundle
 rm -rf /home/aneline/Desktop/chess/chess.jar
 rm -rf /home/aneline/Desktop/chess/chess.sh
 cp build/bundle/chess.jar /home/aneline/Desktop/chess/chess.jar

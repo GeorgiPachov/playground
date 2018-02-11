@@ -35,18 +35,18 @@ public class CastlingTest {
         moves.clear();
 
         // test king has moved
-        board.whiteKingHasMoved = true;
+        board.metadata.whiteKingHasMoved = true;
         Castling.addCastlingIfApplicable(board, kingCoordinates, moves);
         assertEquals(0, moves.size());
         moves.clear();
-        board.whiteKingHasMoved = false;
+        board.metadata.whiteKingHasMoved = false;
 
         // test rook has moved
-        board.whiteRLHasMoved = true;
+        board.metadata.whiteRLHasMoved = true;
         Castling.addCastlingIfApplicable(board, kingCoordinates, moves);
         assertEquals(0, moves.size());
         moves.clear();
-        board.whiteRLHasMoved = false;
+        board.metadata.whiteRLHasMoved = false;
 
         // test king is in check
         board.pieces[4][3] = BLACK_ROOK;

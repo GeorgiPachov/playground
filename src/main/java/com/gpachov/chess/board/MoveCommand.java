@@ -6,6 +6,8 @@ public class MoveCommand {
 
 	private final Board board;
 	private final TurnColor movingColor;
+	private final Metadata oldMetadata;
+	private final int[][] snapshotPieces;
 	private int promoted = 0;
 
 	private int xDestination;
@@ -26,32 +28,18 @@ public class MoveCommand {
 		this.promoted = move[4];
 		this.movingPiece = board.pieces[xOrigin][yOrigin];
 		this.movingColor = board.getColor(xOrigin, yOrigin);
+		this.oldMetadata = new Metadata(board.metadata);
+		this.snapshotPieces = snapshotPieces(board);
 	}
 
-
-	private boolean revertEnPassantIfApplicable(TurnColor color) {
-		switch (color) {
-			case white:
-				if (isWhiteEnPassant()) {
-					// execute move
-					int pieceToUndo = board.pieces[xDestination][yDestination];
-					board.pieces[xOrigin][yOrigin] = pieceToUndo;
-					board.pieces[xDestination][yDestination] = 0; // most of the time = 0
-					board.pieces[xDestination][yDestination- 1] = enemyRemoved; // most of the time = 0
-					return true;
-				}
-				break;
-			case black:
-				if (isBlackEnPassant()) {
-					int pieceToUndo = board.pieces[xDestination][yDestination];
-					board.pieces[xOrigin][yOrigin] = pieceToUndo;
-					board.pieces[xDestination][yDestination] = 0; // most of the time = 0
-					board.pieces[xDestination][yDestination + 1] = enemyRemoved; // most of the time = 0
-					return true;
-				}
-				break;
+	private int[][] snapshotPieces(Board board) {
+		int[][] pieces = new int[8][8];
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8;j++) {
+				pieces[i][j] = board.pieces[i][j];
+			}
 		}
-		return false;
+		return pieces;
 	}
 
 
@@ -119,74 +107,19 @@ public class MoveCommand {
 		return false;
 	}
 
-	private boolean revertCastlingIfApplicable(TurnColor color) {
-		switch (color) {
-			case white:
-				int k = Board.WHITE_KING;
-				int r = Board.WHITE_ROOK;
-				if (isShortWhiteCastling()) {
-					board.pieces[4][0] = k;
-					board.pieces[6][0] = 0;
-					board.pieces[7][0] = r;
-					board.pieces[5][0] = 0;
-					return true;
-				} else if (isLongWhiteCastling()) {
-					board.pieces[4][0] = k;
-					board.pieces[2][0] = 0;
-					board.pieces[0][0] = r;
-					board.pieces[3][0] = 0;
-					return true;
-				}
-				break;
-			case black:
-				k = Board.BLACK_KING;
-				r = Board.BLACK_ROOK;
-
-				if (isShortBlackCastling()) {
-					board.pieces[4][7] = k;
-					board.pieces[6][7] = 0;
-					board.pieces[7][7] = r;
-					board.pieces[5][7] = 0;
-					return true;
-				} else if (isLongBlackCastling()) {
-					board.pieces[4][7] = k;
-					board.pieces[2][7] = 0;
-					board.pieces[0][7] = r;
-					board.pieces[3][7] = 0;
-					return true;
-				}
-				break;
-		}
-		return false;
-	}
-
 
 	public void undo() {
 		// update caches
 		int[] king = board.getKing(movingColor);
 
-		boolean wasEnPassant = revertEnPassantIfApplicable(movingColor);
-		if (!wasEnPassant) {
-			boolean wasCastling = revertCastlingIfApplicable(movingColor);
-			if (!wasCastling) {
-				if (isPromotion(movingColor)) {
-					switch (movingColor) {
-						case white:
-							board.pieces[xOrigin][yOrigin] = WHITE_PAWN;
-							break;
-						case black:
-							board.pieces[xOrigin][yOrigin] = BLACK_PAWN;
-							break;
-					}
-					board.pieces[xDestination][yDestination] = enemyRemoved;
-				} else {
-					// execute move
-					int pieceToUndo = board.pieces[xDestination][yDestination];
-					board.pieces[xOrigin][yOrigin] = pieceToUndo;
-					board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
-				}
+		for (int i = 0; i < 8; i++) {
+			for (int j =0 ; j < 8; j++) {
+				board.pieces[i][j] = 0;
 			}
 		}
+
+		board.pieces = snapshotPieces;
+
 		// update caches
 		if (xDestination == king[0] && yDestination == king[1]) {
 			king[0] = xOrigin;
@@ -196,6 +129,8 @@ public class MoveCommand {
         // update pieces pieces cache
         this.board.whitePieces = board.findWhitePieces();
         this.board.blackPieces = board.findBlackPieces();
+
+        this.board.metadata = oldMetadata;
 	}
 
 	private boolean handleCastlingIfApplicable(TurnColor turnColor) {

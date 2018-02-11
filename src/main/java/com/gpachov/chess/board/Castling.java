@@ -29,8 +29,8 @@ public class Castling {
             return;
         }
 
-        boolean kingHasMoved = board.blackKingHasMoved;
-        boolean rookLeftHasMoved = board.blackRRHasMoved;
+        boolean kingHasMoved = board.metadata.blackKingHasMoved;
+        boolean rookLeftHasMoved = board.metadata.blackRRHasMoved;
         boolean noPiecesBetweenThem = true;
         for (int x = 5; x < 7; x++) {
             if (board.pieces[x][7] != 0) {
@@ -72,12 +72,12 @@ public class Castling {
     private static void addLeftBlackCastlingIfApplicable(Board board, int[] coordinates, List<Integer> moves) {
         boolean leftRookExists = board.pieces[0][7] == BLACK_ROOK;
         boolean blackKingIsAtRightPlace = board.pieces[4][7] == BLACK_KING;
-        if (!leftRookExists || blackKingIsAtRightPlace) {
+        if (!leftRookExists || !blackKingIsAtRightPlace) {
             return;
         }
         // left castling
-        boolean kingHasMoved = board.blackKingHasMoved;
-        boolean rookLeftHasMoved = board.blackRLHasMoved;
+        boolean kingHasMoved = board.metadata.blackKingHasMoved;
+        boolean rookLeftHasMoved = board.metadata.blackRLHasMoved;
         boolean noPiecesBetweenThem = true;
         for (int x = 1; x < 4; x++) {
             if (board.pieces[x][7] != 0) {
@@ -128,8 +128,8 @@ public class Castling {
             return;
         }
 
-        boolean kingHasMoved = board.blackKingHasMoved;
-        boolean rookLeftHasMoved = board.blackRRHasMoved;
+        boolean kingHasMoved = board.metadata.blackKingHasMoved;
+        boolean rookLeftHasMoved = board.metadata.blackRRHasMoved;
         boolean noPiecesBetweenThem = true;
         for (int x = 5; x < 7; x++) {
             if (board.pieces[x][0] != 0) {
@@ -157,8 +157,8 @@ public class Castling {
             }
         }
 
-        boolean rightBlackCastlingAvailable = !kingIsInCheckAfterMove && noFieldIsUnderSiege && !kingHasMoved && !rookLeftHasMoved && noPiecesBetweenThem;
-        if (rightBlackCastlingAvailable) {
+        boolean rightWhiteCastlingApplicable = !kingIsInCheckAfterMove && noFieldIsUnderSiege && !kingHasMoved && !rookLeftHasMoved && noPiecesBetweenThem;
+        if (rightWhiteCastlingApplicable) {
             moves.add(4);
             moves.add(0);
             moves.add(6);
@@ -175,8 +175,8 @@ public class Castling {
         }
 
 
-        boolean kingHasMoved = board.whiteKingHasMoved;
-        boolean rookLeftHasMoved = board.whiteRLHasMoved;
+        boolean kingHasMoved = board.metadata.whiteKingHasMoved;
+        boolean rookLeftHasMoved = board.metadata.whiteRLHasMoved;
         boolean noPiecesBetweenThem = true;
         for (int x = 1; x < 4; x++) {
             if (board.pieces[x][0] != 0) {

@@ -35,7 +35,7 @@ repositories {
 fatJar {
     classifier 'fat'
     manifest {
-        attributes 'Main-Class': 'chessControllers.Main'
+        attributes 'Main-Class': 'com.gpachov.chess.Main'
     }
 }
 

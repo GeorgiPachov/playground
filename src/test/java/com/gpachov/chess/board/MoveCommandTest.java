@@ -28,12 +28,12 @@ public class MoveCommandTest {
 
         MoveCommand command = new MoveCommand(board, new int[] {5,2, 5, 3, 0});
         command.execute();
-        assertEquals(pieces[5][2], 0);
-        assertEquals(pieces[5][3], WHITE_PAWN);
+        assertEquals(board.pieces[5][2], 0);
+        assertEquals(board.pieces[5][3], WHITE_PAWN);
 
         command.undo();
-        assertEquals(pieces[5][2], WHITE_PAWN);
-        assertEquals(pieces[5][3], 0);
+        assertEquals(board.pieces[5][2], WHITE_PAWN);
+        assertEquals(board.pieces[5][3], 0);
     }
 
     @Test
@@ -48,12 +48,12 @@ public class MoveCommandTest {
 
         MoveCommand command = new MoveCommand(board, new int[] {5,0, 5, 2, 0});
         command.execute();
-        assertEquals(pieces[5][0], 0);
-        assertEquals(pieces[5][2], WHITE_ROOK);
+        assertEquals(board.pieces[5][0], 0);
+        assertEquals(board.pieces[5][2], WHITE_ROOK);
 
         command.undo();
-        assertEquals(pieces[5][2], BLACK_PAWN);
-        assertEquals(pieces[5][0], WHITE_ROOK);
+        assertEquals(board.pieces[5][2], BLACK_PAWN);
+        assertEquals(board.pieces[5][0], WHITE_ROOK);
     }
 
     @Test
@@ -67,12 +67,12 @@ public class MoveCommandTest {
 
         MoveCommand command = new MoveCommand(board, new int[] {5,1, 5, 0, BLACK_QUEEN});
         command.execute();
-        assertEquals(pieces[5][1], 0);
-        assertEquals(pieces[5][0], BLACK_QUEEN);
+        assertEquals(board.pieces[5][1], 0);
+        assertEquals(board.pieces[5][0], BLACK_QUEEN);
 
         command.undo();
-        assertEquals(pieces[5][1], BLACK_PAWN);
-        assertEquals(pieces[5][0], 0);
+        assertEquals(board.pieces[5][1], BLACK_PAWN);
+        assertEquals(board.pieces[5][0], 0);
     }
 
     @Test
@@ -88,12 +88,12 @@ public class MoveCommandTest {
 
         MoveCommand command = new MoveCommand(board, new int[] {5,1, 4, 0, BLACK_QUEEN});
         command.execute();
-        assertEquals(pieces[5][1], 0);
-        assertEquals(pieces[4][0], BLACK_QUEEN);
+        assertEquals(board.pieces[5][1], 0);
+        assertEquals(board.pieces[4][0], BLACK_QUEEN);
 
         command.undo();
-        assertEquals(pieces[5][1], BLACK_PAWN);
-        assertEquals(pieces[4][0], WHITE_ROOK);
+        assertEquals(board.pieces[5][1], BLACK_PAWN);
+        assertEquals(board.pieces[4][0], WHITE_ROOK);
     }
 
     @Test

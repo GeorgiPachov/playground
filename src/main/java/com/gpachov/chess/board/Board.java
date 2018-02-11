@@ -11,10 +11,40 @@ import com.gpachov.chess.Util;
 import java.util.*;
 
 public class Board {
-    public boolean gameOver;
-    public Stack<MoveCommand> commandStack;
 
-    public TurnColor gameTurn;
+    public Metadata metadata;
+
+    public static class Metadata {
+        public Metadata() {
+            this.gameTurn = TurnColor.white;
+        }
+
+        public Metadata(Metadata old) {
+            this.whiteKingHasMoved = old.whiteKingHasMoved;
+            this.blackKingHasMoved = old.blackKingHasMoved;
+            this.whiteRLHasMoved = old.whiteRLHasMoved;
+            this.whiteRRHasMoved = old.whiteRRHasMoved;
+            this.blackRLHasMoved = old.blackRLHasMoved;
+            this.blackRRHasMoved = old.blackRRHasMoved;
+
+            this.lastExecutedCommand = old.lastExecutedCommand;
+            this.gameOver = old.gameOver;
+            this.gameTurn = old.gameTurn;
+        }
+
+        public boolean whiteKingHasMoved = false;
+        public boolean blackKingHasMoved = false;
+
+        public boolean whiteRLHasMoved = false;
+        public boolean whiteRRHasMoved = false;
+        public boolean blackRLHasMoved = false;
+        public boolean blackRRHasMoved = false;
+        public MoveCommand lastExecutedCommand;
+        public boolean gameOver;
+        public TurnColor gameTurn;
+
+    }
+    public Stack<MoveCommand> commandStack;
     public int pieces[][];
 
 
@@ -23,21 +53,15 @@ public class Board {
     public int[] whiteKing = new int[]{4,0};
     public int[] blackKing = new int[]{4,7};
 
-    public boolean whiteKingHasMoved = false;
-    public boolean blackKingHasMoved = false;
-
-    public boolean whiteRLHasMoved = false;
-    public boolean whiteRRHasMoved = false;
-    public boolean blackRLHasMoved = false;
-    public boolean blackRRHasMoved = false;
 
 	public Board() {
         this.pieces = new int[8][8];
-        gameTurn = TurnColor.white;
+        this.metadata = new Metadata();
+        metadata.gameTurn = TurnColor.white;
         populateBoardWithSquares();
         populateBoardWithPieces();
 
-        gameOver = false;
+        metadata.gameOver = false;
         commandStack = new Stack<>();
 
         initCaches();
@@ -45,9 +69,10 @@ public class Board {
 
     public Board(int[][] board) {
         this.pieces = board;
-        gameTurn = TurnColor.white;
+        metadata = new Metadata();
+        metadata.gameTurn = TurnColor.white;
 
-        gameOver = false;
+        metadata.gameOver = false;
         commandStack = new Stack<>();
 
         initCaches();
@@ -332,7 +357,7 @@ public class Board {
     }
 
     public void flipTurn() {
-        gameTurn = gameTurn.opposite();
+        metadata.gameTurn = metadata.gameTurn.opposite();
     }
 
     private boolean kingBecomesEndangered(int oldX, int oldY, int newPieceX, int newPieceY) {
@@ -520,29 +545,29 @@ public class Board {
     private void updateCastlingCaches(MoveCommand command) {
         // king castling caches
         if (command.getMovingPiece() == WHITE_KING) {
-            whiteKingHasMoved = true;
+            metadata.whiteKingHasMoved = true;
         }
         else if (command.getMovingPiece() == BLACK_KING) {
-            blackKingHasMoved = true;
+            metadata.blackKingHasMoved = true;
         }
 
         // rook castling caches
         else if (command.getMovingPiece() == WHITE_ROOK && command.getXOrigin() == Rook.WHITE_ROOK_LEFT[0] && command.getYOrigin() == Rook.WHITE_ROOK_LEFT[1]) {
-            whiteRLHasMoved = true;
+            metadata.whiteRLHasMoved = true;
         } else if (command.getMovingPiece() == WHITE_ROOK && command.getXOrigin() == Rook.WHITE_ROOK_RIGHT[0] && command.getYOrigin() == Rook.WHITE_ROOK_RIGHT[1]) {
-            whiteRRHasMoved = true;
+            metadata.whiteRRHasMoved = true;
         } else if (command.getMovingPiece() == BLACK_ROOK && command.getXOrigin() == Rook.BLACK_ROOK_LEFT[0] && command.getYOrigin() == Rook.BLACK_ROOK_LEFT[1]) {
-            blackRLHasMoved = true;
+            metadata.blackRLHasMoved = true;
         } else if (command.getMovingPiece() == BLACK_ROOK && command.getXOrigin() == Rook.BLACK_ROOK_RIGHT[0] && command.getYOrigin() == Rook.BLACK_ROOK_RIGHT[1]) {
-            blackRRHasMoved = true;
+            metadata.blackRRHasMoved = true;
         }
 
 
     }
 
     private void stopGame() {
-        System.out.println("GAME ENDED!!!!" + this.gameTurn + " WON");
-        this.gameOver = true;
+        System.out.println("GAME ENDED!!!!" + this.metadata.gameTurn + " WON");
+        this.metadata.gameOver = true;
     }
 
     public void undoMove() {

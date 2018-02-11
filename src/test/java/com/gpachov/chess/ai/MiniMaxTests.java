@@ -116,7 +116,7 @@ public class MiniMaxTests {
             MiniMaxStrategy strategy = new MiniMaxStrategy();
             strategy.MAX_DEPTH = i;
             for (int j = 0; j < 100; j++) {
-                if (board.gameOver) {
+                if (board.metadata.gameOver) {
                     break;
                 }
                 int[] nextMove = null;
@@ -126,7 +126,7 @@ public class MiniMaxTests {
                         Assert.fail("Next move was null!!!!");
                     }
                 }
-                if (board.gameOver) {
+                if (board.metadata.gameOver) {
                     break;
                 }
                 if (j%2 == 1) {
