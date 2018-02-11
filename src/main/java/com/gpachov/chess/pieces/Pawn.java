@@ -46,7 +46,7 @@ public class Pawn {
 						moves.add(oldY);
 						moves.add(possibleMove[0]);
 						moves.add(possibleMove[1]);
-						moves.add(Board.BLACK_KNIGHT);
+						moves.add(Board.WHITE_KNIGHT);
 
 						// add rook
 
