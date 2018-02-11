@@ -7,10 +7,11 @@ import com.gpachov.chess.board.Constants;
 
 import java.util.*;
 
+import static com.gpachov.chess.Util.pack;
 import static com.gpachov.chess.board.TurnColor.black;
 
 public class MiniMaxStrategy implements PlayingStrategy {
-    public static int MAX_DEPTH = 5;
+    public static int MAX_DEPTH = Constants.MAX_DEPTH;
     private static short WHITE = 0;
     private static short BLACK = 1;
     private static short[] PIECES_SCORE = new short[32];
@@ -214,7 +215,7 @@ public class MiniMaxStrategy implements PlayingStrategy {
 
         List<int[]> packedMoves = pack(moves);
         packedMoves.sort((c1, c2) -> cmp(board, c1, c2, turnColor));
-        int maxBeamWidth = 100;
+        int maxBeamWidth = Constants.BEAM_WIDTH;
         if (packedMoves.size() > maxBeamWidth) {
             packedMoves = packedMoves.subList(0, maxBeamWidth);
         }
@@ -271,28 +272,6 @@ public class MiniMaxStrategy implements PlayingStrategy {
         return max;
     }
 
-    private List<int[]> pack(List<Integer> moves) {
-        List<int[]> packedMoves = new ArrayList<>();
-        int[] c = new int[5];
-        int counter = 0;
-        for (int number: moves) {
-            counter++;
-            if (counter == 5) {
-                boolean isChessPiece = black.isPiece(number) || TurnColor.white.isPiece(number);
-                if (isChessPiece) {
-                    c[counter-1] = number;
-                } else {
-                    c[counter-1] = 0;
-                }
-                packedMoves.add(c);
-                c = new int[5];
-                counter = 0;
-            } else {
-                c[counter-1] = number;
-            }
-        }
-        return packedMoves;
-    }
 
     private int cmp(Board board, int[] c1, int[] c2, TurnColor turnColor) {
         Util.logV("Comparing: " + Arrays.toString(c1) + " against " + Arrays.toString(c2));

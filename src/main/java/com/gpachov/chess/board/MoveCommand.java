@@ -1,5 +1,7 @@
 package com.gpachov.chess.board;
 
+import java.util.Arrays;
+
 import static com.gpachov.chess.board.Board.*;
 
 public class MoveCommand {
@@ -7,7 +9,7 @@ public class MoveCommand {
 	private final Board board;
 	private final TurnColor movingColor;
 	private final Metadata oldMetadata;
-	private final int[][] snapshotPieces;
+	private int[][] snapshotPieces;
 	private int promoted = 0;
 
 	private int xDestination;
@@ -16,8 +18,8 @@ public class MoveCommand {
 	private int yOrigin;
 	private int enemyRemoved;
 
-
 	private int movingPiece;
+	private boolean isComplexMove;
 
 	public MoveCommand(Board board, int[] move){
 		this.board = board;
@@ -29,14 +31,16 @@ public class MoveCommand {
 		this.movingPiece = board.pieces[xOrigin][yOrigin];
 		this.movingColor = board.getColor(xOrigin, yOrigin);
 		this.oldMetadata = new Metadata(board.metadata);
-		this.snapshotPieces = snapshotPieces(board);
+		this.snapshotPieces = null;
 	}
 
 	private int[][] snapshotPieces(Board board) {
 		int[][] pieces = new int[8][8];
 		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8;j++) {
+			for (int j = 0; j < 8; j++) {
 				pieces[i][j] = board.pieces[i][j];
+				// optimize for caches
+				// careful with the allocation - implement a memory manager with referenceQueue
 			}
 		}
 		return pieces;
@@ -46,6 +50,14 @@ public class MoveCommand {
 	public void execute() {
         // prepare caches
         int[] king = board.getKing(movingColor);
+		boolean willBeEnPassant = isBlackEnPassant() || isWhiteEnPassant();
+		boolean willBeCastling = isShortWhiteCastling() || isLongWhiteCastling() || isShortBlackCastling() || isLongBlackCastling();
+		boolean willBePromotion = isPromotion(movingColor);
+
+		this.isComplexMove = willBeEnPassant || willBeCastling || willBePromotion;
+		if (isComplexMove) {
+			snapshotPieces = snapshotPieces(board);
+		}
 
 		boolean isEnPassant = handleEnPassantIfApplicable(movingColor);
 		if (!isEnPassant) {
@@ -112,14 +124,15 @@ public class MoveCommand {
 		// update caches
 		int[] king = board.getKing(movingColor);
 
-		for (int i = 0; i < 8; i++) {
-			for (int j =0 ; j < 8; j++) {
-				board.pieces[i][j] = 0;
-			}
+		if (isComplexMove) {
+			board.pieces = snapshotPieces;
 		}
-
-		board.pieces = snapshotPieces;
-
+		 else {
+			// execute move
+			int pieceToUndo = board.pieces[xDestination][yDestination];
+			board.pieces[xOrigin][yOrigin] = pieceToUndo;
+			board.pieces[xDestination][yDestination] = enemyRemoved; // most of the time = 0
+		}
 		// update caches
 		if (xDestination == king[0] && yDestination == king[1]) {
 			king[0] = xOrigin;

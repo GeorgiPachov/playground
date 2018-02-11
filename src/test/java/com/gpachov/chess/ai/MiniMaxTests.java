@@ -1,11 +1,17 @@
 package com.gpachov.chess.ai;
 
+import com.gpachov.chess.Util;
 import com.gpachov.chess.ai.MiniMaxStrategy;
 import com.gpachov.chess.board.Board;
+import com.gpachov.chess.board.Constants;
+import com.gpachov.chess.board.TurnColor;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import static com.gpachov.chess.board.Board.BLACK_PAWN;
 import static com.gpachov.chess.board.Board.WHITE_PAWN;
@@ -14,21 +20,18 @@ public class MiniMaxTests {
 
     @Test
     public void testWillTakeFreeQueen() {
-        for (int i = 1; i < 5; i++) {
-            int[][] pieces = new int[8][8];
-            pieces[0][0] = Board.BLACK_KING;
-            pieces[6][6] = Board.WHITE_KING;
+        int[][] pieces = new int[8][8];
+        pieces[0][0] = Board.BLACK_KING;
+        pieces[6][6] = Board.WHITE_KING;
 
-            pieces[5][2] = Board.WHITE_ROOK;
-            pieces[5][0] = Board.BLACK_QUEEN;
-            Board board = new Board(pieces);
+        pieces[5][2] = Board.WHITE_ROOK;
+        pieces[5][0] = Board.BLACK_QUEEN;
+        Board board = new Board(pieces);
 
-            MiniMaxStrategy strategy = new MiniMaxStrategy();
-//            strategy.MAX_DEPTH = i;
-            int[] nextWhiteMove = strategy.playWhite(board);
+        MiniMaxStrategy strategy = new MiniMaxStrategy();
+        int[] nextWhiteMove = strategy.playWhite(board);
 
-            Assert.assertArrayEquals(new int[] {5,2,5,0,0}, nextWhiteMove);
-        }
+        Assert.assertArrayEquals(new int[] {5,2,5,0,0}, nextWhiteMove);
     }
 
     @Test
@@ -137,5 +140,40 @@ public class MiniMaxTests {
                 }
             }
         }
+    }
+
+    @Test
+    @Ignore
+    public void perftTest() {
+        Constants.BEAM_WIDTH = Integer.MAX_VALUE;
+        for (int i = 0; i < 6; i++) {
+            Board board = new Board();
+            long score = perft(board, i, TurnColor.white);
+            System.out.println("Expected: " + getExpected(i) + ", actual" + score);
+            Assert.assertEquals(getExpected(i), score);
+        }
+    }
+
+    private long getExpected(int level) {
+        int[] expectations = new int[] {
+                1, 20, 400, 8902, 197281, 4865609
+        };
+        return expectations[level];
+    }
+
+    private long perft(Board board, int depth, TurnColor color) {
+        if (depth == 0) {
+            return 1;
+        }
+        long nodes = 0;
+        List<Integer> possibleMoves = new ArrayList<>();
+        board.populatePossibleMoves(color, possibleMoves);
+        List<int[]> moves = Util.pack(possibleMoves);
+        for (int[] move: moves) {
+            board.executeMove(move);
+            nodes += perft(board, depth-1, color.opposite());
+            board.undoMove();
+        }
+        return nodes;
     }
 }

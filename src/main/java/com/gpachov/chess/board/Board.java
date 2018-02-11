@@ -1,5 +1,6 @@
 package com.gpachov.chess.board;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.gpachov.chess.pieces.Queen;
 import com.gpachov.chess.pieces.Rook;
 import com.gpachov.chess.pieces.Bishop;
@@ -9,6 +10,8 @@ import com.gpachov.chess.pieces.Pawn;
 import com.gpachov.chess.Util;
 
 import java.util.*;
+
+import static com.gpachov.chess.Util.logV;
 
 public class Board {
 
@@ -173,7 +176,7 @@ public class Board {
         pieces.forEach(p -> addAllowedMoves(p, moves));
 	}
 
-    private void addAllowedMoves(int[] coordinates, List<Integer> moves) {
+    public @VisibleForTesting void addAllowedMoves(int[] coordinates, List<Integer> moves) {
         int x = coordinates[0];
         int y = coordinates[1];
 
@@ -209,12 +212,12 @@ public class Board {
 	    switch (gameTurn) {
             case white:
                 //XXX disable caches
-                return findWhitePieces();
-//                return whitePieces;
+//                return findWhitePieces();
+                return whitePieces;
             case black:
                 //XXX disable caches
-                return findBlackPieces();
-//                return blackPieces;
+//                return findBlackPieces();
+                return blackPieces;
         }
         return null;
 	}
@@ -253,18 +256,18 @@ public class Board {
     }
 
     public int[] getKing(TurnColor gameTurn) {
-//        switch (gameTurn) {
-//            case white:
-//                return whiteKing;
-//            case black:
-//                return blackKing;
-//        }
-        Optional<int[]> king = getPieces(gameTurn).stream().filter(this::isKing).findAny();
-        if (!king.isPresent()){
-            throw new RuntimeException("Missing king!");
+        switch (gameTurn) {
+            case white:
+                return whiteKing;
+            case black:
+                return blackKing;
         }
-        return king.get();
-//        return null;
+//        Optional<int[]> king = getPieces(gameTurn).stream().filter(this::isKing).findAny();
+//        if (!king.isPresent()){
+//            throw new RuntimeException("Missing king!");
+//        }
+//        return king.get();
+        return null;
     }
 
     public boolean canMove(int oldX, int oldY, int newX, int newY){
@@ -403,7 +406,6 @@ public class Board {
     public boolean isKingCheckmate(int[] kingToCheck){
         if(isKingInCheck(kingToCheck)) {
             TurnColor color = getColor(kingToCheck);
-            System.out.println("King " + color + " is in check");
             List<Integer> moves = new ArrayList<>();
             populatePossibleMoves(color, moves);
             if (moves.size() == 0) {
@@ -412,26 +414,6 @@ public class Board {
             return false;
         }
         return false;
-//            for(int i = 0; i < moves.size(); i+=4){
-//                int ox = moves.get(i);
-//                int oy = moves.get(i+1);
-//                int nx = moves.get(i+2);
-//                int ny = moves.get(i+3);
-//                MoveCommand command = new MoveCommand(this, new int[] {ox, oy, nx, ny, 0});
-//                if(canMove(ox, oy, nx, ny)){ // maybe only check if valid move, without endangering the king?
-//                    command.execute();
-//                    // we could have moved the king...
-//                    kingToCheck = getKing(color);
-//                    boolean kingIsInCheck = isKingInCheck(kingToCheck);
-//                    command.undo();
-//                    if (!kingIsInCheck) {
-//                        return false;
-//                    }
-//                }
-//            }
-//            return true;
-//        }
-//        return false;
     }
 
     public boolean isKing(int[] p) {
@@ -512,7 +494,7 @@ public class Board {
     }
 
     public void executeMove(int[]  move) {
-        Util.logV(toString());
+        logV(toString());
         int xDestination = move[2];
         int yDestination = move[3];
         int movingPiece = pieces[move[0]][move[1]];
@@ -529,8 +511,7 @@ public class Board {
 
         updateCastlingCaches(newCommand);
 
-
-        Util.logV(toString());
+        logV(toString());
 
         int[] kingToCheck = this.getKing(movingPieceColor.opposite());
         boolean gameOver = this.isKingCheckmate(kingToCheck);
@@ -566,7 +547,7 @@ public class Board {
     }
 
     private void stopGame() {
-        System.out.println("GAME ENDED!!!!" + this.metadata.gameTurn + " WON");
+        logV("GAME ENDED!!!!" + this.metadata.gameTurn + " WON");
         this.metadata.gameOver = true;
     }
 

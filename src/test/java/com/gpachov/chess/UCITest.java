@@ -62,6 +62,19 @@ public class UCITest {
         testCase("/home/aneline/IdeaProjects/video-creator/src/test/resources/exception2.txt", () -> {});
     }
 
+    @Test
+    public void testException3() throws FileNotFoundException {
+        Constants.RECREATE_BOARD_ON_MOVE = true;
+        testCase("/home/aneline/IdeaProjects/video-creator/src/test/resources/exception3.txt", () -> {});
+    }
+
+    //black queen when promoted case
+    @Test
+    public void testException4() throws FileNotFoundException {
+        Constants.RECREATE_BOARD_ON_MOVE = true;
+        testCase("/home/aneline/IdeaProjects/video-creator/src/test/resources/exception4.txt", () -> {});
+
+    }
     @AfterClass
     public static void restore() {
         System.setIn(in);
